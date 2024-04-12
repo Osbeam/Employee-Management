@@ -16,6 +16,8 @@ import Leave_management from './pages/Leave_management';
 import Hr_docs from './pages/Hr_docs';
 import Leaders from './pages/Leaders';
 
+
+
 function App() {
   return (
     <Router>
