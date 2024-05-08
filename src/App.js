@@ -15,8 +15,7 @@ import Attendence from './pages/Attendence';
 import Leave_management from './pages/Leave_management';
 import Hr_docs from './pages/Hr_docs';
 import Leaders from './pages/Leaders';
-
-
+import ChannelPartner from './pages/ChannelPartner';
 
 function App() {
   return (
@@ -26,6 +25,7 @@ function App() {
         <Route path='/admin' element={<Layout />}>
           <Route index element={< Dashboard />} />
           <Route path='telecaller' element={<Telecaller />} />
+          <Route path='channelpartner' element={<ChannelPartner />} />
           <Route path='leaders' element={<Leaders />} />
           {/* <Route path='hr' element={<Hr />} /> */}
           <Route path='new-employee' element={<New_employee/>} />

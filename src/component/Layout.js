@@ -10,7 +10,8 @@ import {
   TeamOutlined,
   BookOutlined,
   SolutionOutlined,
-  ProjectOutlined
+  ProjectOutlined,
+  SoundOutlined ,
 } from '@ant-design/icons';
 import logo from '../Images/ShawniksLogo.png'
 import { Layout, Menu, Button, theme } from 'antd';
@@ -50,6 +51,9 @@ const MainLayout = () => {
           </Menu.Item>
           <Menu.Item key="telecaller" icon={<PhoneOutlined />} label="Telecaller">
             Telecaller
+          </Menu.Item>
+          <Menu.Item key="channelpartner" icon={<SoundOutlined />} label="Channel Partner">
+            Channel partner
           </Menu.Item>
           <Menu.Item key="leaders" icon={<RobotOutlined />} label="leaders">
             Leaders
