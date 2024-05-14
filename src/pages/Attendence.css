@@ -28,6 +28,7 @@
   }
   .tabs {
     display: flex;
+    gap: 10px;
   }
   
   .tab {
@@ -36,6 +37,7 @@
     border: none;
     background-color: #f0f0f0;
     cursor: pointer;
+    border-radius: 7px;
   }
   
   .tab.active {
@@ -44,8 +46,9 @@
   }
   
   .tab-content {
-    padding: 20px;
+    padding-top: 40px;
     background-color: #fff;
+    overflow-x: auto;
   }
   
   .table-container {
@@ -63,9 +66,54 @@
   
   th, td {
     padding: 8px;
-    text-align: left;
+    text-align: center;
+    min-width: 5.5rem;
   }
   
+  
+  .approvebtn{
+    border: none;
+    padding: 6px;
+    background-color: #4a864c;
+    border-radius: 5px;
+    color: white;
+    width: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+
+  }
+  .savebtn{
+    border: none;
+    padding: 6px;
+    background-color: #4a864c;
+    border-radius: 5px;
+    color: white;
+    width: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  .editbtn{
+    border: none;
+    padding: 6px;
+    background-color: #4096ff;
+    border-radius: 5px;
+    color: white;
+    width: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+
+  }
+  .deletebtn{
+    border: none;
+    padding: 6px;
+    background-color: #d9363e;
+    border-radius: 5px;
+    color: white;
+    width: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+
+  }
   
   /*login page css */
   .main{
