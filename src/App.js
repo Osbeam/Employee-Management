@@ -27,6 +27,7 @@ function App() {
           <Route path='telecaller' element={<Telecaller />} />
           <Route path='channelpartner' element={<ChannelPartner />} />
           <Route path='leaders' element={<Leaders />} />
+        
           {/* <Route path='hr' element={<Hr />} /> */}
           <Route path='new-employee' element={<New_employee/>} />
           <Route path='employee-list' element={<Employee_list/>} />
