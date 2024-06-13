@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "./Images/ShawniksLogo.png";
+import logo from "./admin/Images/ShawniksLogo.png";
 import { message } from "antd";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [EmailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -14,34 +14,45 @@ export default function Login() {
     event.preventDefault();
 
     // Validate input fields
-    if (!email || !password) {
-      setError("Please enter both email and password");
+    if (!EmailId || !password) {
+      setError("Please enter both Email and password");
+      message.error("Please enter both Email and password");
       return;
     }
 
-    console.log("Login button clicked");
-    console.log("Email and Password provided", { email, password });
-
     try {
       const response = await axios.post(
-        "http://77.37.45.224:3000/api/user/login",
-        { Email: email, Password: password }
+        "http://77.37.45.224:8000/api/user/EmployeeInfoLogin",
+        { EmailId, Password: password }
       );
 
-      console.log("API response:", response);
+      console.log("API response:", response.data);
 
       if (response.data.success && response.data.loggedUser) {
-        localStorage.setItem("user", JSON.stringify(response.data.loggedUser));
-        navigate("/admin");
+        const { loggedUser } = response.data;
+
+        console.log("Logged User:", loggedUser);
+
+        if (loggedUser.Role && loggedUser.Role.includes("Admin")) {
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          navigate("/admin");
+          message.success("Login successful!");
+        } else if (loggedUser.Role && loggedUser.Role.includes("HR")) {
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          navigate("/hrpanel");
+          message.success("Login successful!");
+        } else {
+          setError("Unauthorized role");
+          message.error("Unauthorized role");
+        }
       } else {
-        setError(response.data.message || "Invalid email or password");
-        console.log("Login failed:", response.data.message);
-        message.error("Invalid user details"); 
+        setError(response.data.message || "Invalid Email or password");
+        message.error(response.data.message || "Invalid Email or password");
       }
     } catch (error) {
-      setError("An error occurred during login. Please try again.");
+      setError("Invalid Userdetails");
       console.error("Login error:", error);
-      message.error("An error occurred during login. Please try again."); 
+      message.error("Invalid Userdetails.");
     }
   }
 
@@ -60,9 +71,9 @@ export default function Login() {
               <p>Welcome back</p>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter username"
+                value={EmailId}
+                onChange={(e) => setEmailId(e.target.value)}
+                placeholder="Enter EmailId"
                 className="input-login"
               />
               <br />

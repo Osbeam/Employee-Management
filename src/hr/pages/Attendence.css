@@ -69,8 +69,7 @@
     text-align: center;
     min-width: 5.5rem;
   }
-  
-  
+
   .approvebtn{
     border: none;
     padding: 6px;
@@ -113,6 +112,16 @@
     margin-right: 5px;
     cursor: pointer;
 
+  }
+  .cancelbtn{
+    border: none;
+    padding: 6px;
+    background-color: #ffc107;
+    border-radius: 5px;
+    color: white;
+    width: 40px;
+    margin-right: 5px;
+    cursor: pointer;
   }
   
   /*login page css */
@@ -217,4 +226,20 @@
   .logout-dropdown button{
     border-radius: 17px;
     border: 1px solid;
+  }
+
+  .pagination{
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .pagination-btn{
+    padding: 10px 20px 10px 20px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .pagination-info{
+    padding: 10px;
+    font-size: 15px;
   }

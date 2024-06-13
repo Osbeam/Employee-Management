@@ -1,0 +1,28 @@
+.emp_container{
+    display: flex;
+    justify-content: right;
+    margin-bottom: 55px;
+}
+.empuploadlabel{
+    font-size: 22px;
+    margin-top: 7px;
+    margin-right: 10px;
+}
+.empinput{
+    border: 1px solid gray;
+    padding: 7px;
+    border-radius: 5px;
+}
+.downloadtemplete{
+    padding: 8px;
+    font-size: 17px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
+}
+.table-emp-container{
+
+}
+.emp-table{
+    width: 100%;
+}

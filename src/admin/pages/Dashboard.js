@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Tab1() {
+export default function Dashboard() {
   return (
     <>
       <h3>Dashboard details here ...!</h3>
