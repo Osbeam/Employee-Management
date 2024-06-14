@@ -68,13 +68,20 @@ export default function Leave_management() {
                             </div>
                         </section>
 
-                        <section>Hello</section>
-                        <aside>Hey</aside>
+                        <section className='LM-leave-History-section'>
+                            <div>
+                                <h1>Leave History</h1>
+                                <div className='inner-LH-container'>
+
+                                </div>
+                            </div>
+                        </section>
+                        <aside className='LM-leave-Request-section'>Hey</aside>
                     </div>
                 </div>
             </div>
             </div> 
-            <h1>Under working...</h1>
+          
         </>
     )
 }

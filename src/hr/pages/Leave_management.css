@@ -16,7 +16,7 @@
     grid-template-columns: 3fr 1fr; 
     grid-template-rows: 1fr 1fr; 
     gap: 10px; 
-    height: 100vh; 
+    /* height: 100vh;  */
     border-radius: 10px;
 }
 
@@ -59,11 +59,17 @@
 
 .LM-leave-section {
     display: flex;
+    flex-direction: row !important;
     justify-content: space-around;
     padding: 20px;
     background-color: #f0f8ff;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1); 
 }
+
 
 .LM-section-container {
     text-align: center;
@@ -142,4 +148,30 @@
 .LM-holiday-leave-info {
     background-color: #fff3e0;
     color: #f57c00;
+}
+
+/* Leave History Section*/
+
+.LM-leave-History-section{
+    display: flex;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1); 
+}
+.inner-LH-container{
+
+}
+.LM-leave-Request-section{
+    display: flex;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1); 
 }
