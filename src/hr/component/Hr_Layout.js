@@ -46,7 +46,7 @@ const MainLayout = () => {
             }
           }}
         >
-          <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
+          {/* <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
             Dashboard
           </Menu.Item>
          
@@ -58,6 +58,9 @@ const MainLayout = () => {
           </Menu.Item>
           <Menu.Item key="employee" icon={<RobotOutlined />} label="employee">
             Employee
+          </Menu.Item> */}
+          <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
+            Dashboard
           </Menu.Item>
           <Menu.SubMenu key="Hr" icon={<BookOutlined />} title="Hr">
             <Menu.Item key="new-employee" icon={<UsergroupAddOutlined />} label="Emp Registration">

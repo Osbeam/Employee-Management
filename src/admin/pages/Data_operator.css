@@ -1,0 +1,78 @@
+.dop_container{
+    display: flex;
+    justify-content: space-between;
+}
+.dopuploadlabel{
+    font-size: 22px;
+    margin-top: 7px;
+    margin-right: 10px;
+}
+.dopupload{
+    border: 1px solid gray;
+    padding: 4px;
+    border-radius: 5px;
+}
+.downloadtemplete{
+    padding: 8px;
+    font-size: 17px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
+}
+.table-dop-container{
+
+}
+.dop-table{
+
+}
+.dop-dropdown{
+    padding: 8px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    outline: none;
+}
+.drop-option{
+
+}
+.add-btn{
+    padding: 9px;
+    border: 1px solid gray;
+    border-radius: 5PX;
+    margin-left: 10px;
+    cursor: pointer;
+    outline: none;
+}
+.fileuploadbtn{
+    padding: 7px;
+    margin-left: 5px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid gray;
+}
+.Data-op-pagination-btn {
+    padding: 10px 20px 10px 20px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.custom-modal .ant-modal-content {
+    width: 1100px !important;
+  }
+  
+  .custom-modal .ant-form-item {
+    width: 100%;
+  }
+  
+  .custom-modal .ant-row {
+    width: 100%;
+  }
+  .ant-modal{
+    width: 1061px !important;
+  }
+  .ant-input{
+    width: 210px !important;
+  }
