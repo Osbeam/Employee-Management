@@ -633,12 +633,12 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Job Profile</h2>
-            <label style={{ marginRight: "38px", marginLeft: "0px" }}>
+            <label style={{ marginRight: "42px", marginLeft: "0px" }}>
               Department:
             </label>
      
             <select
-              style={{ width: '249px' }}
+              style={{ width: '237px' }}
               onChange={handleDepartmentChange}
               value={formData.Department}
             >
@@ -652,7 +652,7 @@ export default function New_employee() {
             <label style={{ marginRight: "39px" }}>Sub Department:</label>
          
             <select
-              style={{ width: '250px' }}
+              style={{ width: '237px' }}
               onChange={handleSubDepartmentChange}
               value={formData.SubDepartment}
             >
@@ -664,10 +664,10 @@ export default function New_employee() {
               ))}
             </select>
             <br />
-            <label style={{ marginRight: "37px" }}>Designation:</label>
+            <label style={{ marginRight: "42px" }}>Designation:</label>
          
             <select
-              style={{ width: '250px' }}
+              style={{ width: '237px' }}
               onChange={handleDesignationChange}
               value={formData.Designation}
             >
@@ -702,7 +702,6 @@ export default function New_employee() {
               <option value="Sidhhant">Sidhhant</option>
             </select>
             <label style={{ marginRight: "52px" }}>Joining Date :</label>
-            <label style={{ marginRight: "53px" }}>Joining Date :</label>
             <input
               type="date"
               style={{ width: "20%" }}
