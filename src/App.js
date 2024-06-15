@@ -9,6 +9,8 @@ import './hr/pages/Employee_list.css'
 import './hr/pages/Leave_management.css'
 import './hr/pages/Attendence.css'
 
+import './hr/pages/New_Employee.css'
+
 import Layout from './admin/component//Layout';
 import Dashboard from './admin/pages/Dashboard'
 import Data_operator from './admin/pages/Data_operator';

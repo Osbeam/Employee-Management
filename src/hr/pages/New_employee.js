@@ -71,6 +71,7 @@ export default function New_employee() {
     TDS: false,
     Password: "",
     Role: [],
+    MrMissMrs:"",
   };
 
   const [formData, setformData] = useState(initialFormData);
@@ -110,6 +111,7 @@ export default function New_employee() {
 
   const validateFormData = () => {
     const requiredFields = [
+      "MrMissMrs",
       "FirstName",
       "MiddleName",
       "LastName",
@@ -291,6 +293,8 @@ export default function New_employee() {
     }));
   };
 
+  
+
   return (
     <Tabs defaultActiveKey="1">
       <TabPane tab="Basic Information" key="1">
@@ -300,7 +304,12 @@ export default function New_employee() {
             <p>Basic Information</p>
             <div className="inner-container">
               <label style={{ marginRight: "66px" }}>Full Name :</label>
-              <select style={{ marginRight: '5px' }}>
+              <select 
+              style={{ marginRight: '5px' }}
+              name="MrMissMrs"
+              value={formData.MrMissMrs}
+              onChange={handleInputChange}
+              >
                 <option>Select title</option>
                 <option>Mr</option>
                 <option>Miss</option>

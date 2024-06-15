@@ -3,16 +3,7 @@
     justify-content: right;
     margin-bottom: 55px;
 }
-.empuploadlabel{
-    font-size: 22px;
-    margin-top: 7px;
-    margin-right: 10px;
-}
-.empinput{
-    border: 1px solid gray;
-    padding: 7px;
-    border-radius: 5px;
-}
+
 .downloadtemplete{
     padding: 8px;
     font-size: 17px;
@@ -20,9 +11,27 @@
     border-radius: 5px;
     color: gray;
 }
-.table-emp-container{
 
-}
 .emp-table{
     width: 100%;
 }
+.custom-table .ant-table {
+    border-radius: 0;
+  }
+  .custom-table .ant-table-thead > tr > th {
+    padding: 8px 16px;
+    border-radius: 0;
+  }
+  .custom-table .ant-table-tbody > tr > td {
+    padding: 8px 10px;
+    border-radius: 0;
+  }
+  
+  .table-emp-container {
+    overflow-x: auto;
+  }
+  
+  .Emp-label {
+    font-weight: bold;
+    font-size: 16px;
+  }
