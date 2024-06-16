@@ -162,9 +162,7 @@
                 4px 0 8px rgba(0, 0, 0, 0.1), 
                 -4px 0 8px rgba(0, 0, 0, 0.1); 
 }
-.inner-LH-container{
 
-}
 .LM-leave-Request-section{
     display: flex;
     padding: 20px;
@@ -174,4 +172,97 @@
                 0 -4px 8px rgba(0, 0, 0, 0.1), 
                 4px 0 8px rgba(0, 0, 0, 0.1), 
                 -4px 0 8px rgba(0, 0, 0, 0.1); 
+}
+.LR-heading h1{
+    margin-bottom: 15px;
+   }
+   
+   .LR-container{
+       background-color: white;
+       height: 100vh;
+       width: auto;
+   }
+   .LR-inner-card{
+       background-color: #FCE69E;
+       padding: 20px;
+       border: 1px solid transparent;
+       border-radius: 10px;
+   }
+   .LR-para{
+       color: #5D5B5B;
+       padding-top: 15px;
+       display: flex;
+   }
+   .LR-btn{
+       margin-top: 10px;
+   }
+   .LR-btn-approve{
+       padding: 4px 15px 4px 15px;
+       color: white;
+       background-color: green;
+       outline: none;
+       border: none;
+       margin-right: 4px;
+       border-radius: 8px;
+       cursor: pointer;
+   }
+ 
+   .LR-type-date p{
+       color: #5D5B5B;
+       padding-top: 5px;
+   }
+   
+
+
+
+
+
+
+
+/*Leave Request section*/
+.rs-heading h1{
+ margin-bottom: 15px;
+}
+
+.rs-container{
+    background-color: white;
+    height: 100vh;
+    width: auto;
+}
+.rs-inner-card{
+    background-color: #FCE69E;
+    padding: 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+}
+.rs-para{
+    color: #5D5B5B;
+    padding-top: 15px;
+}
+.rs-btn{
+    margin-top: 10px;
+}
+.rs-btn-approve{
+    padding: 4px 15px 4px 15px;
+    color: white;
+    background-color: green;
+    outline: none;
+    border: none;
+    margin-right: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.rs-btn-decline{
+    padding: 4px 15px 4px 15px;
+    color: white;
+    background-color: rgb(243, 21, 21);
+    outline: none;
+    border: none;
+    margin-left: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.rs-type-date p{
+    color: #5D5B5B;
+    padding-top: 5px;
 }

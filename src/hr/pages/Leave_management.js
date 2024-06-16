@@ -69,14 +69,52 @@ export default function Leave_management() {
                         </section>
 
                         <section className='LM-leave-History-section'>
-                            <div>
-                                <h1>Leave History</h1>
-                                <div className='inner-LH-container'>
-
+                        <div className='LR-main-container'>
+                                <div className='LR-heading'>
+                                    <h1>Leave Requests</h1>
+                                </div>
+                                <div className='LR-container'>
+                                    <div className='LR-inner-card'>
+                                        <div className='LR-type-date'>
+                                            <p>Sick Leave</p>
+                                           
+                                        </div>
+                                        <div className='LR-para'>
+                                            <p>Lorem Ipsum is simply dummy text 
+                                                of the printing and typeset</p>
+                                                <button className='LR-btn-approve'>Approved</button>
+                                        </div>
+                                    
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </section>
-                        <aside className='LM-leave-Request-section'>Hey</aside>
+                        <aside className='LM-leave-Request-section'>
+                            <div className='rs-main-container'>
+                                <div className='rs-heading'>
+                                    <h1>Leave Requests</h1>
+                                </div>
+                                <div className='rs-container'>
+                                    <div className='rs-inner-card'>
+                                        <div className='rs-type-date'>
+                                            <p>Start Date : 6 Jun 2024</p>
+                                            <p>End Date : 9 Jun 2024</p>
+                                            <p>Leave Type : Casual Leave</p>
+                                        </div>
+                                        <div className='rs-para'>
+                                            <p>Lorem Ipsum is simply dummy text 
+                                                of the printing and typeset</p>
+                                        </div>
+                                        <div className='rs-btn'>
+                                            <button className='rs-btn-approve'>Approved</button>
+                                            <button className='rs-btn-decline'>Declined</button>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                       </aside>
                     </div>
                 </div>
             </div>
