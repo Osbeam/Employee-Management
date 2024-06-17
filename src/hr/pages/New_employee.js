@@ -349,7 +349,7 @@ export default function New_employee() {
             <div className="inner-container">
               <label style={{ marginRight: "66px" }}>Full Name :</label>
               <select
-                style={{ marginRight: '5px' }}
+                style={{ marginRight: '5px', width:'8%' }}
                 name="MrMissMrs"
                 value={formData.MrMissMrs}
                 onChange={handleInputChange}
@@ -361,7 +361,7 @@ export default function New_employee() {
               </select>
 
               <input
-                style={{ width: '202px' }}
+                style={{ width: '17%' }}
 
                 type="text"
                 name="FirstName"
@@ -370,7 +370,7 @@ export default function New_employee() {
                 placeholder="First Name"
               />
               <input
-                style={{ width: '213px' }}
+                style={{ width: '17%' }}
                 type="text"
                 name="MiddleName"
                 value={formData.MiddleName}
@@ -378,7 +378,7 @@ export default function New_employee() {
                 placeholder="Middle Name"
               />
               <input
-                style={{ width: '202px' }}
+                style={{ width: '17%' }}
                 type="text"
                 name="LastName"
                 value={formData.LastName}
@@ -445,7 +445,7 @@ export default function New_employee() {
               <br />
               {/* <label style={{ marginRight: "42px", marginLeft: "0px" }}>State:</label> */}
               <select
-                style={{marginLeft:'137px'}}
+                style={{marginLeft:'137px',width:'25%'}}
                 name="CurrentState"
                 value={formData.CurrentState}
                 onChange={handleCurrentStateChange}
@@ -459,7 +459,7 @@ export default function New_employee() {
               </select>
 
               <select
-                style={{width:'271px',marginLeft:'-50px'}}
+                style={{width:'23%',marginLeft:'-50px'}}
                 name="CurrentCity"
                 value={formData.CurrentCity}
                 onChange={handleInputChange}
@@ -473,7 +473,7 @@ export default function New_employee() {
               </select>
 
               <input
-              style={{width:'131px', marginLeft:'-45px'}}
+              style={{width:'13.4%', marginLeft:'-45px'}}
                 placeholder="Pincode"
                 type="number"
                 name="CurrentPincode"
@@ -482,12 +482,12 @@ export default function New_employee() {
               />
               <br />
 
-              <label style={{ marginRight: "26px" }}>Same as above :</label>
+              {/* <label style={{ marginRight: "26px" }}>Same as above :</label>
               <input
                 type="checkbox"
                 checked={sameAsAbove}
                 onChange={handleSameAsAboveChange}
-              />
+              /> */}
               <br />
               <label>Permanent Address :</label>
               <input
@@ -507,7 +507,7 @@ export default function New_employee() {
               />
               <br />
               <select
-               style={{marginLeft:'137px'}}
+               style={{marginLeft:'137px',width:'25%'}}
                 name="PermanentState"
                 value={formData.PermanentState}
                 onChange={handlePermanentStateChange}
@@ -520,7 +520,7 @@ export default function New_employee() {
                 ))}
               </select>
               <select
-                style={{width:'271px', marginLeft:'-50px'}}
+                style={{width:'23%', marginLeft:'-50px'}}
                 name="PermanentCity"
                 value={formData.PermanentCity}
                 onChange={handleInputChange}
@@ -533,7 +533,7 @@ export default function New_employee() {
                 ))}
               </select>
               <input
-                style={{width:'131px', marginLeft:'-45px'}}
+                style={{width:'13.4%', marginLeft:'-45px'}}
                 placeholder="Pincode"
                 type="number"
                 name="PermanentPincode"
@@ -548,7 +548,7 @@ export default function New_employee() {
               <h2>Qualification and Experience</h2>
               <label style={{ marginRight: "16px" }}>Highest Qualification :</label>
               <select
-                style={{ width: "320px" }}
+                style={{ width: "27%" }}
                 name="HighestQualification"
                 value={formData.HighestQualification}
                 onChange={handleInputChange}
@@ -562,9 +562,9 @@ export default function New_employee() {
                 <option value="Bachelor's Degree">Engineering</option>
                 <option value="PhD">PhD</option>
               </select>
-              <label style={{ marginRight: "113px", marginLeft: "-41px" }}>Year :</label>
+              <label style={{ marginRight: "113px", marginLeft: "-30px" }}>Year :</label>
               <select
-                style={{ width: "314px" }}
+                style={{ width: "26%" }}
                 name="Year"
                 value={formData.Year}
                 onChange={handleInputChange}
@@ -721,7 +721,7 @@ export default function New_employee() {
             <h2>Job Profile</h2>
             <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:</label>
             <select
-              style={{ width: '237px' }}
+              style={{ width: '20%' }}
               onChange={handleDepartmentChange}
               value={formData.Department}
             >
@@ -735,7 +735,7 @@ export default function New_employee() {
 
             <label style={{ marginRight: "39px" }}>Sub Department:</label>
             <select
-              style={{ width: '237px' }}
+              style={{ width: '20%' }}
               onChange={handleSubDepartmentChange}
               value={formData.SubDepartment}
             >
@@ -751,7 +751,7 @@ export default function New_employee() {
 
             <label style={{ marginRight: "42px" }}>Designation:</label>
             <select
-              style={{ width: '237px' }}
+              style={{ width: '20%' }}
               onChange={handleDesignationChange}
               value={formData.Designation}
             >
@@ -828,7 +828,7 @@ export default function New_employee() {
               type="text"
               placeholder="Enter password"
               name='Password'
-              style={{ width: "56.20%" }}
+              style={{ width: "20%" }}
               value={formData.Password}
               onChange={handleInputChange}
             />
@@ -1131,7 +1131,7 @@ export default function New_employee() {
               value={formData.BankName}
               onChange={handleInputChange}
               placeholder="Enter Bank Name"
-              style={{ width: "404px" }}
+              style={{ width: "34%" }}
            />
             
             <br />
