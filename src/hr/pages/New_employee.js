@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Country, State, City } from 'country-state-city';
 
 export default function New_employee() {
   const initialFormData = {
@@ -71,7 +72,7 @@ export default function New_employee() {
     TDS: false,
     Password: "",
     Role: [],
-    MrMissMrs:"",
+    MrMissMrs: "",
   };
 
   const [formData, setformData] = useState(initialFormData);
@@ -102,12 +103,13 @@ export default function New_employee() {
         ...prevData,
         PermanentAddress1: "",
         PermanentAddress2: "",
-        PermanentCity: "",
-        PermanentState: "",
+        PermanentCity: "",  
+        PermanentState: "", 
         PermanentPincode: "",
       }));
     }
   };
+  
 
   const validateFormData = () => {
     const requiredFields = [
@@ -235,10 +237,11 @@ export default function New_employee() {
     }
   };
 
+
+
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
-
   useEffect(() => {
     // Fetch departments
     const fetchDepartments = async () => {
@@ -262,6 +265,7 @@ export default function New_employee() {
       Designation: "" // Clear designation selection
     }));
 
+    // Fetch sub-departments based on the selected department
     const selectedDepartment = departments.find(dep => dep._id === departmentId);
     if (selectedDepartment) {
       setSubDepartments(selectedDepartment.SubDepartment || []);
@@ -277,9 +281,12 @@ export default function New_employee() {
       Designation: "" // Clear designation selection
     }));
 
+    // Fetch designations based on the selected sub-department
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/department/getDesignation?subDepartment=${subDepartmentId}`);
-      setDesignations(response.data.data || []);
+      const response = await axios.get(`http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`);
+      console.log("Designations response:", response.data);
+      const subDepartmentData = response.data.data;
+      setDesignations(subDepartmentData.designation || []);
     } catch (error) {
       console.error("Error fetching designations:", error);
     }
@@ -293,8 +300,45 @@ export default function New_employee() {
     }));
   };
 
-  
 
+
+  const [currentStates, setCurrentStates] = useState([]);
+  const [currentCities, setCurrentCities] = useState([]);
+  const [permanentStates, setPermanentStates] = useState([]);
+  const [permanentCities, setPermanentCities] = useState([]);
+
+  useEffect(() => {
+    // Fetch states for India on component mount
+    const statesData = State.getStatesOfCountry('IN');
+    setCurrentStates(statesData);
+    setPermanentStates(statesData);
+  }, []);
+
+  const handleCurrentStateChange = (e) => {
+    const stateCode = e.target.value;
+    setformData((prevData) => ({
+      ...prevData,
+      CurrentState: stateCode,
+      CurrentCity: "" // Clear city selection
+    }));
+
+    // Fetch cities based on the selected state
+    const citiesData = City.getCitiesOfState('IN', stateCode);
+    setCurrentCities(citiesData);
+  };
+
+  const handlePermanentStateChange = (e) => {
+    const stateCode = e.target.value;
+    setformData((prevData) => ({
+      ...prevData,
+      PermanentState: stateCode,
+      PermanentCity: "" // Clear city selection
+    }));
+
+    // Fetch cities based on the selected state
+    const citiesData = City.getCitiesOfState('IN', stateCode);
+    setPermanentCities(citiesData);
+  };
   return (
     <Tabs defaultActiveKey="1">
       <TabPane tab="Basic Information" key="1">
@@ -304,11 +348,11 @@ export default function New_employee() {
             <p>Basic Information</p>
             <div className="inner-container">
               <label style={{ marginRight: "66px" }}>Full Name :</label>
-              <select 
-              style={{ marginRight: '5px' }}
-              name="MrMissMrs"
-              value={formData.MrMissMrs}
-              onChange={handleInputChange}
+              <select
+                style={{ marginRight: '5px' }}
+                name="MrMissMrs"
+                value={formData.MrMissMrs}
+                onChange={handleInputChange}
               >
                 <option>Select title</option>
                 <option>Mr</option>
@@ -399,26 +443,37 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
+              {/* <label style={{ marginRight: "42px", marginLeft: "0px" }}>State:</label> */}
               <select
-                style={{ marginLeft: "137px" }}
+                style={{marginLeft:'137px'}}
+                name="CurrentState"
+                value={formData.CurrentState}
+                onChange={handleCurrentStateChange}
+              >
+                <option value="">Select state</option>
+                {currentStates.map((state) => (
+                  <option key={state.isoCode} value={state.isoCode}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                style={{width:'271px',marginLeft:'-50px'}}
                 name="CurrentCity"
                 value={formData.CurrentCity}
                 onChange={handleInputChange}
               >
                 <option value="">Select city</option>
-                <option value="Pune">Pune</option>
-                <option value="Panaji">Panaji</option>
+                {currentCities.map((city) => (
+                  <option key={city.name} value={city.name}>
+                    {city.name}
+                  </option>
+                ))}
               </select>
-              <select
-                name="CurrentState"
-                value={formData.CurrentState}
-                onChange={handleInputChange}
-              >
-                <option value="">Select state</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Goa">Goa</option>
-              </select>
+
               <input
+              style={{width:'131px', marginLeft:'-45px'}}
                 placeholder="Pincode"
                 type="number"
                 name="CurrentPincode"
@@ -452,25 +507,33 @@ export default function New_employee() {
               />
               <br />
               <select
-                style={{ marginLeft: "137px" }}
+               style={{marginLeft:'137px'}}
+                name="PermanentState"
+                value={formData.PermanentState}
+                onChange={handlePermanentStateChange}
+              >
+                <option value="">Select state</option>
+                {permanentStates.map((state) => (
+                  <option key={state.isoCode} value={state.isoCode}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                style={{width:'271px', marginLeft:'-50px'}}
                 name="PermanentCity"
                 value={formData.PermanentCity}
                 onChange={handleInputChange}
               >
                 <option value="">Select city</option>
-                <option value="Pune">Pune</option>
-                <option value="Panaji">Panaji</option>
-              </select>
-              <select
-                name="PermanentState"
-                value={formData.PermanentState}
-                onChange={handleInputChange}
-              >
-                <option value="">Select state</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Goa">Goa</option>
+                {permanentCities.map((city) => (
+                  <option key={city.name} value={city.name}>
+                    {city.name}
+                  </option>
+                ))}
               </select>
               <input
+                style={{width:'131px', marginLeft:'-45px'}}
                 placeholder="Pincode"
                 type="number"
                 name="PermanentPincode"
@@ -485,18 +548,21 @@ export default function New_employee() {
               <h2>Qualification and Experience</h2>
               <label style={{ marginRight: "16px" }}>Highest Qualification :</label>
               <select
-                style={{ width: "325px" }}
+                style={{ width: "320px" }}
                 name="HighestQualification"
                 value={formData.HighestQualification}
                 onChange={handleInputChange}
               >
                 <option value="">Select</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
                 <option value="Master's Degree">Master's Degree</option>
+                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                <option value="Bachelor's Degree">HSC Board</option>
+                <option value="Bachelor's Degree">SSC Board</option>
+                <option value="Bachelor's Degree">Diploma</option>
+                <option value="Bachelor's Degree">Engineering</option>
                 <option value="PhD">PhD</option>
-                {/* Add more options as needed */}
               </select>
-              <label style={{ marginRight: "113px", marginLeft: "-28px" }}>Year :</label>
+              <label style={{ marginRight: "113px", marginLeft: "-41px" }}>Year :</label>
               <select
                 style={{ width: "314px" }}
                 name="Year"
@@ -504,9 +570,20 @@ export default function New_employee() {
                 onChange={handleInputChange}
               >
                 <option value="">Select year</option>
+                <option value="2021">2026</option>
+                <option value="2020">2025</option>
+                <option value="2021">2024</option>
+                <option value="2020">2023</option>
+                <option value="2019">2022</option>
                 <option value="2021">2021</option>
                 <option value="2020">2020</option>
                 <option value="2019">2019</option>
+                <option value="2021">2018</option>
+                <option value="2020">2017</option>
+                <option value="2019">2016</option>
+                <option value="2021">2015</option>
+                <option value="2020">2014</option>
+                <option value="2019">2013</option>
               </select>
               <br />
               <label style={{ marginRight: "35px" }}>Total Experience :</label>
@@ -642,10 +719,7 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Job Profile</h2>
-            <label style={{ marginRight: "42px", marginLeft: "0px" }}>
-              Department:
-            </label>
-     
+            <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:</label>
             <select
               style={{ width: '237px' }}
               onChange={handleDepartmentChange}
@@ -658,8 +732,8 @@ export default function New_employee() {
                 </option>
               ))}
             </select>
+
             <label style={{ marginRight: "39px" }}>Sub Department:</label>
-         
             <select
               style={{ width: '237px' }}
               onChange={handleSubDepartmentChange}
@@ -672,9 +746,10 @@ export default function New_employee() {
                 </option>
               ))}
             </select>
+
             <br />
+
             <label style={{ marginRight: "42px" }}>Designation:</label>
-         
             <select
               style={{ width: '237px' }}
               onChange={handleDesignationChange}
@@ -696,6 +771,7 @@ export default function New_employee() {
             >
               <option value="">Select</option>
               <option value="HR">HR</option>
+              <option value="HR">Manager</option>
               <option value="Team Lead">Team Lead</option>
             </select>
             <br />
@@ -707,8 +783,9 @@ export default function New_employee() {
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value="Vishal">Vishal</option>
-              <option value="Sidhhant">Sidhhant</option>
+              <option value="Sumeet Sahw">Sumeet Shaw</option>
+              <option value="Omkar kalekar">Omkar Kalekar</option>
+              <option value="Rutik kelkar">Rutik Kelkar</option>
             </select>
             <label style={{ marginRight: "52px" }}>Joining Date :</label>
             <input
@@ -728,8 +805,10 @@ export default function New_employee() {
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value="Osbeam IT">Osbeam IT</option>
-              <option value="ShawNiks Solutions">ShawNiks Solutions</option>
+              <option value="Osbeam IT Pvt Ltd">Osbeam IT Pvt Ltd</option>
+              <option value="Shaw Associates">Shaw Associates</option>
+              <option value="ShawNiks Solutions Pvt Ltd">ShawNiks Solutions Pvt Ltd</option>
+              <option value="Damaru Properties">Damaru Properties</option>
             </select>
             <label style={{ marginRight: '108px' }}>Role :</label>
             <select
@@ -1046,17 +1125,15 @@ export default function New_employee() {
               style={{ width: "34%" }}
             />
             <br />
-            <label style={{ marginRight: "137px" }}>Bank Name :</label>
-            <select
+            <label style={{ marginRight: "130px" }}>Bank Name :</label>
+            <input
               name="BankName"
               value={formData.BankName}
               onChange={handleInputChange}
-
+              placeholder="Enter Bank Name"
               style={{ width: "404px" }}
-            >
-              <option value="">Select Bank</option>
-              <option value="Bank of Maharashtra">Bank of Maharashtra</option>
-            </select>
+           />
+            
             <br />
             <label style={{ marginRight: "67px" }}>
               Account Holder Name :

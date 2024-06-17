@@ -18,6 +18,7 @@ import Login from './Login';
 import Hr from './hr/pages/Hr';
 import Employee from './admin/pages/Employee';
 import ChannelPartner from './admin/pages/ChannelPartner';
+import Leads from './admin/pages/Leads';
 
 import New_employee from './hr/pages/New_employee';
 import Employee_list from './hr/pages/Employee_list';
@@ -37,6 +38,7 @@ function App() {
           <Route path='dataoperator' element={<Data_operator />} />
           <Route path='channelpartner' element={<ChannelPartner />} />
           <Route path='employee' element={<Employee />} />
+          <Route path='leads' element={<Leads />} />
           </Route>
         
           <Route path='/hrpanel' element={<Hr_Layout />}>

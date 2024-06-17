@@ -1,4 +1,6 @@
 import React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function Leave_management() {
     return (
@@ -71,18 +73,29 @@ export default function Leave_management() {
                         <section className='LM-leave-History-section'>
                         <div className='LR-main-container'>
                                 <div className='LR-heading'>
-                                    <h1>Leave Requests</h1>
+                                    <h1>Leave History</h1>
                                 </div>
                                 <div className='LR-container'>
                                     <div className='LR-inner-card'>
                                         <div className='LR-type-date'>
                                             <p>Sick Leave</p>
-                                           
+                                            <div>
+                                                <p>Start Date</p>
+                                                <p>04 Jun 2024</p>
+                                            </div>
+                                            <div>
+                                                <p>End Date</p>
+                                                <p>06 Jun 2024</p>
+                                            </div>
+                                            <div>
+                                                <p>Total Days</p>
+                                                <p>02 Days</p>
+                                            </div>
                                         </div>
                                         <div className='LR-para'>
                                             <p>Lorem Ipsum is simply dummy text 
                                                 of the printing and typeset</p>
-                                                <button className='LR-btn-approve'>Approved</button>
+                                                <button className='LR-btn-approve'>Approved <FontAwesomeIcon icon={faCheck}/></button>
                                         </div>
                                     
                                     </div>
@@ -107,8 +120,8 @@ export default function Leave_management() {
                                                 of the printing and typeset</p>
                                         </div>
                                         <div className='rs-btn'>
-                                            <button className='rs-btn-approve'>Approved</button>
-                                            <button className='rs-btn-decline'>Declined</button>
+                                            <button className='rs-btn-approve'>Approved <FontAwesomeIcon icon={faCheck}/></button>
+                                            <button className='rs-btn-decline'>Declined <FontAwesomeIcon icon={faTimes}/></button>
                                         </div>
                                     </div>
                                     
