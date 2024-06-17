@@ -1,0 +1,20 @@
+.container{
+    padding: 25px;
+}
+.dropdown{
+    display: flex;
+    justify-content: space-between;
+}
+.dropdown select{
+    width: 130px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 30px;
+    padding: 5px;
+    outline: none;
+}
+
+.l-table th {
+    background-color: #4a864c;
+    color: white;
+  }

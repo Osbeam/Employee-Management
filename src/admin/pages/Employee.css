@@ -1,0 +1,37 @@
+.emp_container{
+    display: flex;
+    justify-content: right;
+    margin-bottom: 55px;
+}
+
+.downloadtemplete{
+    padding: 8px;
+    font-size: 17px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
+}
+
+.emp-table{
+    width: 100%;
+}
+.custom-table .ant-table {
+    border-radius: 0;
+  }
+  .custom-table .ant-table-thead > tr > th {
+    padding: 8px 16px;
+    border-radius: 0;
+  }
+  .custom-table .ant-table-tbody > tr > td {
+    padding: 8px 10px;
+    border-radius: 0;
+  }
+  
+  .table-emp-container {
+    overflow-x: auto;
+  }
+  
+  .Emp-label {
+    font-weight: bold;
+    font-size: 16px;
+  }

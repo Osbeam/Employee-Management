@@ -1,45 +1,98 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import logo from './Images/ShawniksLogo.png'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import logo from "./admin/Images/ShawniksLogo.png";
+import { message } from "antd";
 
 export default function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('')
-    return (
-        <>
-            <div className='main'>
-                <div className='main-container'>
-                    <div className='left-container'>
-                        <div className='left-contnr-items'>
-                            <img src={logo} />
-                            {/* <h2>Welcome back Hr</h2> */}
-                        </div>
-                    </div>
-                    <div className='right-container'>
-                        <form>
-                            <div className='form-div'>
-                                <h1>Hello Admin!</h1>
-                            <p>Welcom back</p>
-                                <input 
-                                type='username' 
-                                value={username} 
-                                placeholder='Enter username' 
-                                className='input-login' 
-                                onChange={(e) => setUsername(e.target.event)}
-                                /><br/>
-                                <input 
-                                type='password' 
-                                value={password} 
-                                placeholder='Enter password' 
-                                className='input-login'
-                                onChange={(e) => setPassword(e.target.event)} 
-                                /><br/>
-                                <button ><Link to="/admin" className='Link'>Submit</Link></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+  const [EmailId, setEmailId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  async function handleLogin(event) {
+    event.preventDefault();
+
+    // Validate input fields
+    if (!EmailId || !password) {
+      setError("Please enter both Email and password");
+      message.error("Please enter both Email and password");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://77.37.45.224:8000/api/user/EmployeeInfoLogin",
+        { EmailId, Password: password }
+      );
+
+      console.log("API response:", response.data);
+
+      if (response.data.success && response.data.loggedUser) {
+        const { loggedUser } = response.data;
+
+        console.log("Logged User:", loggedUser);
+
+        if (loggedUser.Role && loggedUser.Role.includes("Admin")) {
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          navigate("/admin");
+          message.success("Login successful!");
+        } else if (loggedUser.Role && loggedUser.Role.includes("HR")) {
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          navigate("/hrpanel");
+          message.success("Login successful!");
+        } else {
+          setError("Unauthorized role");
+          message.error("Unauthorized role");
+        }
+      } else {
+        setError(response.data.message || "Invalid Email or password");
+        message.error(response.data.message || "Invalid Email or password");
+      }
+    } catch (error) {
+      setError("Invalid Userdetails");
+      console.error("Login error:", error);
+      message.error("Invalid Userdetails.");
+    }
+  }
+
+  return (
+    <div className="main">
+      <div className="main-container">
+        <div className="left-container">
+          <div className="left-contnr-items">
+            <img src={logo} alt="Logo" />
+          </div>
+        </div>
+        <div className="right-container">
+          <form onSubmit={handleLogin}>
+            <div className="form-div">
+              <h1>Hello Admin!</h1>
+              <p>Welcome back</p>
+              <input
+                type="email"
+                value={EmailId}
+                onChange={(e) => setEmailId(e.target.value)}
+                placeholder="Enter EmailId"
+                className="input-login"
+              />
+              <br />
+              <input
+                type="password"
+                value={password}
+                placeholder="Enter password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-login"
+              />
+              <br />
+              <button type="submit" className="Link">
+                Login
+              </button>
+              {error && <p className="error-message">{error}</p>}
             </div>
-        </>
-    )
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }

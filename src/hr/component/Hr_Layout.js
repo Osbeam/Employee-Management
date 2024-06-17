@@ -10,7 +10,8 @@ import {
   TeamOutlined,
   BookOutlined,
   SolutionOutlined,
-  ProjectOutlined
+  ProjectOutlined,
+  SoundOutlined ,
 } from '@ant-design/icons';
 import logo from '../Images/ShawniksLogo.png'
 import { Layout, Menu, Button, theme } from 'antd';
@@ -45,14 +46,21 @@ const MainLayout = () => {
             }
           }}
         >
-          <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
+          {/* <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
             Dashboard
           </Menu.Item>
-          <Menu.Item key="telecaller" icon={<PhoneOutlined />} label="Telecaller">
-            Telecaller
+         
+          <Menu.Item key="channelpartner" icon={<SoundOutlined />} label="Channel Partner">
+            Channel partner
           </Menu.Item>
-          <Menu.Item key="leaders" icon={<RobotOutlined />} label="leaders">
-            Leaders
+          <Menu.Item key="dataoperator" icon={<PhoneOutlined />} label="Data Operator">
+            Data Operator
+          </Menu.Item>
+          <Menu.Item key="employee" icon={<RobotOutlined />} label="employee">
+            Employee
+          </Menu.Item> */}
+          <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
+            Dashboard
           </Menu.Item>
           <Menu.SubMenu key="Hr" icon={<BookOutlined />} title="Hr">
             <Menu.Item key="new-employee" icon={<UsergroupAddOutlined />} label="Emp Registration">
