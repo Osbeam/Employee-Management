@@ -482,12 +482,12 @@ export default function New_employee() {
               />
               <br />
 
-              {/* <label style={{ marginRight: "26px" }}>Same as above :</label>
+              <label style={{ marginRight: "26px" }}>Same as above :</label>
               <input
                 type="checkbox"
                 checked={sameAsAbove}
                 onChange={handleSameAsAboveChange}
-              /> */}
+              />
               <br />
               <label>Permanent Address :</label>
               <input
@@ -570,20 +570,20 @@ export default function New_employee() {
                 onChange={handleInputChange}
               >
                 <option value="">Select year</option>
-                <option value="2021">2026</option>
-                <option value="2020">2025</option>
-                <option value="2021">2024</option>
-                <option value="2020">2023</option>
-                <option value="2019">2022</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
                 <option value="2021">2021</option>
                 <option value="2020">2020</option>
                 <option value="2019">2019</option>
-                <option value="2021">2018</option>
-                <option value="2020">2017</option>
-                <option value="2019">2016</option>
-                <option value="2021">2015</option>
-                <option value="2020">2014</option>
-                <option value="2019">2013</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
               </select>
               <br />
               <label style={{ marginRight: "35px" }}>Total Experience :</label>
