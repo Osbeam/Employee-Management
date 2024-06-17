@@ -556,10 +556,10 @@ export default function New_employee() {
                 <option value="">Select</option>
                 <option value="Master's Degree">Master's Degree</option>
                 <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Bachelor's Degree">HSC Board</option>
-                <option value="Bachelor's Degree">SSC Board</option>
-                <option value="Bachelor's Degree">Diploma</option>
-                <option value="Bachelor's Degree">Engineering</option>
+                <option value="HSC Board">HSC Board</option>
+                <option value="SSC Board">SSC Board</option>
+                <option value="Diploma">Diploma</option>
+                <option value="Engineering">Engineering</option>
                 <option value="PhD">PhD</option>
               </select>
               <label style={{ marginRight: "113px", marginLeft: "-30px" }}>Year :</label>
