@@ -98,17 +98,23 @@ export default function New_employee() {
         PermanentState: prevData.CurrentState,
         PermanentPincode: prevData.CurrentPincode,
       }));
+  
+      // Fetch cities based on the current state and set them to permanent cities
+      const citiesData = City.getCitiesOfState('IN', formData.CurrentState);
+      setPermanentCities(citiesData);
     } else {
       setformData((prevData) => ({
         ...prevData,
         PermanentAddress1: "",
         PermanentAddress2: "",
-        PermanentCity: "",  
-        PermanentState: "", 
+        PermanentCity: "",
+        PermanentState: "",
         PermanentPincode: "",
       }));
+      setPermanentCities([]); // Clear the permanent cities list when unchecked
     }
   };
+  
   
 
   const validateFormData = () => {
@@ -481,12 +487,12 @@ export default function New_employee() {
               />
               <br />
 
-              {/* <label style={{ marginRight: "26px" }}>Same as above :</label>
+              <label style={{ marginRight: "26px" }}>Same as above :</label>
               <input
                 type="checkbox"
                 checked={sameAsAbove}
                 onChange={handleSameAsAboveChange}
-              /> */}
+              />
               <br />
               <label>Permanent Address :</label>
               <input
