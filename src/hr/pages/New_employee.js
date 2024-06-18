@@ -134,8 +134,8 @@ export default function New_employee() {
       "Year",
       "TotalExperience",
       "LastCompanyName",
-      "JoiningDate",
-      "RelievingDate",
+      // "JoiningDate",
+      // "RelievingDate",
       // "EmployeeID",
       "Department",
       "SubDepartment",
@@ -443,7 +443,6 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
-              {/* <label style={{ marginRight: "42px", marginLeft: "0px" }}>State:</label> */}
               <select
                 style={{marginLeft:'137px',width:'25%'}}
                 name="CurrentState"
@@ -482,12 +481,12 @@ export default function New_employee() {
               />
               <br />
 
-              <label style={{ marginRight: "26px" }}>Same as above :</label>
+              {/* <label style={{ marginRight: "26px" }}>Same as above :</label>
               <input
                 type="checkbox"
                 checked={sameAsAbove}
                 onChange={handleSameAsAboveChange}
-              />
+              /> */}
               <br />
               <label>Permanent Address :</label>
               <input
@@ -771,7 +770,7 @@ export default function New_employee() {
             >
               <option value="">Select</option>
               <option value="HR">HR</option>
-              <option value="HR">Manager</option>
+              <option value="Manager">Manager</option>
               <option value="Team Lead">Team Lead</option>
             </select>
             <br />
@@ -786,6 +785,7 @@ export default function New_employee() {
               <option value="Sumeet Sahw">Sumeet Shaw</option>
               <option value="Omkar kalekar">Omkar Kalekar</option>
               <option value="Rutik kelkar">Rutik Kelkar</option>
+              <option value="Urmila Dhage">Urmila Dhage</option>
             </select>
             <label style={{ marginRight: "52px" }}>Joining Date :</label>
             <input
