@@ -98,7 +98,7 @@ export default function New_employee() {
         PermanentState: prevData.CurrentState,
         PermanentPincode: prevData.CurrentPincode,
       }));
-  
+
       // Fetch cities based on the current state and set them to permanent cities
       const citiesData = City.getCitiesOfState('IN', formData.CurrentState);
       setPermanentCities(citiesData);
@@ -114,85 +114,69 @@ export default function New_employee() {
       setPermanentCities([]); // Clear the permanent cities list when unchecked
     }
   };
-  
-  
-
   const validateFormData = () => {
     const requiredFields = [
-      "MrMissMrs",
-      "FirstName",
-      "MiddleName",
-      "LastName",
-      "MobileNumber",
-      "EmailId",
-      "BloodGroup",
-      "CurrentAddress1",
-      "CurrentAddress2",
-      "CurrentCity",
-      "CurrentState",
-      "CurrentPincode",
-      "PermanentAddress1",
-      "PermanentAddress2",
-      "PermanentCity",
-      "PermanentState",
-      "PermanentPincode",
-      "HighestQualification",
-      "Year",
-      "TotalExperience",
-      "LastCompanyName",
-      // "JoiningDate",
-      // "RelievingDate",
-      // "EmployeeID",
-      "Department",
-      "SubDepartment",
-      "Designation",
-      "ReportingTo",
-      "ManagerName",
-      "CompanyName",
-      "BasicSalary",
-      "FixedAllowance",
-      "SpecialAllowance",
-      "VeriableAllowance",
-      "NoteBook",
-      "Stationery",
-      "JoiningKit",
-      "OfficialMobileNumber",
-      "MobileIMEINumber",
-      // "PanCard",
-      // "AadharCard",
-      // "Photo",
-      // "AddressProof",
-      // "HighestQuaCertificate",
-      // "LastComRellievingLetter",
-      // "BankDetails",
-      "BankName",
-      "AccountHolderName",
-      "AccountNumber",
-      "IFSCCode",
-      "Password",
+      { field: "MrMissMrs", label: "Mr/Miss/Mrs" },
+      { field: "FirstName", label: "First Name" },
+      { field: "MiddleName", label: "Middle Name" },
+      { field: "LastName", label: "Last Name" },
+      { field: "MobileNumber", label: "Mobile Number" },
+      { field: "EmailId", label: "Email Id" },
+      { field: "BloodGroup", label: "Blood Group" },
+      { field: "CurrentAddress1", label: "Current Address 1" },
+      { field: "CurrentAddress2", label: "Current Address 2" },
+      { field: "CurrentCity", label: "Current City" },
+      { field: "CurrentState", label: "Current State" },
+      { field: "CurrentPincode", label: "Current Pincode" },
+      { field: "PermanentAddress1", label: "Permanent Address 1" },
+      { field: "PermanentAddress2", label: "Permanent Address 2" },
+      { field: "PermanentCity", label: "Permanent City" },
+      { field: "PermanentState", label: "Permanent State" },
+      { field: "PermanentPincode", label: "Permanent Pincode" },
+      { field: "HighestQualification", label: "Highest Qualification" },
+      { field: "Year", label: "Year" },
+      { field: "TotalExperience", label: "Total Experience" },
+      { field: "LastCompanyName", label: "Last Company Name" },
+      { field: "Department", label: "Department" },
+      { field: "SubDepartment", label: "Sub-Department" },
+      { field: "Designation", label: "Designation" },
+      { field: "ReportingTo", label: "Reporting To" },
+      { field: "ManagerName", label: "Manager Name" },
+      { field: "CompanyName", label: "Company Name" },
+      { field: "Password", label: "Password" },
+      { field: "BasicSalary", label: "Basic Salary" },
+      { field: "FixedAllowance", label: "Fixed Allowance" },
+      { field: "SpecialAllowance", label: "Special Allowance" },
+      { field: "VeriableAllowance", label: "Variable Allowance" },
+      { field: "NoteBook", label: "Notebook" },
+      { field: "Stationery", label: "Stationery" },
+      { field: "JoiningKit", label: "Joining Kit" },
+      // { field: "OfficialMobileNumber", label: "Official Mobile Number" },
+      // { field: "MobileIMEINumber", label: "Mobile IMEI Number" },
+      { field: "BankName", label: "Bank Name" },
+      { field: "AccountHolderName", label: "Account Holder Name" },
+      { field: "AccountNumber", label: "Account Number" },
+      { field: "IFSCCode", label: "IFSC Code" },
+    
     ];
-
-    for (const field of requiredFields) {
+  
+    for (const { field, label } of requiredFields) {
       if (!formData[field]) {
-        return false;
+        return label;
       }
     }
-    return true;
+    return null;
   };
-
-  const resetForm = () => {
-    setformData(initialFormData);
-    setSameAsAbove(false);
-  };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateFormData()) {
-      toast.error("Please fill all the fields.");
+  
+    const missingField = validateFormData();
+    if (missingField) {
+      toast.error(`Please fill the ${missingField} field.`);
       return;
     }
-
+  
     try {
       const deductionsArray = [];
       if (formData.PF) {
@@ -207,7 +191,7 @@ export default function New_employee() {
       if (formData.TDS) {
         deductionsArray.push("TDS");
       }
-
+  
       const updatedFormData = {
         ...formData,
         CurrentAddress: {
@@ -226,12 +210,12 @@ export default function New_employee() {
         },
         Deductions: deductionsArray,
       };
-
+  
       const response = await axios.post(
         "http://77.37.45.224:8000/api/user/employeeInfo",
         updatedFormData
       );
-
+  
       if (response.status === 200) {
         toast.success("Employee registered successfully!");
         resetForm(); // Reset form on successful submission
@@ -242,6 +226,13 @@ export default function New_employee() {
       toast.error("Email or mobile number already exists.");
     }
   };
+  
+
+  const resetForm = () => {
+    setformData(initialFormData);
+    setSameAsAbove(false);
+  };
+
 
 
 
@@ -355,7 +346,7 @@ export default function New_employee() {
             <div className="inner-container">
               <label style={{ marginRight: "66px" }}>Full Name :</label>
               <select
-                style={{ marginRight: '5px', width:'8%' }}
+                style={{ marginRight: '5px', width: '8%' }}
                 name="MrMissMrs"
                 value={formData.MrMissMrs}
                 onChange={handleInputChange}
@@ -450,7 +441,7 @@ export default function New_employee() {
               />
               <br />
               <select
-                style={{marginLeft:'137px',width:'25%'}}
+                style={{ marginLeft: '137px', width: '25%' }}
                 name="CurrentState"
                 value={formData.CurrentState}
                 onChange={handleCurrentStateChange}
@@ -464,7 +455,7 @@ export default function New_employee() {
               </select>
 
               <select
-                style={{width:'23%',marginLeft:'-50px'}}
+                style={{ width: '23%', marginLeft: '-50px' }}
                 name="CurrentCity"
                 value={formData.CurrentCity}
                 onChange={handleInputChange}
@@ -478,7 +469,7 @@ export default function New_employee() {
               </select>
 
               <input
-              style={{width:'13.4%', marginLeft:'-45px'}}
+                style={{ width: '13.4%', marginLeft: '-45px' }}
                 placeholder="Pincode"
                 type="number"
                 name="CurrentPincode"
@@ -512,7 +503,7 @@ export default function New_employee() {
               />
               <br />
               <select
-               style={{marginLeft:'137px',width:'25%'}}
+                style={{ marginLeft: '137px', width: '25%' }}
                 name="PermanentState"
                 value={formData.PermanentState}
                 onChange={handlePermanentStateChange}
@@ -525,7 +516,7 @@ export default function New_employee() {
                 ))}
               </select>
               <select
-                style={{width:'23%', marginLeft:'-50px'}}
+                style={{ width: '23%', marginLeft: '-50px' }}
                 name="PermanentCity"
                 value={formData.PermanentCity}
                 onChange={handleInputChange}
@@ -538,7 +529,7 @@ export default function New_employee() {
                 ))}
               </select>
               <input
-                style={{width:'13.4%', marginLeft:'-45px'}}
+                style={{ width: '13.4%', marginLeft: '-45px' }}
                 placeholder="Pincode"
                 type="number"
                 name="PermanentPincode"
@@ -1138,8 +1129,8 @@ export default function New_employee() {
               onChange={handleInputChange}
               placeholder="Enter Bank Name"
               style={{ width: "34%" }}
-           />
-            
+            />
+
             <br />
             <label style={{ marginRight: "67px" }}>
               Account Holder Name :
