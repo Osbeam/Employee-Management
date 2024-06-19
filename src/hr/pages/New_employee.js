@@ -779,7 +779,7 @@ export default function New_employee() {
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value="Sumeet Sahw">Sumeet Shaw</option>
+              <option value="Sumeet Shaw">Sumeet Shaw</option>
               <option value="Omkar kalekar">Omkar Kalekar</option>
               <option value="Rutik kelkar">Rutik Kelkar</option>
               <option value="Urmila Dhage">Urmila Dhage</option>

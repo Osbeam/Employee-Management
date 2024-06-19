@@ -4,11 +4,11 @@ import './Login.css'
 import './admin/pages/Leaders.css'
 import  './admin/pages/Data_operator.css'
 import  './admin/pages/Employee.css'
+import  './admin/pages/Leads.css'
 
 import './hr/pages/Employee_list.css'
 import './hr/pages/Leave_management.css'
 import './hr/pages/Attendence.css'
-
 import './hr/pages/New_Employee.css'
 
 import Layout from './admin/component//Layout';

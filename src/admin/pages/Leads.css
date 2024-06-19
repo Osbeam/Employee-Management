@@ -1,0 +1,29 @@
+
+.inner-head-section{
+    display: flex;
+    justify-content: right;
+}
+.lead-upload-input{
+    border: 1px solid gray;
+    padding: 4px;
+    border-radius: 5px;
+}
+.lead-add-btn{
+    padding: 9px;
+    border: 1px solid gray;
+    border-radius: 5PX;
+    margin-left: 10px;
+    cursor: pointer;
+    outline: none;
+}
+
+.lead-table-section{
+    overflow: overlay;
+    margin-top: 70px;
+
+}
+.lead-table{
+}
+.lead-th{
+    min-width: 13.5rem
+}
