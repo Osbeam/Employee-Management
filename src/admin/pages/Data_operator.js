@@ -197,7 +197,7 @@ export default function Data_operator() {
         <div>
           <label className='dopuploadlabel'>Upload :</label>
           <input
-            ref={fileInputRef} // Assign the ref to the input element
+            ref={fileInputRef} 
             className='dopupload'
             type='file'
             name='file'

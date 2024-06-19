@@ -393,7 +393,7 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <label style={{ marginRight: "15px", marginLeft: "23px" }}>
-                EmailId id :
+                Email id :
               </label>
               <input
                 type="Email"
