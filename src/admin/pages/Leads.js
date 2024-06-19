@@ -23,6 +23,9 @@ export default function Leads() {
     <>
       <div className="lead-main-container">
         <div className="lead-head-section">
+        <a className='lead-down-temp' href="" download>
+          Download Template
+        </a>
           <div className="inner-head-section">
             <div>
               <label>Upload :</label>

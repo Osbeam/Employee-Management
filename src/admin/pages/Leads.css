@@ -2,6 +2,7 @@
 .inner-head-section{
     display: flex;
     justify-content: right;
+    margin-top: -27px;
 }
 .lead-upload-input{
     border: 1px solid gray;
@@ -22,8 +23,14 @@
     margin-top: 70px;
 
 }
-.lead-table{
-}
 .lead-th{
     min-width: 13.5rem
+}
+.lead-down-temp{
+    margin-top: 20px;
+    padding: 8px;
+    font-size: 17px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
 }
