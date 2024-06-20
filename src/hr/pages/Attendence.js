@@ -19,6 +19,8 @@ export default function Attendance() {
   const [currentReportPage, setCurrentReportPage] = useState(1);
   const [totalReportPages, setTotalReportPages] = useState(1);
   const [totalReportRecords, setTotalReportRecords] = useState(0);
+  const [designations, setDesignations] = useState({});
+
   const pageReportSize = 10;
 
   const fetchUsers = async (page = 1) => {
@@ -213,7 +215,22 @@ export default function Attendance() {
     setIsDeleteModalVisible(false);
   };
 
-  
+  const fetchEmployeeDetails = async () => {
+    try {
+      const response = await axios.get("http://77.37.45.224:8000/api/department/getDesignation");
+      const designationData = response.data.data.reduce((acc, designation) => {
+        acc[designation._id] = designation.name;
+        return acc;
+      }, {});
+      setDesignations(designationData);
+    } catch (error) {
+      console.log("Error fetching employee details:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeDetails();
+  }, []);
 
   return (
     <>
@@ -447,7 +464,7 @@ export default function Attendance() {
                               </td>
                               <td>{user.EmployeeID}</td>
                               <td>{user.FirstName}</td>
-                              <td>{user.Designation}</td>
+                              <td>{designations[user.Designation] || user.Designation}</td>
                               <td>{user.count}</td>
                               <td className="statusbtn">
                                 <button className="approvebtn">

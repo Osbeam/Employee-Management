@@ -43,18 +43,20 @@ export default function Pending_Leads() {
                 _id: lead._id,
                 AssignedTo: selectedEmployee,
                 DatabaseName: lead.DatabaseName,
+                Status: lead.Status, // Add status field
+                LeadCallStatus: "", // Set LeadCallStatus to empty
                 // Add other required fields as needed by the API
             });
             console.log('Update response:', response.data);
-            // Update the local state to reflect the change
-            const updatedData = [...data];
-            updatedData[index].AssignedTo = selectedEmployee;
-            setData(updatedData);
+            // Refetch the data from the server to update the table
+            fetchLeads();
             setEditMode(null); // Exit edit mode
         } catch (error) {
             console.log('Error updating data', error);
         }
     };
+    
+    
 
     useEffect(() => {
         fetchLeads();
