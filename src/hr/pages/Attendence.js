@@ -213,6 +213,8 @@ export default function Attendance() {
     setIsDeleteModalVisible(false);
   };
 
+  
+
   return (
     <>
       <div className="dashboard">
@@ -261,7 +263,7 @@ export default function Attendance() {
                           <tr key={user._id}>
                             <td>{(currentPage - 1) * pageSize + index + 1}</td>
                             <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
-                            <td>{user.userId ? user.userId.UserName : "-"}</td>
+                            <td>{user.userId ? user.userId.FirstName : "-"}</td>
 
                             <td>
                               {user.editMode ? (
@@ -444,7 +446,7 @@ export default function Attendance() {
                                 {index + 1 + (currentReportPage - 1) * pageSize}
                               </td>
                               <td>{user.EmployeeID}</td>
-                              <td>{user.UserName}</td>
+                              <td>{user.FirstName}</td>
                               <td>{user.Designation}</td>
                               <td>{user.count}</td>
                               <td className="statusbtn">

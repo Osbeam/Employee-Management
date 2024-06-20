@@ -206,7 +206,7 @@ export default function Leads() {
                   <th className="lead-th">Existing EMI</th>
                   <th className="lead-th">Is Called</th>
                   <th className="lead-th">Lead From</th>
-                  <th className="lead-th">Assigned To</th>
+                  {/* <th className="lead-th">Assigned To</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -234,7 +234,7 @@ export default function Leads() {
                     <td>{lead.ExistingEMI}</td>
                     <td>{lead.IsCalled ? 'Yes' : 'No'}</td>
                     <td>{lead.LeadFrom}</td>
-                    <td>{lead.AssignedTo}</td>
+                    {/* <td>{lead.AssignedTo}</td> */}
                   </tr>
                 ))}
               </tbody>

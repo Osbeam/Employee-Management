@@ -59,9 +59,14 @@ const MainLayout = () => {
           <Menu.Item key="employee" icon={<RobotOutlined />} label="employee">
             Employee
           </Menu.Item>
+          <Menu.SubMenu key="Leads" icon={<BookOutlined />} title="All Leads"> 
           <Menu.Item key="leads" icon={<SolutionOutlined />} label="Leads">
             Leads
           </Menu.Item>
+          <Menu.Item key="pendingleads" icon={<SolutionOutlined />} label="Pending Leads">
+            Pending Leads
+          </Menu.Item>
+          </Menu.SubMenu>
           {/* <Menu.SubMenu key="Hr" icon={<BookOutlined />} title="Hr">
             <Menu.Item key="new-employee" icon={<UsergroupAddOutlined />} label="Emp Registration">
               New Employee

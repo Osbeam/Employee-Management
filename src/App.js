@@ -5,6 +5,7 @@ import './admin/pages/Leaders.css'
 import  './admin/pages/Data_operator.css'
 import  './admin/pages/Employee.css'
 import  './admin/pages/Leads.css'
+import  './admin/pages/Pending_Leads.css'
 
 import './hr/pages/Employee_list.css'
 import './hr/pages/Leave_management.css'
@@ -27,6 +28,7 @@ import Attendence from './hr/pages/Attendence';
 import Leave_management from './hr/pages/Leave_management';
 import Hr_docs from './hr/pages/Hr_docs';
 import Hr_Dashboard from './hr/pages/Hr_Dashboard';
+import Pending_Leads from './admin/pages/Pending_Leads';
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
           <Route path='channelpartner' element={<ChannelPartner />} />
           <Route path='employee' element={<Employee />} />
           <Route path='leads' element={<Leads />} />
+          <Route path='pendingleads' element={<Pending_Leads/>}/>
           </Route>
         
           <Route path='/hrpanel' element={<Hr_Layout />}>
