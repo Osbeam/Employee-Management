@@ -12,9 +12,14 @@ export default function Pending_Leads() {
     const fetchLeads = async () => {
         try {
             const response = await axios.get(`http://77.37.45.224:8000/api/admin/pendingLeads`);
-            setData(response.data.data);
+            const fetchedData = response.data.data;
+            if (Array.isArray(fetchedData)) {
+                setData(fetchedData);
+            } else {
+                console.error('Fetched leads data is not an array:', fetchedData);
+            }
         } catch (error) {
-            console.log('Error fetching data');
+            console.log('Error fetching data:', error);
         }
     };
 
@@ -27,7 +32,7 @@ export default function Pending_Leads() {
             }, {});
             setEmployees(employeesData);
         } catch (error) {
-            console.log('Error fetching data');
+            console.log('Error fetching data:', error);
         }
     };
 
@@ -55,8 +60,6 @@ export default function Pending_Leads() {
             console.log('Error updating data', error);
         }
     };
-    
-    
 
     useEffect(() => {
         fetchLeads();
@@ -102,7 +105,7 @@ export default function Pending_Leads() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((lead, index) => (
+                        {Array.isArray(data) && data.map((lead, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{lead.DatabaseName}</td>
