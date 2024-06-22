@@ -151,7 +151,7 @@ export default function Employee_list() {
                 <td>{designations.find(desig => desig._id === employee.Designation)?.name || '-'}</td>
                 <td>{employee.ReportingTo.join(', ')}</td>
                 <td>{employee.ManagerName.join(', ')}</td>
-                <td>{employee.JoiningDate}</td>
+                <td>{employee.DateOfJoining}</td>
                 <td>{employee.BasicSalary}</td>
                 <td>{employee.OfficialMobileNumber}</td>
                 <td>{employee.OfficialEmailId}</td>

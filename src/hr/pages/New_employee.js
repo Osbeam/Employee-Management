@@ -73,6 +73,7 @@ export default function New_employee() {
     Password: "",
     Role: [],
     MrMissMrs: "",
+    DateOfJoining: "",
   };
 
   const [formData, setformData] = useState(initialFormData);
