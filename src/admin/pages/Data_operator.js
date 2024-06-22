@@ -239,7 +239,7 @@ export default function Data_operator() {
                 <td>{item.DatabaseOwner}</td>
                 <td>{item.DatabaseName}</td>
                 <td>{item.Name}</td>
-                <td>91{item.MobileNo1.substring(2).replace(/./g, '*')}</td>
+                <td>{item.MobileNo1.substring(0, 2)}{item.MobileNo1.substring(2, item.MobileNo1.length - 2).replace(/./g, '*')}{item.MobileNo1.substring(item.MobileNo1.length - 2)}</td>
                 <td>{item.Address}</td>
                 <td>{item.Gender}</td>
               </tr>
