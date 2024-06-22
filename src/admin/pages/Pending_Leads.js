@@ -43,14 +43,12 @@ export default function Pending_Leads() {
                 _id: lead._id,
                 AssignedTo: selectedEmployee,
                 DatabaseName: lead.DatabaseName,
-                Status: lead.Status, // Add status field
-                LeadCallStatus: "", // Set LeadCallStatus to empty
-                // Add other required fields as needed by the API
+                Status: lead.Status,
+                LeadCallStatus: "", 
             });
             console.log('Update response:', response.data);
-            // Refetch the data from the server to update the table
             fetchLeads();
-            setEditMode(null); // Exit edit mode
+            setEditMode(null); 
         } catch (error) {
             console.log('Error updating data', error);
         }
