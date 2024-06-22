@@ -783,6 +783,7 @@ export default function New_employee() {
               <option value="Omkar kalekar">Omkar Kalekar</option>
               <option value="Rutik kelkar">Rutik Kelkar</option>
               <option value="Sandip Chandane">Sandip Chandane</option>
+              <option value="Rahul Kamble">Rahul Kamble</option>
               <option value="Urmila Dhage">Urmila Dhage</option>
             </select>
             <label style={{ marginRight: "52px" }}>Joining Date :</label>
