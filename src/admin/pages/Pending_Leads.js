@@ -1,4 +1,4 @@
-import { faCheck, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -9,15 +9,22 @@ export default function Pending_Leads() {
     const [editMode, setEditMode] = useState(null); // Track which row is in edit mode
     const [selectedEmployee, setSelectedEmployee] = useState(null); // Track the selected employee for each row
 
-    const fetchLeads = async () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalLeads, setTotalLeads] = useState(0);
+
+    useEffect(() => {
+        fetchLeads(currentPage);
+        fetchEmployees();
+    }, [currentPage]);
+
+    const fetchLeads = async (page) => {
         try {
-            const response = await axios.get(`http://77.37.45.224:8000/api/admin/pendingLeads`);
-            const fetchedData = response.data.data;
-            if (Array.isArray(fetchedData)) {
-                setData(fetchedData);
-            } else {
-                console.error('Fetched leads data is not an array:', fetchedData);
-            }
+            const response = await axios.get(`http://77.37.45.224:8000/api/admin/pendingLeads?currentPage=${page}`);
+            const { pendingLeads, totalLeads, totalPages } = response.data.data;
+            setData(pendingLeads);
+            setTotalPages(totalPages);
+            setTotalLeads(totalLeads);
         } catch (error) {
             console.log('Error fetching data:', error);
         }
@@ -52,17 +59,18 @@ export default function Pending_Leads() {
                 LeadCallStatus: "", 
             });
             console.log('Update response:', response.data);
-            fetchLeads();
+            fetchLeads(currentPage);
             setEditMode(null); 
         } catch (error) {
             console.log('Error updating data', error);
         }
     };
 
-    useEffect(() => {
-        fetchLeads();
-        fetchEmployees();
-    }, []);
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     return (
         <div className="pending-leads-main-container">
@@ -105,7 +113,7 @@ export default function Pending_Leads() {
                     <tbody>
                         {Array.isArray(data) && data.map((lead, index) => (
                             <tr key={index}>
-                                <td>{index + 1}</td>
+                                <td>{(currentPage - 1) * 10 + index + 1}</td>
                                 <td>{lead.DatabaseName}</td>
                                 <td>{lead.DatabaseOwner}</td>
                                 <td>{lead.DatabaseType}</td>
@@ -147,20 +155,46 @@ export default function Pending_Leads() {
                                 <td>{lead.LeadCallStatus}</td>
                                 <td>{lead.CallStatus.join(", ")}</td>
                                 <td className="statusbtn">
-                                    {editMode === index ? (
-                                        <button className="savebtn" onClick={() => handleSaveClick(index, lead)}>
-                                            <FontAwesomeIcon icon={faCheck} />
-                                        </button>
-                                    ) : (
-                                        <button className="editbtn" onClick={() => handleEditClick(index)}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </button>
-                                    )}
-                                </td>
+    {editMode === index ? (
+        <>
+            <button className="savebtn" onClick={() => handleSaveClick(index, lead)}>
+                <FontAwesomeIcon icon={faCheck} />
+            </button>
+            <button className="cancelbtn" onClick={() => setEditMode(null)}>
+            <FontAwesomeIcon icon={faTimes} />
+            </button>
+        </>
+    ) : (
+        <button className="editbtn" onClick={() => handleEditClick(index)}>
+            <FontAwesomeIcon icon={faEdit} />
+        </button>
+    )}
+</td>
+
                             </tr>
                         ))}
                     </tbody>
                 </table>
+            </div>
+            <div className="pagination">
+                <button
+                    className="Data-op-pagination-btn"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+                <span>
+                    Page {currentPage} of {totalPages}
+                </span>
+                <div>Total Leads: {totalLeads}</div>
+                <button
+                    className="Data-op-pagination-btn"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
             </div>
         </div>
     );

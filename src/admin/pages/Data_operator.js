@@ -159,38 +159,38 @@ export default function Data_operator() {
     }
   };
 
-  const handleDistributeData = async () => {
-    try {
-      const response = await axios.get(
-        "http://77.37.45.224:8000/api/admin/distributeDataToEmployees"
-      );
-      console.log("Data distributed successfully:", response.data);
-      toast.success("Data distributed successfully!");
-    } catch (error) {
-      console.error("Error distributing data:", error);
-      if (error.response) {
-        // Server responded with a status other than 2xx
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-        toast.error(
-          `Error distributing data: ${
-            error.response.data.message || error.response.statusText
-          }`
-        );
-      } else if (error.request) {
-        // Request was made but no response was received
-        console.error("Request data:", error.request);
-        toast.error(
-          "Error distributing data: No response received from server"
-        );
-      } else {
-        // Something else happened while setting up the request
-        console.error("Error message:", error.message);
-        toast.error(`Error distributing data: ${error.message}`);
-      }
-    }
-  };
+  // const handleDistributeData = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://77.37.45.224:8000/api/admin/distributeDataToEmployees"
+  //     );
+  //     console.log("Data distributed successfully:", response.data);
+  //     toast.success("Data distributed successfully!");
+  //   } catch (error) {
+  //     console.error("Error distributing data:", error);
+  //     if (error.response) {
+  //       // Server responded with a status other than 2xx
+  //       console.error("Response data:", error.response.data);
+  //       console.error("Response status:", error.response.status);
+  //       console.error("Response headers:", error.response.headers);
+  //       toast.error(
+  //         `Error distributing data: ${
+  //           error.response.data.message || error.response.statusText
+  //         }`
+  //       );
+  //     } else if (error.request) {
+  //       // Request was made but no response was received
+  //       console.error("Request data:", error.request);
+  //       toast.error(
+  //         "Error distributing data: No response received from server"
+  //       );
+  //     } else {
+  //       // Something else happened while setting up the request
+  //       console.error("Error message:", error.message);
+  //       toast.error(`Error distributing data: ${error.message}`);
+  //     }
+  //   }
+  // };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -232,9 +232,9 @@ export default function Data_operator() {
           <Button className="add-btn" onClick={openModal}>
             Add Data
           </Button>
-          <Button className="add-btn" onClick={handleDistributeData}>
+          {/* <Button className="add-btn" onClick={handleDistributeData}>
             Distribute Data
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="table-dop-container">

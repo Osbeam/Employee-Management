@@ -10,6 +10,11 @@ export default function Leads() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null); 
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, settotalPage] = useState(1);
+  const [LeadFromCount, setLeadFromCount] = useState(0);
+
   const [formData, setFormData] = useState({
     DatabaseName: '',
     DatabaseOwner: '',
@@ -74,18 +79,27 @@ export default function Leads() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const fetchLeads = async () => {
+  const fetchLeads = async (page) => {
     try {
-      const response = await axios.get('http://77.37.45.224:8000/api/admin/LeadFromData');
+      const response = await axios.get(`http://77.37.45.224:8000/api/admin/LeadFromData?currentPage=${page}&limit=10`);
       setLeads(response.data.data.LeadFromData); // Access the nested LeadFromData array
+      setCurrentPage(response.data.data.currentPage);
+      settotalPage(response.data.data.totalPage);
+      setLeadFromCount(response.data.data.LeadFromCount);
     } catch (error) {
       console.error('Error fetching leads data:', error);
     }
   };
 
   useEffect(() => {
-    fetchLeads();
-  }, []);
+    fetchLeads(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPage) {
+      setCurrentPage(page);
+    }
+  };
 
   const distributeData = async () => {
     try {
@@ -123,7 +137,7 @@ export default function Leads() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post('http://77:37.45.224:8000/api/admin/LeadUpload', formData, {
+      const response = await axios.post('http://77.37.45.224:8000/api/admin/LeadUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -212,7 +226,7 @@ export default function Leads() {
               <tbody>
                 {leads.map((lead, index) => (
                   <tr key={lead._id}>
-                    <td>{index + 1}</td>
+                    <td>{index + 1 + (currentPage - 1) * 10}</td>
                     <td>{lead.DatabaseName}</td>
                     <td>{lead.DatabaseOwner}</td>
                     <td>{lead.DatabaseType}</td>
@@ -362,6 +376,26 @@ export default function Leads() {
         </Row>
       </Form>
     </Modal>
+    <div className="pagination">
+        <button
+          className="Data-op-pagination-btn"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPage}
+        </span>
+        <div>User Count: {LeadFromCount}</div>
+        <button
+          className="Data-op-pagination-btn"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPage}
+        >
+          Next
+        </button>
+      </div>
     </>
   );
 }
