@@ -34,7 +34,7 @@ export default function Leads() {
   });
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://77.37.45.224:8000/api/admin/manualDataUpload', formData);
+      const response = await axios.post('http://77.37.45.224:8000/api/admin/manualLeadDataUpload', formData);
       console.log('Data added successfully:', response.data);
       toast.success('Data added successfully!');
       setIsModalOpen(false);
@@ -123,7 +123,7 @@ export default function Leads() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post('http://77.37.45.224:8000/api/admin/upload', formData, {
+      const response = await axios.post('http://77:37.45.2248000/api/admin/LeadUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
