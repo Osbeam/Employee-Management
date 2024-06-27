@@ -123,7 +123,7 @@ export default function Leads() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post('http://77:37.45.2248000/api/admin/LeadUpload', formData, {
+      const response = await axios.post('http://77:37.45.224:8000/api/admin/LeadUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
