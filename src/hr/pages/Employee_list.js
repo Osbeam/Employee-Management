@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-export default function Employee_list() {
+export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -21,7 +21,8 @@ export default function Employee_list() {
         if (response.data.success) {
           setEmployees(response.data.data.map(employee => ({
             ...employee,
-            editMode: false // Add editMode property to each employee
+            editMode: false, // Add editMode property to each employee
+            original: { ...employee } // Store original employee data
           })));
           setCurrentPage(response.data.currentPage);
           setTotalPages(response.data.totalPage);
@@ -66,6 +67,23 @@ export default function Employee_list() {
         _id: employee._id,
         Password: employee.Password,
         Role: employee.Role,
+        FirstName: employee.FirstName,
+        MiddleName: employee.MiddleName,
+        LastName: employee.LastName,
+        MobileNumber: employee.MobileNumber,
+        EmailId: employee.EmailId,
+        CurrentAddress: employee.CurrentAddress,
+        Reference1: employee.Reference1,
+        Designation: employee.Designation,
+        ReportingTo: employee.ReportingTo,
+        ManagerName: employee.ManagerName,
+        DateOfJoining: employee.DateOfJoining,
+        BasicSalary: employee.BasicSalary,
+        OfficialMobileNumber: employee.OfficialMobileNumber,
+        OfficialEmailId: employee.OfficialEmailId,
+        BankName: employee.BankName,
+        AccountNumber: employee.AccountNumber,
+        IFSCCode: employee.IFSCCode,
       });
 
       console.log('API response:', response.data); // Log the API response
@@ -86,6 +104,14 @@ export default function Employee_list() {
     }
   };
 
+  const handleCancel = (employee) => {
+    setEmployees(prevEmployees =>
+      prevEmployees.map(emp =>
+        emp._id === employee._id ? { ...emp, editMode: false, ...emp.original } : emp
+      )
+    );
+  };
+
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -94,7 +120,7 @@ export default function Employee_list() {
 
   return (
     <>
-      <div><h2 style={{ marginBottom: '25px', fontSize: '25' }}>Employee List</h2></div>
+      <div><h2 style={{ marginBottom: '25px', fontSize: '25px' }}>Employee List</h2></div>
       <div className="table-container">
         <table className="el-table">
           <thead>
@@ -124,8 +150,25 @@ export default function Employee_list() {
           <tbody>
             {employees.map((employee, index) => (
               <tr key={employee._id}>
-                <td>{index + 1}</td>
-                <td>{`${employee.FirstName} ${employee.MiddleName} ${employee.LastName}`}</td>
+                <td>{index + 1 + (currentPage - 1) * 10}</td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={`${employee.FirstName} ${employee.MiddleName} ${employee.LastName}`}
+                      onChange={(e) => {
+                        const [FirstName, MiddleName, LastName] = e.target.value.split(' ');
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, FirstName, MiddleName, LastName } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    `${employee.FirstName} ${employee.MiddleName} ${employee.LastName}`
+                  )}
+                </td>
                 <td>{employee.EmployeeID}</td>
                 <td>
                   {employee.editMode ? (
@@ -144,20 +187,247 @@ export default function Employee_list() {
                     employee.Role
                   )}
                 </td>
-                <td>{employee.MobileNumber}</td>
-                <td>{employee.EmailId}</td>
-                <td>{employee.CurrentAddress ? employee.CurrentAddress.Caddress1 : '-'}</td>
-                <td>{employee.Reference1}</td>
-                <td>{designations.find(desig => desig._id === employee.Designation)?.name || '-'}</td>
-                <td>{employee.ReportingTo.join(', ')}</td>
-                <td>{employee.ManagerName.join(', ')}</td>
-                <td>{employee.DateOfJoining}</td>
-                <td>{employee.BasicSalary}</td>
-                <td>{employee.OfficialMobileNumber}</td>
-                <td>{employee.OfficialEmailId}</td>
-                <td>{employee.BankName}</td>
-                <td>{employee.AccountNumber}</td>
-                <td>{employee.IFSCCode}</td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.MobileNumber}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, MobileNumber: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.MobileNumber
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="email"
+                      value={employee.EmailId}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, EmailId: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.EmailId
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.CurrentAddress ? employee.CurrentAddress.Caddress1 : ''}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, CurrentAddress: { ...emp.CurrentAddress, Caddress1: e.target.value } } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.CurrentAddress ? employee.CurrentAddress.Caddress1 : '-'
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.Reference1}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, Reference1: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.Reference1
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <select
+                      value={employee.Designation}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, Designation: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    >
+                      {designations.map(desig => (
+                        <option key={desig._id} value={desig._id}>{desig.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    designations.find(desig => desig._id === employee.Designation)?.name || '-'
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.ReportingTo.join(', ')}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, ReportingTo: e.target.value.split(',').map(name => name.trim()) } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.ReportingTo.join(', ')
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.ManagerName.join(', ')}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, ManagerName: e.target.value.split(',').map(name => name.trim()) } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.ManagerName.join(', ')
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="date"
+                      value={employee.DateOfJoining}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, DateOfJoining: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.DateOfJoining
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="number"
+                      value={employee.BasicSalary}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, BasicSalary: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.BasicSalary
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.OfficialMobileNumber}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, OfficialMobileNumber: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.OfficialMobileNumber
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="email"
+                      value={employee.OfficialEmailId}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, OfficialEmailId: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.OfficialEmailId
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.BankName}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, BankName: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.BankName
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.AccountNumber}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, AccountNumber: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.AccountNumber
+                  )}
+                </td>
+                <td>
+                  {employee.editMode ? (
+                    <input
+                      type="text"
+                      value={employee.IFSCCode}
+                      onChange={(e) => {
+                        setEmployees(prevEmployees =>
+                          prevEmployees.map(emp =>
+                            emp._id === employee._id ? { ...emp, IFSCCode: e.target.value } : emp
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    employee.IFSCCode
+                  )}
+                </td>
                 <td>
                   {employee.editMode ? (
                     <input
@@ -177,12 +447,20 @@ export default function Employee_list() {
                 </td>
                 <td className="statusbtn">
                   {employee.editMode ? (
-                    <button
-                      className="savebtn"
-                      onClick={() => handleSave(employee)}
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button>
+                    <>
+                      <button
+                        className="savebtn"
+                        onClick={() => handleSave(employee)}
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </button>
+                      <button
+                        className="cancelbtn"
+                        onClick={() => handleCancel(employee)}
+                      >
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    </>
                   ) : (
                     <button
                       className="editbtn"

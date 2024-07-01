@@ -451,7 +451,7 @@ export default function Attendance() {
                         <th>Employee Name</th>
                         <th>Designation</th>
                         <th>Present Days</th>
-                        <th>Status</th>
+                        {/* <th>Status</th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -466,14 +466,14 @@ export default function Attendance() {
                               <td>{user.FirstName}</td>
                               <td>{designations[user.Designation] || user.Designation}</td>
                               <td>{user.count}</td>
-                              <td className="statusbtn">
+                              {/* <td className="statusbtn">
                                 <button className="approvebtn">
                                   <FontAwesomeIcon icon={faCheck} />
                                 </button>
                                 <button className="editbtn">
                                   <FontAwesomeIcon icon={faEdit} />
                                 </button>
-                              </td>
+                              </td> */}
                             </tr>
                           );
                         })

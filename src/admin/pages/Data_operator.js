@@ -7,6 +7,7 @@ import { Modal, Button, Form, Input, Row, Col } from "antd";
 export default function Data_operator() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false); // State to manage upload status
   const [data, setData] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -125,6 +126,7 @@ export default function Data_operator() {
 
     const formData = new FormData();
     formData.append("file", selectedFile);
+    setIsUploading(true); // Set isUploading to true when upload starts
 
     try {
       const response = await fetch(
@@ -156,6 +158,8 @@ export default function Data_operator() {
     } catch (error) {
       console.error("Error during file upload:", error);
       toast.error("Error during file upload!");
+    } finally {
+      setIsUploading(false); // Set isUploading to false when upload completes
     }
   };
 
@@ -226,8 +230,8 @@ export default function Data_operator() {
             placeholder="browse"
             onChange={handleFileChange}
           />
-          <button className="fileuploadbtn" onClick={handleFileUpload}>
-            Upload
+          <button className="fileuploadbtn" onClick={handleFileUpload} disabled={isUploading}>
+            {isUploading ? "Uploading..." : "Upload"}
           </button>
           <Button className="add-btn" onClick={openModal}>
             Add Data
@@ -269,18 +273,31 @@ export default function Data_operator() {
             </tr>
           </thead>
           <tbody>
-            {(selectedOption === '' ? data : filteredData).map((item, index) => (
-  <tr key={item._id}>
-    <td>{index + 1 + (currentPage - 1) * 10}</td>
-    <td>{item.DatabaseOwner || '-'}</td>
-    <td>{item.DatabaseName || '-'}</td>
-    <td>{item.Name || '-'}</td>
-    <td>{item.MobileNo1 ? `${item.MobileNo1.substring(0, 2)}${item.MobileNo1.substring(2, item.MobileNo1.length - 2).replace(/./g, '*')}${item.MobileNo1.substring(item.MobileNo1.length - 2)}` : '-'}</td>
-    <td>{item.Address || '-'}</td>
-    <td>{item.Gender || '-'}</td>
-  </tr>
-))
-}
+            {(selectedOption === "" ? data : filteredData).map(
+              (item, index) => (
+                <tr key={item._id}>
+                  <td>{index + 1 + (currentPage - 1) * 10}</td>
+                  <td>{item.DatabaseOwner || "-"}</td>
+                  <td>{item.DatabaseName || "-"}</td>
+                  <td>{item.Name || "-"}</td>
+                  <td>
+                    {item.MobileNo1
+                      ? `${item.MobileNo1.substring(
+                          0,
+                          2
+                        )}${item.MobileNo1.substring(
+                          2,
+                          item.MobileNo1.length - 2
+                        ).replace(/./g, "*")}${item.MobileNo1.substring(
+                          item.MobileNo1.length - 2
+                        )}`
+                      : "-"}
+                  </td>
+                  <td>{item.Address || "-"}</td>
+                  <td>{item.Gender || "-"}</td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
