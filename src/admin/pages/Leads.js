@@ -101,27 +101,27 @@ export default function Leads() {
     }
   };
 
-  const distributeData = async () => {
-    try {
-      const response = await axios.get('http://77.37.45.224:8000/api/admin/leadDistributeToEmployees');
-      if (response.status === 200) {
-        if (response.data.success && response.data.message === "No data to distribute.") {
-          toast.info('No data to distribute.');
-        } else {
-          toast.success('Data distributed successfully!');
-        }
-        fetchLeads(); // Refetch the leads data to refresh the table
-      } else {
-        toast.error('Failed to distribute data. Status code: ' + response.status);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        toast.error('Error distributing data: 404 Not Found');
-      } else {
-        toast.error('Error distributing data: ' + error.message);
-      }
-    }
-  };
+  // const distributeData = async () => {
+  //   try {
+  //     const response = await axios.get('http://77.37.45.224:8000/api/admin/leadDistributeToEmployees');
+  //     if (response.status === 200) {
+  //       if (response.data.success && response.data.message === "No data to distribute.") {
+  //         toast.info('No data to distribute.');
+  //       } else {
+  //         toast.success('Data distributed successfully!');
+  //       }
+  //       fetchLeads(); // Refetch the leads data to refresh the table
+  //     } else {
+  //       toast.error('Failed to distribute data. Status code: ' + response.status);
+  //     }
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 404) {
+  //       toast.error('Error distributing data: 404 Not Found');
+  //     } else {
+  //       toast.error('Error distributing data: ' + error.message);
+  //     }
+  //   }
+  // };
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -190,9 +190,9 @@ export default function Leads() {
             <Button className="lead-add-btn" onClick={handleFileUpload}>Upload File</Button>
             <Button className="lead-add-btn" onClick={openModal}>Add Data</Button>
 
-            <Button className="lead-add-btn" onClick={distributeData}>
+            {/* <Button className="lead-add-btn" onClick={distributeData}>
               Distribute Data
-            </Button>
+            </Button> */}
           </div>
           <div className="lead-table-section">
             <table className="lead-table">
