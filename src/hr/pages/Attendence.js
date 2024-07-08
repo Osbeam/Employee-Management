@@ -262,160 +262,129 @@ export default function Attendance() {
               {activeTab === "dailyAttendance" && (
                 <>
                   <table>
-                    <thead>
-                      <tr>
-                        <th className="th1">Sr. No</th>
-                        <th>Employee Id</th>
-                        <th>Employee Name</th>
-                        <th>In Time</th>
-                        <th>Out Time</th>
-                        <th>Duration</th>
-                        <th>View</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.isArray(users) &&
-                        users.map((user, index) => (
-                          <tr key={user._id}>
-                            <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                            <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
-                            <td>{user.userId ? user.userId.FirstName : "-"}</td>
+                  <thead>
+  <tr>
+    <th className="th1">Sr. No</th>
+    <th>Employee Id</th>
+    <th>Employee Name</th>
+    <th>In Time</th>
+    <th>Out Time</th>
+    <th>Duration</th>
+    <th>View</th>
+    <th>Status</th>
+  </tr>
+</thead>
+<tbody>
+  {Array.isArray(users) &&
+    users.map((user, index) => (
+      <tr key={user._id}>
+        <td>{(currentPage - 1) * pageSize + index + 1}</td>
+        <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
+        <td>{user.userId ? user.userId.FirstName : "-"}</td>
 
-                            <td>
-                              {user.editMode ? (
-                                <input
-                                  type="time"
-                                  value={
-                                    user.inTime.split("T")[1].split(".")[0]
-                                  } // Extract time portion
-                                  onChange={(e) => {
-                                    const currentDate = new Date()
-                                      .toISOString()
-                                      .split("T")[0]; // Get current date
-                                    const updatedUsers = users.map((u) =>
-                                      u._id === user._id
-                                        ? {
-                                          ...u,
-                                          inTime: `${currentDate}T${e.target.value}:00.000Z`,
-                                        }
-                                        : u // Update time portion
-                                    );
-                                    setUsers(updatedUsers);
-                                  }}
-                                />
-                              ) : (
-                                user.inTime.split("T")[1].split(".")[0] // Display time portion
-                              )}
-                            </td>
+        <td>
+          {user.editMode ? (
+            <input
+              type="datetime-local"
+              value={new Date(user.inTime).toISOString().slice(0, 16)} // Format as datetime-local
+              onChange={(e) => {
+                const updatedUsers = users.map((u) =>
+                  u._id === user._id
+                    ? { ...u, inTime: new Date(e.target.value).toISOString() }
+                    : u
+                );
+                setUsers(updatedUsers);
+              }}
+            />
+          ) : (
+            new Date(user.inTime).toLocaleString() // Display as locale string
+          )}
+        </td>
 
-                            <td>
-                              {user.editMode ? (
-                                <input
-                                  type="time"
-                                  value={
-                                    user.outTime
-                                      ? user.outTime.split("T")[1].split(".")[0]
-                                      : ""
-                                  } // Check if outTime exists
-                                  onChange={(e) => {
-                                    const currentDate = new Date()
-                                      .toISOString()
-                                      .split("T")[0]; // Get current date
-                                    const updatedUsers = users.map((u) =>
-                                      u._id === user._id
-                                        ? {
-                                          ...u,
-                                          outTime: `${currentDate}T${e.target.value}:00.000Z`,
-                                        }
-                                        : u // Update time portion
-                                    );
-                                    setUsers(updatedUsers);
-                                  }}
-                                />
-                              ) : user.outTime ? (
-                                user.outTime.split("T")[1].split(".")[0]
-                              ) : (
-                                "-"
-                              )}
-                            </td>
+        <td>
+          {user.editMode ? (
+            <input
+              type="datetime-local"
+              value={
+                user.outTime
+                  ? new Date(user.outTime).toISOString().slice(0, 16)
+                  : ""
+              } // Format as datetime-local if exists
+              onChange={(e) => {
+                const updatedUsers = users.map((u) =>
+                  u._id === user._id
+                    ? { ...u, outTime: new Date(e.target.value).toISOString() }
+                    : u
+                );
+                setUsers(updatedUsers);
+              }}
+            />
+          ) : user.outTime ? (
+            new Date(user.outTime).toLocaleString() // Display as locale string
+          ) : (
+            "-"
+          )}
+        </td>
 
-                            <td>{user.totalHours ? user.totalHours : "-"}</td>
-                            <td>
-                              {user.editMode ? (
-                                <input
-                                  type="file"
-                                  onChange={(e) => {
-                                    const updatedUsers = users.map((u) =>
-                                      u._id === user._id
-                                        ? {
-                                          ...u,
-                                          inTimeImage: e.target.files[0],
-                                        }
-                                        : u
-                                    );
-                                    setUsers(updatedUsers);
-                                  }}
-                                />
-                              ) : user.inTimeImage &&
-                                typeof user.inTimeImage === "string" ? (
-                                <img
-                                  src={`http://77.37.45.224:8000/${user.inTimeImage}?${Date.now()}`}
-                                  alt="User img"
-                                  style={{
-                                    maxWidth: "100px",
-                                    maxHeight: "100px",
-                                  }}
-                                />
-                              ) : (
-                                "-"
-                              )}
-                            </td>
+        <td>{user.totalHours ? user.totalHours : "-"}</td>
+        <td>
+          {user.editMode ? (
+            <input
+              type="file"
+              onChange={(e) => {
+                const updatedUsers = users.map((u) =>
+                  u._id === user._id
+                    ? { ...u, inTimeImage: e.target.files[0] }
+                    : u
+                );
+                setUsers(updatedUsers);
+              }}
+            />
+          ) : user.inTimeImage && typeof user.inTimeImage === "string" ? (
+            <img
+              src={`http://77.37.45.224:8000/${user.inTimeImage}?${Date.now()}`}
+              alt="User img"
+              style={{ maxWidth: "100px", maxHeight: "100px" }}
+            />
+          ) : (
+            "-"
+          )}
+        </td>
 
-                            <td className="statusbtn">
-                              {user.editMode ? (
-                                <>
-                                  <button
-                                    className="savebtn"
-                                    onClick={() => handleSave(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faCheck} />
-                                  </button>
-                                  <button
-                                    className="cancelbtn"
-                                    onClick={() => handleCancelEdit(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faTimes} />
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  <button
-                                    className="approvebtn"
-                                    onClick={() => handleApprove(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faCheck} />
-                                  </button>
-                                  <button
-                                    className="editbtn"
-                                    onClick={() => handleEdit(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faEdit} />
-                                  </button>
-                                  <button
-                                    className="deletebtn"
-                                    onClick={() =>
-                                      showDeleteConfirmation(user._id)
-                                    }
-                                  >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                  </button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
+        <td className="statusbtn">
+          {user.editMode ? (
+            <>
+              <button className="savebtn" onClick={() => handleSave(user._id)}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <button
+                className="cancelbtn"
+                onClick={() => handleCancelEdit(user._id)}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="editbtn" onClick={() => handleEdit(user._id)}>
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+              <button
+                className="deletebtn"
+                onClick={() => showDeleteConfirmation(user._id)}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+              <button className="approvebtn" onClick={() => handleApprove(user._id)}>
+              <FontAwesomeIcon icon={faCheck} />
+              </button>
+            </>
+          )}
+        </td>
+      </tr>
+    ))}
+</tbody>
+
                   </table>
                   <div className="pagination">
                     <button

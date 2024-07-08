@@ -26,8 +26,8 @@ export default function Employee() {
           totalCalls: item.totalCalls
         })); // Extracting user data, statusCounts, and totalCalls
         setUserData(userDataWithStatus); // Set user data to state
-        setTotalUsers(response.data.totalUsers); // Set total users to state
-        setTotalPages(Math.ceil(response.data.totalUsers / pageSize)); // Calculate total pages
+        setTotalUsers(response.data.pagination.totalUsers); // Set total users to state
+        setTotalPages(response.data.pagination.totalPages); // Calculate total pages
       } else {
         console.error('Failed to fetch call status data');
       }
