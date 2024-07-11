@@ -1,0 +1,32 @@
+
+.ant-tabs-nav-list{
+    gap: 50px;
+}
+
+
+.submit-container{
+    display: flex;
+    justify-content: space-between;
+}
+.submit-container{
+    padding: 40px 20px 20px 0px;
+  }
+  .submit-container button{
+    padding: 3px;
+    width: 75px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #aba3a3;
+    float: right;
+    cursor: pointer;
+  }
+
+  .first-tab-next-btn button{
+    padding: 3px;
+    width: 75px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #aba3a3;
+    float: right;
+    cursor: pointer;
+  }

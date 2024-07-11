@@ -21,9 +21,17 @@ export default function Login() {
     }
 
     try {
+      const authToken = localStorage.getItem("jwtoken");
+
       const response = await axios.post(
         "http://77.37.45.224:8000/api/user/EmployeeInfoLogin",
-        { EmailId, Password: password }
+        { EmailId, Password: password },
+        {
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
 
       console.log("API response:", response.data);

@@ -141,12 +141,12 @@ export default function Attendance() {
     try {
       const userToSave = users.find((user) => user._id === _id);
       const formData = new FormData();
-      formData.append("inTime", userToSave.inTime);
-      formData.append("outTime", userToSave.outTime);
+      formData.append("inTime", new Date(userToSave.inTime).toISOString());
+      formData.append("outTime", new Date(userToSave.outTime).toISOString());
       if (userToSave.inTimeImage && userToSave.inTimeImage instanceof File) {
         formData.append("inTimeImage", userToSave.inTimeImage);
       }
-
+  
       await axios.put(
         `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
         formData,
@@ -156,28 +156,27 @@ export default function Attendance() {
           },
         }
       );
-
-      // Update the users state with the updated user object
-      // After updating the image
+  
       const updatedUsers = users.map((user) =>
         user._id === _id
           ? {
-            ...user,
-            editMode: false,
-            originalInTimeImage: user.inTimeImage,
-            inTimeImage: user.inTimeImage instanceof File
-              ? `${user.inTimeImage.name}?${Date.now()}`
-              : user.inTimeImage
-          }
+              ...user,
+              editMode: false,
+              originalInTimeImage: user.inTimeImage,
+              inTimeImage: user.inTimeImage instanceof File
+                ? `${user.inTimeImage.name}?${Date.now()}`
+                : user.inTimeImage,
+            }
           : user
       );
       setUsers(updatedUsers);
-      message.success("Attendance edit successfully");
+      message.success("Attendance edited successfully");
     } catch (error) {
       console.log("Error editing user:", error);
       message.error("Failed to edit attendance");
     }
   };
+  
 
   //Cancel edit mode
   const handleCancelEdit = (_id) => {
@@ -232,6 +231,18 @@ export default function Attendance() {
     fetchEmployeeDetails();
   }, []);
 
+  const formatDateTimeForInput = (dateString) => {
+    if (!dateString) return "";
+    return dateString.slice(0, 16); // Assuming dateString is already in ISO 8601 format
+  };
+  
+  const formatDateTimeForDisplay = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleString();
+  };
+  
+  
+
   return (
     <>
       <div className="dashboard">
@@ -283,48 +294,41 @@ export default function Attendance() {
         <td>{user.userId ? user.userId.FirstName : "-"}</td>
 
         <td>
-          {user.editMode ? (
-            <input
-              type="datetime-local"
-              value={new Date(user.inTime).toISOString().slice(0, 16)} // Format as datetime-local
-              onChange={(e) => {
-                const updatedUsers = users.map((u) =>
-                  u._id === user._id
-                    ? { ...u, inTime: new Date(e.target.value).toISOString() }
-                    : u
-                );
-                setUsers(updatedUsers);
-              }}
-            />
-          ) : (
-            new Date(user.inTime).toLocaleString() // Display as locale string
-          )}
-        </td>
+  {user.editMode ? (
+    <input
+      type="text"
+      value={formatDateTimeForInput(user.inTime)}
+      onChange={(e) => {
+        const updatedUsers = users.map((u) =>
+          u._id === user._id ? { ...u, inTime: e.target.value } : u
+        );
+        setUsers(updatedUsers);
+      }}
+    />
+  ) : (
+    formatDateTimeForDisplay(user.inTime)
+  )}
+</td>
+<td>
+  {user.editMode ? (
+    <input
+      type="text"
+      value={formatDateTimeForInput(user.outTime)}
+      onChange={(e) => {
+        const updatedUsers = users.map((u) =>
+          u._id === user._id ? { ...u, outTime: e.target.value } : u
+        );
+        setUsers(updatedUsers);
+      }}
+    />
+  ) : (
+    formatDateTimeForDisplay(user.outTime)
+  )}
+</td>
 
-        <td>
-          {user.editMode ? (
-            <input
-              type="datetime-local"
-              value={
-                user.outTime
-                  ? new Date(user.outTime).toISOString().slice(0, 16)
-                  : ""
-              } // Format as datetime-local if exists
-              onChange={(e) => {
-                const updatedUsers = users.map((u) =>
-                  u._id === user._id
-                    ? { ...u, outTime: new Date(e.target.value).toISOString() }
-                    : u
-                );
-                setUsers(updatedUsers);
-              }}
-            />
-          ) : user.outTime ? (
-            new Date(user.outTime).toLocaleString() // Display as locale string
-          ) : (
-            "-"
-          )}
-        </td>
+
+
+
 
         <td>{user.totalHours ? user.totalHours : "-"}</td>
         <td>

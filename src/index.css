@@ -250,18 +250,7 @@ td {
 .assets-button{
   width: 139px !important;
 }
-.submit-container{
-  padding: 40px 20px 20px 0px;
-}
-.submit-container button{
-  padding: 3px;
-  width: 75px;
-  border-radius: 5px;
-  outline: none;
-  border: 1px solid #aba3a3;
-  float: right;
-  cursor: pointer;
-}
+
 
 .grid-container{
   display: grid;

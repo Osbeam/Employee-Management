@@ -52,8 +52,6 @@ function App() {
           <Route path='leave-management' element={<Leave_management/>} />
           <Route path='hr-docs' element={<Hr_docs/>} />
           </Route>
-          
-      
       </Routes>
     </Router>
   );

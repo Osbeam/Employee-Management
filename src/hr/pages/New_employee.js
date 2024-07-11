@@ -337,9 +337,14 @@ export default function New_employee() {
     const citiesData = City.getCitiesOfState('IN', stateCode);
     setPermanentCities(citiesData);
   };
+
+  const [activeTabKey, setActiveTabKey] = useState("1");
+  const handleTabChange = (key) => {
+    setActiveTabKey(key);
+  };
   return (
-    <Tabs defaultActiveKey="1">
-      <TabPane tab="Basic Information" key="1">
+    <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
+      <TabPane className="new_emp_tabs" tab="Basic Information" key="1">
         <form className="new-emp-form" onSubmit={handleSubmit}>
           <div className="form-container">
             <h2>Employee Registration Form</h2>
@@ -706,9 +711,9 @@ export default function New_employee() {
 
           </div>
           <div>
-            <div className="submit-container">
-              {/* <button type="submit">Next</button> */}
-            </div>
+          <div className="first-tab-next-btn">
+        <button  type="button" onClick={() => handleTabChange("2")}>Next</button>
+      </div>
           </div>
         </form>
       </TabPane>
@@ -949,10 +954,10 @@ export default function New_employee() {
           </div>
         </div>
         <div>
-          <div className="submit-container">
-            {/* <button style={{ float: "left" }}>Back</button>
-            <button >Next</button> */}
-          </div>
+        <div className="submit-container">
+        <button type="button" onClick={() => handleTabChange("1")}>Back</button>
+        <button type="button" onClick={() => handleTabChange("3")}>Next</button>
+      </div>
         </div>
       </TabPane>
       <TabPane tab="Assets" key="3">
@@ -1055,10 +1060,10 @@ export default function New_employee() {
           </div>
         </div>
         <div>
-          <div className="submit-container">
-            {/* <button style={{ float: "left" }}>Back</button>
-            <button >Submit</button> */}
-          </div>
+        <div className="submit-container">
+        <button type="button" onClick={() => handleTabChange("2")}>Back</button>
+        <button type="button" onClick={() => handleTabChange("4")}>Next</button>
+      </div>
         </div>
       </TabPane>
       <TabPane tab="Documents" key="4">
@@ -1170,7 +1175,10 @@ export default function New_employee() {
           </div>
         </div>
         <div>
+     
           <div className="submit-container">
+      <button type="button" onClick={() => handleTabChange("3")}>Back</button>
+
             <button onClick={handleSubmit}>Submit</button>
           </div>
         </div>
