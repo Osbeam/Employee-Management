@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Pagination } from 'antd';
+import { Modal, Button, DatePicker } from 'antd';
 import axios from 'axios';
 import './Employee.css'; // Make sure to import the CSS file
+
+const { RangePicker } = DatePicker;
 
 export default function Employee() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,25 +11,30 @@ export default function Employee() {
   const [selectedUser, setSelectedUser] = useState(null); // State to store selected user data
   const [currentPage, setCurrentPage] = useState(1); // State to store current page
   const [pageSize, setPageSize] = useState(10); // State to store page size
-  const [totalUsers, setTotalUsers] = useState(0); // State to store total number of users
+  const [totalUserCount, settotalUserCount] = useState(0); // State to store total number of users
   const [totalPages, setTotalPages] = useState(1); // State to store total pages
+  const [userCount, setUserCount] = useState(0); // State for user count
+  const [dateRange, setDateRange] = useState([null, null]); // State to store date range
 
-  useEffect(() => {
-    fetchCallStatusData(currentPage, pageSize); // Fetch call status data on component mount or page change
-  }, [currentPage, pageSize]);
-
-  const fetchCallStatusData = async (page, size) => {
+  // Fetching all emp call status
+  const fetchCallStatusData = async (page, size, startDate = null, endDate = null) => {
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/admin/Allcallstatus?currentPage=${page}&pageSize=${size}`);
+      let url = `http://77.37.45.224:8000/api/admin/Allcallstatus?currentPage=${page}&pageSize=${size}`;
+      if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      const response = await axios.get(url);
       if (response.data.success) {
         const userDataWithStatus = response.data.data.map(item => ({
           ...item.user,
           statusCounts: item.statusCounts,
-          totalCalls: item.totalCalls
+          totalCalls: item.statusCounts.totalCall // Updated to use the correct key
         })); // Extracting user data, statusCounts, and totalCalls
         setUserData(userDataWithStatus); // Set user data to state
-        setTotalUsers(response.data.pagination.totalUsers); // Set total users to state
+        settotalUserCount(response.data.totalUserCount); // Set total users to state
         setTotalPages(response.data.pagination.totalPages); // Calculate total pages
+        return userDataWithStatus;
       } else {
         console.error('Failed to fetch call status data');
       }
@@ -36,20 +43,27 @@ export default function Employee() {
     }
   };
 
-  const openModal = (user) => {
-    setSelectedUser(user);
+  useEffect(() => {
+    fetchCallStatusData(currentPage, pageSize); // Fetch call status data on component mount or page change
+  }, [currentPage, pageSize]);
+
+  const openModal = async (user) => {
+    await resetModalData();
+    const data = await fetchCallStatusData(currentPage, pageSize);
+    const updatedUser = data.find(u => u.EmployeeID === user.EmployeeID);
+    setSelectedUser(updatedUser);
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleCancel = async () => {
+    await resetModalData();
     setIsModalOpen(false);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const resetModalData = async () => {
+    setSelectedUser(null);
+    setDateRange([null, null]);
   };
-
-  const [userCount, setUserCount] = useState(0);
 
   const fetchData = async () => {
     try {
@@ -63,6 +77,20 @@ export default function Employee() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleDateRangeChange = (dates) => {
+    setDateRange(dates);
+  };
+
+  const handleFetchWithDateRange = async () => {
+    if (dateRange && dateRange[0] && dateRange[1] && selectedUser) {
+      const startDate = dateRange[0].format('YYYY-MM-DD');
+      const endDate = dateRange[1].format('YYYY-MM-DD');
+      const data = await fetchCallStatusData(currentPage, pageSize, startDate, endDate);
+      const updatedUser = data.find(user => user.EmployeeID === selectedUser.EmployeeID);
+      setSelectedUser(updatedUser);
+    }
+  };
 
   return (
     <>
@@ -81,7 +109,7 @@ export default function Employee() {
           </thead>
           <tbody>
             {userData.map((user) => (
-              <tr key={user.UserName}>
+              <tr key={user.EmployeeID}>
                 <td style={{ textAlign: 'left' }}>{user.FirstName} {user.LastName}</td>
                 <td style={{ textAlign: 'center' }}>
                   <Button onClick={() => openModal(user)}>View</Button>
@@ -103,7 +131,7 @@ export default function Employee() {
           Page {currentPage} of {totalPages}
         </span>
         <span>
-          User Count: {totalUsers}
+          User Count: {totalUserCount}
         </span>
         <Button
           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
@@ -113,19 +141,31 @@ export default function Employee() {
           Next
         </Button>
       </div>
-      <Modal title="Employee Call Status" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+        title="Employee Call Status"
+        visible={isModalOpen}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>
+        ]}
+      >
         {selectedUser ? (
           <div>
-            <table style={{ width: '100%' }}>
+            <RangePicker onChange={handleDateRangeChange} />
+            <Button onClick={handleFetchWithDateRange} style={{ marginTop: 16 }}>
+              Fetch Data
+            </Button>
+            <table style={{ width: '100%', marginTop: 16 }}>
               <tbody>
                 {Object.entries(selectedUser.statusCounts || {}).map(([key, value]) => (
                   <tr key={key}>
-                    <td style={{ textAlign: 'left' }}><p>{key}:</p></td>
-                    <td style={{ textAlign: 'center' }}>{value}</td>
+                    <td style={{ textAlign: 'left', fontWeight: 500 }}><p>{key}:</p></td>
+                    <td style={{ textAlign: 'center', fontWeight: 400 }}>{value}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td style={{ textAlign: 'left' }}><strong>Total Calls:</strong></td>
                   <td style={{ textAlign: 'center', fontWeight: '700' }}>{selectedUser.totalCalls}</td>
                 </tr>
               </tbody>

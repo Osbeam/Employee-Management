@@ -243,3 +243,7 @@
     padding: 10px;
     font-size: 15px;
   }
+  .daily-attendence-del-modal .ant-modal-content {
+    width: 40% !important;  
+  }
+  

@@ -127,27 +127,57 @@ export default function Attendance() {
     }
   };
 
-  //Edit user data
+  const formatDateTimeForInput = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const formatDateTimeForDisplay = (dateString) => {
+
+    if (!dateString) {
+      return "-";
+    }
+
+    const date = new Date(dateString);
+    return date.toLocaleString("en-US", {
+      month: 'numeric',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
+  // Edit user data
   const handleEdit = (_id) => {
-    setEditUserId(_id);
     const updatedUsers = users.map((user) =>
-      user._id === _id ? { ...user, editMode: true } : user
+      user._id === _id ? { ...user, editMode: true, originalInTimeImage: user.inTimeImage } : user
     );
+    setEditUserId(_id);
     setUsers(updatedUsers);
   };
 
-  //Update and save data
+  // Update and save data
   const handleSave = async (_id) => {
     try {
       const userToSave = users.find((user) => user._id === _id);
       const formData = new FormData();
       formData.append("inTime", new Date(userToSave.inTime).toISOString());
       formData.append("outTime", new Date(userToSave.outTime).toISOString());
+
+      // Append the image only if it has been changed
       if (userToSave.inTimeImage && userToSave.inTimeImage instanceof File) {
         formData.append("inTimeImage", userToSave.inTimeImage);
       }
-  
-      await axios.put(
+
+      const response = await axios.put(
         `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
         formData,
         {
@@ -156,27 +186,28 @@ export default function Attendance() {
           },
         }
       );
-  
+
       const updatedUsers = users.map((user) =>
         user._id === _id
           ? {
-              ...user,
-              editMode: false,
-              originalInTimeImage: user.inTimeImage,
-              inTimeImage: user.inTimeImage instanceof File
-                ? `${user.inTimeImage.name}?${Date.now()}`
-                : user.inTimeImage,
-            }
+            ...user,
+            editMode: false,
+            inTimeImage: userToSave.inTimeImage instanceof File
+              ? response.data.log.inTimeImage
+              : user.inTimeImage,
+            totalHours: response.data.log.totalHours,
+          }
           : user
       );
       setUsers(updatedUsers);
+
       message.success("Attendance edited successfully");
     } catch (error) {
       console.log("Error editing user:", error);
       message.error("Failed to edit attendance");
     }
   };
-  
+
 
   //Cancel edit mode
   const handleCancelEdit = (_id) => {
@@ -231,17 +262,7 @@ export default function Attendance() {
     fetchEmployeeDetails();
   }, []);
 
-  const formatDateTimeForInput = (dateString) => {
-    if (!dateString) return "";
-    return dateString.slice(0, 16); // Assuming dateString is already in ISO 8601 format
-  };
-  
-  const formatDateTimeForDisplay = (dateString) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleString();
-  };
-  
-  
+
 
   return (
     <>
@@ -273,121 +294,103 @@ export default function Attendance() {
               {activeTab === "dailyAttendance" && (
                 <>
                   <table>
-                  <thead>
-  <tr>
-    <th className="th1">Sr. No</th>
-    <th>Employee Id</th>
-    <th>Employee Name</th>
-    <th>In Time</th>
-    <th>Out Time</th>
-    <th>Duration</th>
-    <th>View</th>
-    <th>Status</th>
-  </tr>
-</thead>
-<tbody>
-  {Array.isArray(users) &&
-    users.map((user, index) => (
-      <tr key={user._id}>
-        <td>{(currentPage - 1) * pageSize + index + 1}</td>
-        <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
-        <td>{user.userId ? user.userId.FirstName : "-"}</td>
+                    <thead>
+                      <tr>
+                        <th className="th1">Sr. No</th>
+                        <th>Employee Id</th>
+                        <th>Employee Name</th>
+                        <th>In Time</th>
+                        <th>Out Time</th>
+                        <th>Duration</th>
+                        <th>View</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.isArray(users) &&
+                        users.map((user, index) => (
+                          <tr key={user._id}>
+                            <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                            <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
+                            <td>{user.userId ? user.userId.FirstName : "-"}</td>
 
-        <td>
-  {user.editMode ? (
-    <input
-      type="text"
-      value={formatDateTimeForInput(user.inTime)}
-      onChange={(e) => {
-        const updatedUsers = users.map((u) =>
-          u._id === user._id ? { ...u, inTime: e.target.value } : u
-        );
-        setUsers(updatedUsers);
-      }}
-    />
-  ) : (
-    formatDateTimeForDisplay(user.inTime)
-  )}
-</td>
-<td>
-  {user.editMode ? (
-    <input
-      type="text"
-      value={formatDateTimeForInput(user.outTime)}
-      onChange={(e) => {
-        const updatedUsers = users.map((u) =>
-          u._id === user._id ? { ...u, outTime: e.target.value } : u
-        );
-        setUsers(updatedUsers);
-      }}
-    />
-  ) : (
-    formatDateTimeForDisplay(user.outTime)
-  )}
-</td>
-
-
-
-
-
-        <td>{user.totalHours ? user.totalHours : "-"}</td>
-        <td>
-          {user.editMode ? (
-            <input
-              type="file"
-              onChange={(e) => {
-                const updatedUsers = users.map((u) =>
-                  u._id === user._id
-                    ? { ...u, inTimeImage: e.target.files[0] }
-                    : u
-                );
-                setUsers(updatedUsers);
-              }}
-            />
-          ) : user.inTimeImage && typeof user.inTimeImage === "string" ? (
-            <img
-              src={`http://77.37.45.224:8000/${user.inTimeImage}?${Date.now()}`}
-              alt="User img"
-              style={{ maxWidth: "100px", maxHeight: "100px" }}
-            />
-          ) : (
-            "-"
-          )}
-        </td>
-
-        <td className="statusbtn">
-          {user.editMode ? (
-            <>
-              <button className="savebtn" onClick={() => handleSave(user._id)}>
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-              <button
-                className="cancelbtn"
-                onClick={() => handleCancelEdit(user._id)}
-              >
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </>
-          ) : (
-            <>
-              <button className="editbtn" onClick={() => handleEdit(user._id)}>
-                <FontAwesomeIcon icon={faEdit} />
-              </button>
-              <button
-                className="deletebtn"
-                onClick={() => showDeleteConfirmation(user._id)}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-              <button className="approvebtn" onClick={() => handleApprove(user._id)}>
-              <FontAwesomeIcon icon={faCheck} />
-              </button>
-            </>
-          )}
-        </td>
-      </tr>
-    ))}
-</tbody>
+                            <td>
+                              {user.editMode ? (
+                                <input
+                                  type="datetime-local"
+                                  value={formatDateTimeForInput(user.inTime)}
+                                  onChange={(e) => {
+                                    const updatedUsers = users.map((u) =>
+                                      u._id === user._id ? { ...u, inTime: e.target.value } : u
+                                    );
+                                    setUsers(updatedUsers);
+                                  }}
+                                />
+                              ) : (
+                                formatDateTimeForDisplay(user.inTime)
+                              )}
+                            </td>
+                            <td>
+                              {user.editMode ? (
+                                <input
+                                  type="datetime-local"
+                                  value={formatDateTimeForInput(user.outTime)}
+                                  onChange={(e) => {
+                                    const updatedUsers = users.map((u) =>
+                                      u._id === user._id ? { ...u, outTime: e.target.value } : u
+                                    );
+                                    setUsers(updatedUsers);
+                                  }}
+                                />
+                              ) : (
+                                formatDateTimeForDisplay(user.outTime)
+                              )}
+                            </td>
+                            <td>{user.totalHours ? user.totalHours : "-"}</td>
+                            <td>
+                              {user.inTimeImage && typeof user.inTimeImage === "string" ? (
+                                <img
+                                  src={`http://77.37.45.224:8000/${user.inTimeImage}?${Date.now()}`}
+                                  alt="User img"
+                                  style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </td>
+                            <td className="statusbtn">
+                              {user.editMode ? (
+                                <>
+                                  <button className="savebtn" onClick={() => handleSave(user._id)}>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                  <button
+                                    className="cancelbtn"
+                                    onClick={() => handleCancelEdit(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTimes} />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button className="editbtn" onClick={() => handleEdit(user._id)}>
+                                    <FontAwesomeIcon icon={faEdit} />
+                                  </button>
+                                  <button
+                                    className="deletebtn"
+                                    onClick={() => showDeleteConfirmation(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </button>
+                                  <button className="approvebtn" onClick={() => handleApprove(user._id)}>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
 
                   </table>
                   <div className="pagination">
@@ -485,6 +488,7 @@ export default function Attendance() {
         </div>
       </div>
       <Modal
+        className="daily-attendence-del-modal"
         title="Confirm Delete"
         visible={isDeleteModalVisible}
         onOk={handleDeleteConfirmed}
