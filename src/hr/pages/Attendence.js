@@ -156,27 +156,74 @@ export default function Attendance() {
     });
   };
   // Edit user data
+  // const handleEdit = (_id) => {
+  //   const updatedUsers = users.map((user) =>
+  //     user._id === _id ? { ...user, editMode: true, originalInTimeImage: user.inTimeImage } : user
+  //   );
+  //   setEditUserId(_id);
+  //   setUsers(updatedUsers);
+  // };
   const handleEdit = (_id) => {
     const updatedUsers = users.map((user) =>
-      user._id === _id ? { ...user, editMode: true, originalInTimeImage: user.inTimeImage } : user
+      user._id === _id ? { ...user, editMode: true } : user
     );
     setEditUserId(_id);
     setUsers(updatedUsers);
   };
+  
 
   // Update and save data
+  // const handleSave = async (_id) => {
+  //   try {
+  //     const userToSave = users.find((user) => user._id === _id);
+  //     const formData = new FormData();
+  //     formData.append("inTime", new Date(userToSave.inTime).toISOString());
+  //     formData.append("outTime", new Date(userToSave.outTime).toISOString());
+
+  //     // Append the image only if it has been changed
+  //     if (userToSave.inTimeImage && userToSave.inTimeImage instanceof File) {
+  //       formData.append("inTimeImage", userToSave.inTimeImage);
+  //     }
+
+  //     const response = await axios.put(
+  //       `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+
+  //     const updatedUsers = users.map((user) =>
+  //       user._id === _id
+  //         ? {
+  //           ...user,
+  //           editMode: false,
+  //           inTimeImage: userToSave.inTimeImage instanceof File
+  //             ? response.data.log.inTimeImage
+  //             : user.inTimeImage,
+  //           totalHours: response.data.log.totalHours,
+  //         }
+  //         : user
+  //     );
+  //     setUsers(updatedUsers);
+
+  //     message.success("Attendance edited successfully");
+  //   } catch (error) {
+  //     console.log("Error editing user:", error);
+  //     message.error("Failed to edit attendance");
+  //   }
+  // };
   const handleSave = async (_id) => {
     try {
       const userToSave = users.find((user) => user._id === _id);
       const formData = new FormData();
       formData.append("inTime", new Date(userToSave.inTime).toISOString());
       formData.append("outTime", new Date(userToSave.outTime).toISOString());
-
-      // Append the image only if it has been changed
-      if (userToSave.inTimeImage && userToSave.inTimeImage instanceof File) {
-        formData.append("inTimeImage", userToSave.inTimeImage);
-      }
-
+  
+      // Note: No image logic here
+  
       const response = await axios.put(
         `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
         formData,
@@ -186,28 +233,27 @@ export default function Attendance() {
           },
         }
       );
-
+  
       const updatedUsers = users.map((user) =>
         user._id === _id
           ? {
-            ...user,
-            editMode: false,
-            inTimeImage: userToSave.inTimeImage instanceof File
-              ? response.data.log.inTimeImage
-              : user.inTimeImage,
-            totalHours: response.data.log.totalHours,
-          }
+              ...user,
+              editMode: false,
+              totalHours: response.data.log.totalHours,
+              // Ensure inTimeImage remains unchanged
+              inTimeImage: user.inTimeImage,
+            }
           : user
       );
       setUsers(updatedUsers);
-
+  
       message.success("Attendance edited successfully");
     } catch (error) {
       console.log("Error editing user:", error);
       message.error("Failed to edit attendance");
     }
   };
-
+  
 
   //Cancel edit mode
   const handleCancelEdit = (_id) => {
