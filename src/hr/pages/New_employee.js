@@ -42,8 +42,8 @@ export default function New_employee() {
     Department: "",
     SubDepartment: "",
     Designation: "",
-    ReportingTo: "",
-    ManagerName: "",
+    Position: "",
+    ManagedBy: "",
     CompanyName: "",
     BasicSalary: "",
     FixedAllowance: "",
@@ -76,22 +76,65 @@ export default function New_employee() {
     DateOfJoining: "",
   };
 
-  const [formData, setformData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialFormData);
+  const [sameAsAbove, setSameAsAbove] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [subDepartments, setSubDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [currentStates, setCurrentStates] = useState([]);
+  const [currentCities, setCurrentCities] = useState([]);
+  const [permanentStates, setPermanentStates] = useState([]);
+  const [permanentCities, setPermanentCities] = useState([]);
+  const [activeTabKey, setActiveTabKey] = useState("1");
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("http://77.37.45.224:8000/api/department/getDepartments");
+        setDepartments(response.data.data);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    const fetchManagers = async () => {
+      try {
+        const response = await axios.get("http://77.37.45.224:8000/api/user/getTeamLeaders");
+        // Ensure the response data is an array and contains the necessary fields
+        if (Array.isArray(response.data.data)) {
+          setManagers(response.data.data);
+        } else {
+          console.error("Invalid response format for managers:", response.data);
+          setManagers([]);
+        }
+      } catch (error) {
+        console.error("Error fetching managers:", error);
+        setManagers([]);
+      }
+    };
+
+    const statesData = State.getStatesOfCountry('IN');
+    setCurrentStates(statesData);
+    setPermanentStates(statesData);
+
+    fetchDepartments();
+    fetchManagers();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setformData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
-  const [sameAsAbove, setSameAsAbove] = useState(false);
   const handleSameAsAboveChange = (e) => {
     const { checked } = e.target;
     setSameAsAbove(checked);
     if (checked) {
-      setformData((prevData) => ({
+      setFormData((prevData) => ({
         ...prevData,
         PermanentAddress1: prevData.CurrentAddress1,
         PermanentAddress2: prevData.CurrentAddress2,
@@ -99,12 +142,9 @@ export default function New_employee() {
         PermanentState: prevData.CurrentState,
         PermanentPincode: prevData.CurrentPincode,
       }));
-
-      // Fetch cities based on the current state and set them to permanent cities
-      const citiesData = City.getCitiesOfState('IN', formData.CurrentState);
-      setPermanentCities(citiesData);
+      setPermanentCities(City.getCitiesOfState('IN', formData.CurrentState));
     } else {
-      setformData((prevData) => ({
+      setFormData((prevData) => ({
         ...prevData,
         PermanentAddress1: "",
         PermanentAddress2: "",
@@ -112,87 +152,80 @@ export default function New_employee() {
         PermanentState: "",
         PermanentPincode: "",
       }));
-      setPermanentCities([]); // Clear the permanent cities list when unchecked
+      setPermanentCities([]);
     }
   };
-  const validateFormData = () => {
-    const requiredFields = [
-      // { field: "MrMissMrs", label: "Mr/Miss/Mrs" },
-      // { field: "FirstName", label: "First Name" },
-      // { field: "MiddleName", label: "Middle Name" },
-      // { field: "LastName", label: "Last Name" },
-      // { field: "MobileNumber", label: "Mobile Number" },
-      // { field: "EmailId", label: "Email Id" },
-      // { field: "BloodGroup", label: "Blood Group" },
-      // { field: "CurrentAddress1", label: "Current Address 1" },
-      // { field: "CurrentAddress2", label: "Current Address 2" },
-      // { field: "CurrentCity", label: "Current City" },
-      // { field: "CurrentState", label: "Current State" },
-      // { field: "CurrentPincode", label: "Current Pincode" },
-      // { field: "PermanentAddress1", label: "Permanent Address 1" },
-      // { field: "PermanentAddress2", label: "Permanent Address 2" },
-      // { field: "PermanentCity", label: "Permanent City" },
-      // { field: "PermanentState", label: "Permanent State" },
-      // { field: "PermanentPincode", label: "Permanent Pincode" },
-      // { field: "HighestQualification", label: "Highest Qualification" },
-      // { field: "Year", label: "Year" },
-      // { field: "TotalExperience", label: "Total Experience" },
-      // { field: "LastCompanyName", label: "Last Company Name" },
-      // { field: "Department", label: "Department" },
-      // { field: "SubDepartment", label: "Sub-Department" },
-      // { field: "Designation", label: "Designation" },
-      // { field: "ReportingTo", label: "Reporting To" },
-      // { field: "ManagerName", label: "Manager Name" },
-      // { field: "CompanyName", label: "Company Name" },
-      // { field: "Password", label: "Password" },
-      // { field: "BasicSalary", label: "Basic Salary" },
-      // { field: "FixedAllowance", label: "Fixed Allowance" },
-      // { field: "SpecialAllowance", label: "Special Allowance" },
-      // { field: "VeriableAllowance", label: "Variable Allowance" },
-      // { field: "NoteBook", label: "Notebook" },
-      // { field: "Stationery", label: "Stationery" },
-      // { field: "JoiningKit", label: "Joining Kit" },
-      // { field: "OfficialMobileNumber", label: "Official Mobile Number" },
-      // { field: "MobileIMEINumber", label: "Mobile IMEI Number" },
-      // { field: "BankName", label: "Bank Name" },
-      // { field: "AccountHolderName", label: "Account Holder Name" },
-      // { field: "AccountNumber", label: "Account Number" },
-      // { field: "IFSCCode", label: "IFSC Code" },
-    
-    ];
-  
-    for (const { field, label } of requiredFields) {
-      if (!formData[field]) {
-        return label;
-      }
+
+  const handleDepartmentChange = (e) => {
+    const departmentId = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      Department: departmentId,
+      SubDepartment: "",
+      Designation: ""
+    }));
+
+    const selectedDepartment = departments.find(dep => dep._id === departmentId);
+    if (selectedDepartment) {
+      setSubDepartments(selectedDepartment.SubDepartment || []);
+      setDesignations([]);
     }
-    return null;
   };
-  
+
+  const handleSubDepartmentChange = async (e) => {
+    const subDepartmentId = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      SubDepartment: subDepartmentId,
+      Designation: ""
+    }));
+
+    try {
+      const response = await axios.get(`http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`);
+      setDesignations(response.data.data.designation || []);
+    } catch (error) {
+      console.error("Error fetching designations:", error);
+    }
+  };
+
+  const handleDesignationChange = (e) => {
+    const designationId = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      Designation: designationId
+    }));
+  };
+
+  const handleCurrentStateChange = (e) => {
+    const stateCode = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      CurrentState: stateCode,
+      CurrentCity: ""
+    }));
+    setCurrentCities(City.getCitiesOfState('IN', stateCode));
+  };
+
+  const handlePermanentStateChange = (e) => {
+    const stateCode = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      PermanentState: stateCode,
+      PermanentCity: ""
+    }));
+    setPermanentCities(City.getCitiesOfState('IN', stateCode));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const missingField = validateFormData();
-    if (missingField) {
-      toast.error(`Please fill the ${missingField} field.`);
-      return;
-    }
-  
+
     try {
       const deductionsArray = [];
-      if (formData.PF) {
-        deductionsArray.push("PF");
-      }
-      if (formData.ESI) {
-        deductionsArray.push("ESI");
-      }
-      if (formData.PT) {
-        deductionsArray.push("PT");
-      }
-      if (formData.TDS) {
-        deductionsArray.push("TDS");
-      }
-  
+      if (formData.PF) deductionsArray.push("PF");
+      if (formData.ESI) deductionsArray.push("ESI");
+      if (formData.PT) deductionsArray.push("PT");
+      if (formData.TDS) deductionsArray.push("TDS");
+
       const updatedFormData = {
         ...formData,
         CurrentAddress: {
@@ -211,15 +244,15 @@ export default function New_employee() {
         },
         Deductions: deductionsArray,
       };
-  
+
       const response = await axios.post(
         "http://77.37.45.224:8000/api/user/employeeInfo",
         updatedFormData
       );
-  
+
       if (response.status === 200) {
         toast.success("Employee registered successfully!");
-        resetForm(); // Reset form on successful submission
+        resetForm();
       }
       console.log("Form submitted successfully!", response.data);
     } catch (error) {
@@ -227,118 +260,12 @@ export default function New_employee() {
       toast.error("Email or mobile number already exists.");
     }
   };
-  
 
   const resetForm = () => {
-    setformData(initialFormData);
+    setFormData(initialFormData);
     setSameAsAbove(false);
   };
 
-
-
-
-  const [departments, setDepartments] = useState([]);
-  const [subDepartments, setSubDepartments] = useState([]);
-  const [designations, setDesignations] = useState([]);
-  useEffect(() => {
-    // Fetch departments
-    const fetchDepartments = async () => {
-      try {
-        const response = await axios.get("http://77.37.45.224:8000/api/department/getDepartments");
-        setDepartments(response.data.data);
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-      }
-    };
-
-    fetchDepartments();
-  }, []);
-
-  const handleDepartmentChange = (e) => {
-    const departmentId = e.target.value;
-    setformData((prevData) => ({
-      ...prevData,
-      Department: departmentId,
-      SubDepartment: "", // Clear sub-department selection
-      Designation: "" // Clear designation selection
-    }));
-
-    // Fetch sub-departments based on the selected department
-    const selectedDepartment = departments.find(dep => dep._id === departmentId);
-    if (selectedDepartment) {
-      setSubDepartments(selectedDepartment.SubDepartment || []);
-      setDesignations([]);
-    }
-  };
-
-  const handleSubDepartmentChange = async (e) => {
-    const subDepartmentId = e.target.value;
-    setformData((prevData) => ({
-      ...prevData,
-      SubDepartment: subDepartmentId,
-      Designation: "" // Clear designation selection
-    }));
-
-    // Fetch designations based on the selected sub-department
-    try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`);
-      console.log("Designations response:", response.data);
-      const subDepartmentData = response.data.data;
-      setDesignations(subDepartmentData.designation || []);
-    } catch (error) {
-      console.error("Error fetching designations:", error);
-    }
-  };
-
-  const handleDesignationChange = (e) => {
-    const designationId = e.target.value;
-    setformData((prevData) => ({
-      ...prevData,
-      Designation: designationId
-    }));
-  };
-
-
-
-  const [currentStates, setCurrentStates] = useState([]);
-  const [currentCities, setCurrentCities] = useState([]);
-  const [permanentStates, setPermanentStates] = useState([]);
-  const [permanentCities, setPermanentCities] = useState([]);
-
-  useEffect(() => {
-    // Fetch states for India on component mount
-    const statesData = State.getStatesOfCountry('IN');
-    setCurrentStates(statesData);
-    setPermanentStates(statesData);
-  }, []);
-
-  const handleCurrentStateChange = (e) => {
-    const stateCode = e.target.value;
-    setformData((prevData) => ({
-      ...prevData,
-      CurrentState: stateCode,
-      CurrentCity: "" // Clear city selection
-    }));
-
-    // Fetch cities based on the selected state
-    const citiesData = City.getCitiesOfState('IN', stateCode);
-    setCurrentCities(citiesData);
-  };
-
-  const handlePermanentStateChange = (e) => {
-    const stateCode = e.target.value;
-    setformData((prevData) => ({
-      ...prevData,
-      PermanentState: stateCode,
-      PermanentCity: "" // Clear city selection
-    }));
-
-    // Fetch cities based on the selected state
-    const citiesData = City.getCitiesOfState('IN', stateCode);
-    setPermanentCities(citiesData);
-  };
-
-  const [activeTabKey, setActiveTabKey] = useState("1");
   const handleTabChange = (key) => {
     setActiveTabKey(key);
   };
@@ -711,9 +638,9 @@ export default function New_employee() {
 
           </div>
           <div>
-          <div className="first-tab-next-btn">
-        <button  type="button" onClick={() => handleTabChange("2")}>Next</button>
-      </div>
+            <div className="first-tab-next-btn">
+              <button type="button" onClick={() => handleTabChange("2")}>Next</button>
+            </div>
           </div>
         </form>
       </TabPane>
@@ -721,6 +648,7 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Job Profile</h2>
+
             <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:</label>
             <select
               style={{ width: '20%' }}
@@ -764,34 +692,39 @@ export default function New_employee() {
                 </option>
               ))}
             </select>
-            <label style={{ marginRight: "60px" }}>Reporting to :</label>
+
+            <label style={{ marginRight: "86px" }}>Position :</label>
             <select
               style={{ width: "20%" }}
-              name="ReportingTo"
-              value={formData.ReportingTo}
+              name="Position"
+              value={formData.Position}
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value="HR">HR</option>
+              <option value="Boss">Boss</option>
               <option value="Manager">Manager</option>
-              <option value="Team Lead">Team Lead</option>
+              <option value="TeamLeader">TeamLeader</option>
+              <option value="None">None</option>
             </select>
+
             <br />
-            <label style={{ marginRight: "16px" }}>Manager name :</label>
+
+            <label style={{ marginRight: "33px" }}>Managed By :</label>
             <select
               style={{ width: "20%" }}
-              name="ManagerName"
-              value={formData.ManagerName}
+              name="ManagedBy"
+              value={formData.ManagedBy}
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value="Sumeet Shaw">Sumeet Shaw</option>
-              <option value="Omkar kalekar">Omkar Kalekar</option>
-              <option value="Rutik kelkar">Rutik Kelkar</option>
-              <option value="Sandip Chandane">Sandip Chandane</option>
-              <option value="Rahul Kamble">Rahul Kamble</option>
-              <option value="Urmila Dhage">Urmila Dhage</option>
+              {managers.map((manager) => (
+                <option key={manager._id} value={manager._id}>
+                  {manager.FirstName} {manager.LastName}
+                </option>
+              ))}
             </select>
+
+
             <label style={{ marginRight: "52px" }}>Joining Date :</label>
             <input
               type="date"
@@ -801,7 +734,9 @@ export default function New_employee() {
               value={formData.DateOfJoining}
               onChange={handleInputChange}
             />
+
             <br />
+
             <label style={{ marginRight: "16px" }}>Company name :</label>
             <select
               style={{ width: "20%", marginLeft: '-5px' }}
@@ -815,6 +750,7 @@ export default function New_employee() {
               <option value="ShawNiks Solutions Pvt Ltd">ShawNiks Solutions Pvt Ltd</option>
               <option value="Damaru Properties">Damaru Properties</option>
             </select>
+
             <label style={{ marginRight: '108px' }}>Role :</label>
             <select
               name='Role'
@@ -827,7 +763,9 @@ export default function New_employee() {
               <option value="Admin">Admin</option>
               <option value="HR">HR</option>
             </select>
+
             <br />
+
             <label style={{ marginRight: "43px" }}>Password :</label>
             <input
               type="text"
@@ -837,9 +775,12 @@ export default function New_employee() {
               value={formData.Password}
               onChange={handleInputChange}
             />
+
             <br />
           </div>
+
           <hr style={{ marginTop: 30 }} />
+
           <div className="form-container">
             <div className="inner-container">
               <h2>CTC</h2>
@@ -848,6 +789,7 @@ export default function New_employee() {
                 <div className="grid-item2">Amount</div>
                 <div className="grid-item3">Per Month</div>
                 <div className="grid-item4">Per Annual</div>
+
                 <div className="grid-item5">Basic Salary</div>
                 <div className="grid-item6">
                   <input
@@ -861,6 +803,7 @@ export default function New_employee() {
                 <div className="grid-item7">
                   <input type="text" id="basicSalaryPerAnnual" disabled />
                 </div>
+
                 <div className="grid-item8">Fixed Allowance</div>
                 <div className="grid-item9">
                   <input
@@ -874,6 +817,7 @@ export default function New_employee() {
                 <div className="grid-item10">
                   <input type="text" id="FixedAllowancePerAnnual" disabled />
                 </div>
+
                 <div className="grid-item11">Special Allowance</div>
                 <div className="grid-item12">
                   <input
@@ -887,6 +831,7 @@ export default function New_employee() {
                 <div className="grid-item13">
                   <input type="text" id="specialallowncePerAnnual" disabled />
                 </div>
+
                 <div className="grid-item14">Variable Allowance</div>
                 <div className="grid-item15">
                   <input
@@ -900,6 +845,7 @@ export default function New_employee() {
                 <div className="grid-item16">
                   <input type="text" id="variableAllowancePerAnnual" disabled />
                 </div>
+
                 <div className="grid-item17">
                   <p>Deductions</p>
                   <div style={{ display: "flex", marginLeft: "30px" }}>
@@ -952,14 +898,16 @@ export default function New_employee() {
               </div>
             </div>
           </div>
-        </div>
-        <div>
-        <div className="submit-container">
-        <button type="button" onClick={() => handleTabChange("1")}>Back</button>
-        <button type="button" onClick={() => handleTabChange("3")}>Next</button>
-      </div>
+
+          <div>
+            <div className="submit-container">
+              <button type="button" onClick={() => handleTabChange("1")}>Back</button>
+              <button type="button" onClick={() => handleTabChange("3")}>Next</button>
+            </div>
+          </div>
         </div>
       </TabPane>
+
       <TabPane tab="Assets" key="3">
         <div className="form-container">
           <div className="inner-container">
@@ -1060,10 +1008,10 @@ export default function New_employee() {
           </div>
         </div>
         <div>
-        <div className="submit-container">
-        <button type="button" onClick={() => handleTabChange("2")}>Back</button>
-        <button type="button" onClick={() => handleTabChange("4")}>Next</button>
-      </div>
+          <div className="submit-container">
+            <button type="button" onClick={() => handleTabChange("2")}>Back</button>
+            <button type="button" onClick={() => handleTabChange("4")}>Next</button>
+          </div>
         </div>
       </TabPane>
       <TabPane tab="Documents" key="4">
@@ -1175,9 +1123,9 @@ export default function New_employee() {
           </div>
         </div>
         <div>
-     
+
           <div className="submit-container">
-      <button type="button" onClick={() => handleTabChange("3")}>Back</button>
+            <button type="button" onClick={() => handleTabChange("3")}>Back</button>
 
             <button onClick={handleSubmit}>Submit</button>
           </div>

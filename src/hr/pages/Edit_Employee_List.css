@@ -1,0 +1,38 @@
+/* EditEmployee.css */
+
+.emp-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .emp-edit-div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .emp-edit-label {
+    font-weight: bold;
+  }
+  
+  .emp-edit-input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .emp-edit-btn {
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .emp-edit-btn:hover {
+    background-color: #0056b3;
+  }
+  

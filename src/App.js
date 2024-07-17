@@ -1,16 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './App.css';
-import './Login.css'
-import './admin/pages/Leaders.css'
-import  './admin/pages/Data_operator.css'
-import  './admin/pages/Employee.css'
-import  './admin/pages/Leads.css'
-import  './admin/pages/Pending_Leads.css'
 
-import './hr/pages/Employee_list.css'
-import './hr/pages/Leave_management.css'
-import './hr/pages/Attendence.css'
-import './hr/pages/New_Employee.css'
 
 import Layout from './admin/component//Layout';
 import Dashboard from './admin/pages/Dashboard'
@@ -29,6 +18,7 @@ import Leave_management from './hr/pages/Leave_management';
 import Hr_docs from './hr/pages/Hr_docs';
 import Hr_Dashboard from './hr/pages/Hr_Dashboard';
 import Pending_Leads from './admin/pages/Pending_Leads';
+import Edit_Employee_List from './hr/pages/Edit_Employee_List';
 
 function App() {
   return (
@@ -48,6 +38,7 @@ function App() {
           <Route index element={<Hr_Dashboard/>} />
           <Route path='new-employee' element={<New_employee/>} />
           <Route path='employee-list' element={<Employee_list/>} />
+          <Route path='employee-list/edit-employee-list' element={<Edit_Employee_List/>}/>
           <Route path='attendence' element={<Attendence/>} />
           <Route path='leave-management' element={<Leave_management/>} />
           <Route path='hr-docs' element={<Hr_docs/>} />

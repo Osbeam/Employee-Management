@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from 'react-router-dom';
 
-export default function EmployeeList() {
+export default function Employee_List() {
   const [employees, setEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [userCount, setUserCount] = useState(0);
   const [designations, setDesignations] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees(currentPage);
@@ -50,58 +53,41 @@ export default function EmployeeList() {
       });
   };
 
-  const handleEdit = (_id) => {
-    setEmployees(prevEmployees =>
-      prevEmployees.map(employee =>
-        employee._id === _id ? { ...employee, editMode: true } : employee
-      )
-    );
-  };
-
-  const handleSave = async (employee) => {
-    try {
-      const response = await axios.put('http://77.37.45.224:8000/api/user/updateEmployeeData', {
-        _id: employee._id,
-        Password: employee.Password,
-        Role: employee.Role,
-        FirstName: employee.FirstName,
-        MiddleName: employee.MiddleName,
-        LastName: employee.LastName,
-        MobileNumber: employee.MobileNumber,
-        EmailId: employee.EmailId,
-        CurrentAddress: employee.CurrentAddress,
-        Reference1: employee.Reference1,
-        Designation: employee.Designation,
-        ReportingTo: employee.ReportingTo,
-        ManagerName: employee.ManagerName,
-        DateOfJoining: employee.DateOfJoining,
-        BasicSalary: employee.BasicSalary,
-        OfficialMobileNumber: employee.OfficialMobileNumber,
-        OfficialEmailId: employee.OfficialEmailId,
-        BankName: employee.BankName,
-        AccountNumber: employee.AccountNumber,
-        IFSCCode: employee.IFSCCode,
-      });
-
-      if (response.data.success) {
-        setEmployees(prevEmployees =>
-          prevEmployees.map(emp =>
-            emp._id === employee._id ? { ...emp, editMode: false } : emp
-          )
-        );
-      } else {
-        console.error('Failed to update employee');
-      }
-    } catch (error) {
-      console.error('Error updating employee:', error);
-    }
-  };
-
-  const handleCancel = (employee) => {
-    setEmployees(prevEmployees =>
-      prevEmployees.map(emp =>
-        emp._id === employee._id ? { ...emp, editMode: false, ...emp.original } : emp
-      )
+  const handleEdit = (employee) => {
+    navigate(
+      `/employee-list/edit-employee-list/${employee._id}?firstName=${encodeURIComponent(
+        employee.FirstName || ''
+      )}&middleName=${encodeURIComponent(employee.MiddleName || '')}&lastName=${encodeURIComponent(
+        employee.LastName || ''
+      )}&employeeId=${encodeURIComponent(employee.EmployeeID || '')}&role=${encodeURIComponent(
+        employee.Role ? employee.Role.join(', ') : ''
+      )}&mobileNumber=${encodeURIComponent(
+        employee.MobileNumber || ''
+      )}&emailId=${encodeURIComponent(employee.EmailId || '')}&currentAddress=${encodeURIComponent(
+        employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '' : ''
+      )}&reference1=${encodeURIComponent(employee.Reference1 || '')}&designation=${encodeURIComponent(
+        employee.Designation || ''
+      )}&reportingTo=${encodeURIComponent(
+        employee.ReportingTo ? employee.ReportingTo.join(', ') : ''
+      )}&managerName=${encodeURIComponent(
+        employee.ManagerName ? employee.ManagerName.join(', ') : ''
+      )}&dateOfJoining=${encodeURIComponent(
+        employee.DateOfJoining || ''
+      )}&basicSalary=${encodeURIComponent(
+        employee.BasicSalary || ''
+      )}&officialMobileNumber=${encodeURIComponent(
+        employee.OfficialMobileNumber || ''
+      )}&officialEmailId=${encodeURIComponent(
+        employee.OfficialEmailId || ''
+      )}&bankName=${encodeURIComponent(employee.BankName || '')}&accountNumber=${encodeURIComponent(
+        employee.AccountNumber || ''
+      )}&ifscCode=${encodeURIComponent(
+        employee.IFSCCode || ''
+      )}&password=${encodeURIComponent(employee.Password || '')}&position=${encodeURIComponent(
+        employee.Position ? employee.Position.join(', ') : ''
+      )}&managedBy=${encodeURIComponent(
+        employee.ManagedBy ? `${employee.ManagedBy.FirstName || ''} ${employee.ManagedBy.LastName || ''}` : ''
+      )}&status=${encodeURIComponent(employee.Status || '')}`
     );
   };
 
@@ -118,7 +104,7 @@ export default function EmployeeList() {
         <table className="el-table">
           <thead>
             <tr className="el-table-tr">
-              <th style={{minWidth:'75px'}}>Sr. No.</th>
+              <th style={{ minWidth: '75px' }}>Sr. No.</th>
               <th>Fullname</th>
               <th>Employee Id</th>
               <th>Role</th>
@@ -165,11 +151,15 @@ export default function EmployeeList() {
                 <td>{employee.IFSCCode || '-'}</td>
                 <td>{employee.Password || '-'}</td>
                 <td>{employee.Position && employee.Position.length > 0 ? employee.Position.join(', ') : '-'}</td>
-                <td>{employee.Position && employee.Position.length > 0 ? '-' : `${employee.ManagedBy?.FirstName || ''} ${employee.ManagedBy?.LastName || ''}`}</td>
+                <td>
+                  {employee.ManagedBy
+                    ? `${employee.ManagedBy.FirstName || ''} ${employee.ManagedBy.LastName || ''}`
+                    : '-'}
+                </td>
                 <td className="statusbtn">
                   <button
                     className="editbtn"
-                    onClick={() => handleEdit(employee._id)}
+                    onClick={() => handleEdit(employee)}
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
