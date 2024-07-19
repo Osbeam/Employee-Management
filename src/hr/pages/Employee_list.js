@@ -18,26 +18,42 @@ export default function Employee_List() {
     fetchDesignations();
   }, [currentPage]);
 
-  const fetchEmployees = (page) => {
-    axios.get(`http://77.37.45.224:8000/api/user/getEmployee?currentPage=${page}&limit=10`)
-      .then(response => {
-        if (response.data.success) {
-          setEmployees(response.data.data.map(employee => ({
-            ...employee,
-            editMode: false,
-            original: { ...employee }
-          })));
-          setCurrentPage(response.data.currentPage);
-          setTotalPages(response.data.totalPage);
-          setUserCount(response.data.userCount);
-        } else {
-          console.error('Failed to fetch employee data');
+
+  const fetchEmployees = async (page) => {
+    try {
+      const authToken = localStorage.getItem('jwtoken'); // Retrieve token each time
+  
+      if (!authToken) {
+        console.error('No auth token found in local storage');
+        return;
+      }
+  
+      const response = await axios.get(
+        `http://77.37.45.224:8000/api/user/getEmployee?currentPage=${page}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         }
-      })
-      .catch(error => {
-        console.error('Error fetching employee data:', error);
-      });
+      );
+  
+      if (response.data.success) {
+        setEmployees(response.data.data.map(employee => ({
+          ...employee,
+          editMode: false,
+          original: { ...employee }
+        })));
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPage);
+        setUserCount(response.data.userCount);
+      } else {
+        console.error('Failed to fetch employee data:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching employee data:', error);
+    }
   };
+
 
   const fetchDesignations = () => {
     axios.get('http://77.37.45.224:8000/api/department/getDesignation')

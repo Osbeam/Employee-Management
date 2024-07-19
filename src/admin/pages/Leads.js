@@ -86,17 +86,39 @@ export default function Leads() {
     setFormData({ ...formData, [name]: value });
   };
   // fetch lead data
+
   const fetchLeads = async (page) => {
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/admin/LeadFromData?currentPage=${page}&limit=10`);
-      setLeads(response.data.data.LeadFromData); // Access the nested LeadFromData array
-      setCurrentPage(response.data.data.currentPage);
-      settotalPage(response.data.data.totalPage);
-      setLeadFromCount(response.data.data.LeadFromCount);
+      const authToken = localStorage.getItem('jwtoken'); // Ensure the key name matches
+      console.log('Auth Token:', authToken); // Debug log for the token
+  
+      if (!authToken) {
+        console.error('No auth token found in local storage');
+        return;
+      }
+  
+      const response = await axios.get(
+        `http://77.37.45.224:8000/api/admin/LeadFromData?currentPage=${page}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.data.success) {
+        setLeads(response.data.data.LeadFromData); // Access the nested LeadFromData array
+        setCurrentPage(response.data.data.currentPage);
+        settotalPage(response.data.data.totalPage);
+        setLeadFromCount(response.data.data.LeadFromCount);
+      } else {
+        console.error('Failed to fetch leads data:', response.data.message);
+      }
     } catch (error) {
       console.error('Error fetching leads data:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchLeads(currentPage);

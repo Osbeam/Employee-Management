@@ -17,14 +17,23 @@ export default function Employee() {
   const [dateRange, setDateRange] = useState([null, null]); // State to store date range
 
   // Fetching all emp call status
+
+
   const fetchCallStatusData = async (page, size, startDate = null, endDate = null) => {
     try {
       let url = `http://77.37.45.224:8000/api/admin/Allcallstatus?currentPage=${page}&pageSize=${size}`;
       if (startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-
-      const response = await axios.get(url);
+  
+      const authToken = localStorage.getItem('jwtoken');
+  
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
       if (response.data.success) {
         const userDataWithStatus = response.data.data.map(item => ({
           ...item.user,
@@ -42,6 +51,7 @@ export default function Employee() {
       console.error('Error fetching call status data:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchCallStatusData(currentPage, pageSize); // Fetch call status data on component mount or page change

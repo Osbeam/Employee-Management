@@ -24,21 +24,47 @@ export default function Attendance() {
   const pageReportSize = 10;
 
   const fetchUsers = async (page = 1) => {
+    const authToken = localStorage.getItem('jwToken');
+    console.log('Auth Token:', authToken);
+
+    if (!authToken) {
+      console.error('No auth token found in local storage');
+      return;
+    }
+
     try {
       const response = await axios.get(
-        `http://77.37.45.224:8000/api/user/getLogUsers?currentPage=${page}&pageSize=${pageSize}`
+        `http://77.37.45.224:8000/api/user/getLogUsers?currentPage=${page}&pageSize=${pageSize}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
-      const usersWithEditMode = response.data.data.map((user) => ({
-        ...user,
-        editMode: false,
-        originalInTimeImage: user.inTimeImage // Store the original image
-      }));
-      setUsers(usersWithEditMode);
-      setCurrentPage(response.data.currentPage);
-      setTotalPages(response.data.totalPage);
-      setTotalRecords(response.data.userCount);
+
+      console.log('API Response:', response.data); // Log the full response
+
+      if (response.data.success) {
+        const usersWithEditMode = response.data.data.map((user) => ({
+          ...user,
+          editMode: false,
+          originalInTimeImage: user.inTimeImage
+        }));
+        setUsers(usersWithEditMode);
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPage);
+        setTotalRecords(response.data.userCount);
+      } else {
+        console.error('Failed to fetch users:', response.data.message);
+      }
     } catch (error) {
-      console.log("Error fetching users:", error);
+      console.error('Error fetching users:', error.response?.data || error.message);
+      if (error.response) {
+        console.error('Response Error Data:', error.response.data);
+      }
+      if (error.request) {
+        console.error('Request Error:', error.request);
+      }
     }
   };
 

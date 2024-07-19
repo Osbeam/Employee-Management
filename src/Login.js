@@ -21,32 +21,26 @@ export default function Login() {
     }
 
     try {
-      const authToken = localStorage.getItem("jwtoken");
-
       const response = await axios.post(
         "http://77.37.45.224:8000/api/user/EmployeeInfoLogin",
-        { EmailId, Password: password },
-        {
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
+        { EmailId, Password: password }
       );
 
       console.log("API response:", response.data);
 
       if (response.data.success && response.data.loggedUser) {
-        const { loggedUser } = response.data;
+        const { loggedUser, token } = response.data;
 
         console.log("Logged User:", loggedUser);
 
         if (loggedUser.Role && loggedUser.Role.includes("Admin")) {
           localStorage.setItem("user", JSON.stringify(loggedUser));
+          localStorage.setItem("jwtoken", token); // Store the token
           navigate("/admin");
           message.success("Login successful!");
         } else if (loggedUser.Role && loggedUser.Role.includes("HR")) {
           localStorage.setItem("user", JSON.stringify(loggedUser));
+          localStorage.setItem("jwtoken", token); // Store the token
           navigate("/hrpanel");
           message.success("Login successful!");
         } else {
