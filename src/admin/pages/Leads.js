@@ -44,10 +44,15 @@ export default function Leads() {
     ExistingEMI: '',
     LeadFrom: ''
   });
-  //Manual lead data upload
+  //Manual lead data upload with authtoken
   const handleSubmit = async () => {
+    const authToken = localStorage.getItem('jwtoken')
     try {
-      const response = await axios.post('http://77.37.45.224:8000/api/admin/manualLeadDataUpload', formData);
+      const response = await axios.post('http://77.37.45.224:8000/api/admin/manualLeadDataUpload', formData,{
+        headers:{
+          Authorization: `Bearer ${authToken}`
+        }
+      });
       console.log('Data added successfully:', response.data);
       toast.success('Data added successfully!');
       setIsModalOpen(false);
@@ -85,8 +90,7 @@ export default function Leads() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  // fetch lead data
-
+  // fetch lead data with authtoken
   const fetchLeads = async (page) => {
     try {
       const authToken = localStorage.getItem('jwtoken'); // Ensure the key name matches
@@ -118,7 +122,6 @@ export default function Leads() {
       console.error('Error fetching leads data:', error);
     }
   };
-  
 
   useEffect(() => {
     fetchLeads(currentPage);
@@ -175,11 +178,16 @@ export default function Leads() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  // Fetch team leaders on component mount
+  // Fetch team leaders on component mount with authtoken
   useEffect(() => {
     const fetchTeamLeaders = async () => {
+      const authToken = localStorage.getItem('jwtoken');
       try {
-        const response = await axios.get('http://77.37.45.224:8000/api/user/getTeamLeaders');
+        const response = await axios.get(`http://77.37.45.224:8000/api/user/getTeamLeaders`,{
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         if (response.data.success) {
           setTeamLeaders(response.data.data);
         } else {
@@ -192,10 +200,15 @@ export default function Leads() {
 
     fetchTeamLeaders();
   }, []);
-  // Fetch followers based on selected leader
+  // Fetch followers based on selected leader with authtoken
   const fetchFollowers = async (leaderId) => {
+    const authToken = localStorage.getItem('jwtoken');
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/user/getFollowers/${leaderId}`);
+      const response = await axios.get(`http://77.37.45.224:8000/api/user/getFollowers/${leaderId}`,{
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       if (response.data.success) {
         setFollowers(response.data.data);
       } else {
@@ -237,13 +250,20 @@ export default function Leads() {
     }
 
     const leadCallStatus = selectedLeads.map(() => 'Accept'); // Setting all to 'Accept'
+    const authToken = localStorage.getItem('jwtoken');
 
     try {
       const response = await axios.put('http://77.37.45.224:8000/api/admin/assignBulkLeads', {
         employeeId: selectedFollower,
         leadIds: selectedLeads,
         leadCallStatus: leadCallStatus
-      });
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
 
       if (response.data.success) {
         toast.success('Leads assigned successfully!');

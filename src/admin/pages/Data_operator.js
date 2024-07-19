@@ -42,11 +42,18 @@ export default function Data_operator() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Submit manual cold data to db with authtoken
   const handleSubmit = async () => {
     try {
+      const authToken = localStorage.getItem('jwtoken')
       const response = await axios.post(
         "http://77.37.45.224:8000/api/admin/manualDataUpload",
-        formData
+        formData,
+        {
+          headers: {
+            Authorization : `Bearer ${authToken}`
+          }
+        }
       );
       console.log("Data added successfully:", response.data);
       toast.success("Data added successfully!");
@@ -79,7 +86,8 @@ export default function Data_operator() {
       toast.error("Error adding data!");
     }
   };
-  
+
+  // Get cold call data with authtoken
   const fetchData = async (page) => {
     try {
       const authToken = localStorage.getItem('jwtoken');
@@ -104,25 +112,6 @@ export default function Data_operator() {
       console.error('Error fetching data:', error);
     }
   };
-  // const fetchData = async (page) => {
-  //   try {
-  //     const authToken = localStorage.getItem("jwToken")
-  //     const response = await axios.get(
-  //       `http://77.37.45.224:8000/api/admin/getexcelfiles?currentPage=${page}&limit=10`,
-  //       {
-  //         headers: {
-  //           Authorization : `Bearer ${authToken}`
-  //         }
-  //       }
-  //     );
-  //     setData(response.data.data);
-  //     setCurrentPage(response.data.currentPage);
-  //     setTotalPages(response.data.totalPage);
-  //     setUserCount(response.data.userCount);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
 
   useEffect(() => {
     fetchData(currentPage);

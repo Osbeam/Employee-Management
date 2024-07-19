@@ -23,8 +23,9 @@ export default function Attendance() {
 
   const pageReportSize = 10;
 
+  // Get all log in user with authtoken
   const fetchUsers = async (page = 1) => {
-    const authToken = localStorage.getItem('jwToken');
+    const authToken = localStorage.getItem('jwtoken');
     console.log('Auth Token:', authToken);
 
     if (!authToken) {
@@ -84,15 +85,21 @@ export default function Attendance() {
     }
   };
 
-  //Fetch approved users
+  //Fetch approved users with authtoken
   const fetchAllUsers = async (page = 1) => {
     const today = new Date();
     const startDate = "2024-05-07";
     const endDate = today.toISOString().split("T")[0];
 
     try {
+      const authToken = localStorage.getItem('jwtoken')
       const response = await axios.get(
-        `http://77.37.45.224:8000/api/user/getApprovedLogUsers?approved=true&startDate=${startDate}&endDate=${endDate}&currentPage=${page}&pageSize=${pageSize}`
+        `http://77.37.45.224:8000/api/user/getApprovedLogUsers?approved=true&startDate=${startDate}&endDate=${endDate}&currentPage=${page}&pageSize=${pageSize}`,
+        {
+          headers:{
+            Authorization: `Bearer ${authToken}`
+          }
+        }
       );
       setAllUsers(response.data.data);
       setCurrentReportPage(response.data.currentPage);
@@ -119,7 +126,7 @@ export default function Attendance() {
     }
   };
 
-  //Approve users
+  //Approve users with authtoken
   const handleApprove = async (_id) => {
     try {
       // Check if any of the users are missing required fields
@@ -136,12 +143,17 @@ export default function Attendance() {
         );
         return; // Exit the function early
       }
-
+      const authToken = localStorage.getItem('jwtoken')
       // If all required fields are filled, send the approval request
       await axios.put(`http://77.37.45.224:8000/api/user/editLogUser/${_id}`, {
         isPresent: true,
         approved: true,
-      });
+      },
+    {
+      headers: {
+        Authorization:`Bearer ${authToken}`
+      }
+    });
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== _id));
       fetchAllUsers();
       // Show success message
@@ -181,14 +193,8 @@ export default function Attendance() {
       hour12: true
     });
   };
+
   // Edit user data
-  // const handleEdit = (_id) => {
-  //   const updatedUsers = users.map((user) =>
-  //     user._id === _id ? { ...user, editMode: true, originalInTimeImage: user.inTimeImage } : user
-  //   );
-  //   setEditUserId(_id);
-  //   setUsers(updatedUsers);
-  // };
   const handleEdit = (_id) => {
     const updatedUsers = users.map((user) =>
       user._id === _id ? { ...user, editMode: true } : user
@@ -197,50 +203,7 @@ export default function Attendance() {
     setUsers(updatedUsers);
   };
   
-
-  // Update and save data
-  // const handleSave = async (_id) => {
-  //   try {
-  //     const userToSave = users.find((user) => user._id === _id);
-  //     const formData = new FormData();
-  //     formData.append("inTime", new Date(userToSave.inTime).toISOString());
-  //     formData.append("outTime", new Date(userToSave.outTime).toISOString());
-
-  //     // Append the image only if it has been changed
-  //     if (userToSave.inTimeImage && userToSave.inTimeImage instanceof File) {
-  //       formData.append("inTimeImage", userToSave.inTimeImage);
-  //     }
-
-  //     const response = await axios.put(
-  //       `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       }
-  //     );
-
-  //     const updatedUsers = users.map((user) =>
-  //       user._id === _id
-  //         ? {
-  //           ...user,
-  //           editMode: false,
-  //           inTimeImage: userToSave.inTimeImage instanceof File
-  //             ? response.data.log.inTimeImage
-  //             : user.inTimeImage,
-  //           totalHours: response.data.log.totalHours,
-  //         }
-  //         : user
-  //     );
-  //     setUsers(updatedUsers);
-
-  //     message.success("Attendance edited successfully");
-  //   } catch (error) {
-  //     console.log("Error editing user:", error);
-  //     message.error("Failed to edit attendance");
-  //   }
-  // };
+  // Edit and save data with authtoken
   const handleSave = async (_id) => {
     try {
       const userToSave = users.find((user) => user._id === _id);
@@ -249,13 +212,14 @@ export default function Attendance() {
       formData.append("outTime", new Date(userToSave.outTime).toISOString());
   
       // Note: No image logic here
-  
+      const authToken = localStorage.getItem('jwtoken')
       const response = await axios.put(
         `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authToken}`
           },
         }
       );
@@ -279,7 +243,6 @@ export default function Attendance() {
       message.error("Failed to edit attendance");
     }
   };
-  
 
   //Cancel edit mode
   const handleCancelEdit = (_id) => {
@@ -291,13 +254,29 @@ export default function Attendance() {
     setUsers(updatedUsers);
   };
 
-  //Delete user data
+  //Delete user data with authtoken
   const handleDelete = async (_id) => {
+    const authToken = localStorage.getItem('jwtoken'); // Retrieve the token from local storage
+  
+    if (!authToken) {
+      console.error('No auth token found in local storage');
+      return;
+    }
+  
+    console.log('Auth Token:', authToken); // Debugging: Log the token to make sure it's retrieved
+  
     try {
-      await axios.delete(`http://77.37.45.224:8000/api/user/deleteLog/${_id}`);
+      const response = await axios.delete(`http://77.37.45.224:8000/api/user/deleteLog/${_id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include the token in the headers
+        },
+      });
+  
+      console.log('Response:', response.data); // Log the response for debugging
+  
       fetchUsers(currentPage);
     } catch (error) {
-      console.log("Error deleting log:", error);
+      console.log('Error deleting log:', error.response?.data || error.message); // More detailed error message
     }
   };
 
