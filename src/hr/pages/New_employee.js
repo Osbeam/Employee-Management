@@ -99,8 +99,16 @@ export default function New_employee() {
     };
 
     const fetchManagers = async () => {
+      
       try {
-        const response = await axios.get("http://77.37.45.224:8000/api/user/getTeamLeaders");
+        const authToken = localStorage.getItem('jwtoken')
+        const response = await axios.get(`http://77.37.45.224:8000/api/user/getTeamLeaders`,
+          {
+            headers: {
+              Authorization : `Bearer ${authToken}`
+            }
+          }
+        );
         // Ensure the response data is an array and contains the necessary fields
         if (Array.isArray(response.data.data)) {
           setManagers(response.data.data);

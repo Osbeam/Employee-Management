@@ -16,9 +16,7 @@ export default function Employee() {
   const [userCount, setUserCount] = useState(0); // State for user count
   const [dateRange, setDateRange] = useState([null, null]); // State to store date range
 
-  // Fetching all emp call status
-
-
+  // Fetching all emp call status with authtoken
   const fetchCallStatusData = async (page, size, startDate = null, endDate = null) => {
     try {
       let url = `http://77.37.45.224:8000/api/admin/Allcallstatus?currentPage=${page}&pageSize=${size}`;
