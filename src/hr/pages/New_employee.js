@@ -99,13 +99,13 @@ export default function New_employee() {
     };
 
     const fetchManagers = async () => {
-      
+
       try {
         const authToken = localStorage.getItem('jwtoken')
         const response = await axios.get(`http://77.37.45.224:8000/api/user/getTeamLeaders`,
           {
             headers: {
-              Authorization : `Bearer ${authToken}`
+              Authorization: `Bearer ${authToken}`
             }
           }
         );
@@ -721,16 +721,18 @@ export default function New_employee() {
             <select
               style={{ width: "20%" }}
               name="ManagedBy"
-              value={formData.ManagedBy}
+              value={formData.ManagedBy || ''}
               onChange={handleInputChange}
             >
               <option value="">Select</option>
+              <option value='null'>None</option>
               {managers.map((manager) => (
                 <option key={manager._id} value={manager._id}>
                   {manager.FirstName} {manager.LastName}
                 </option>
               ))}
             </select>
+
 
 
             <label style={{ marginRight: "52px" }}>Joining Date :</label>

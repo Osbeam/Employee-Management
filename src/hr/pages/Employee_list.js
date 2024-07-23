@@ -18,7 +18,6 @@ export default function Employee_List() {
     fetchDesignations();
   }, [currentPage]);
 
-
   const fetchEmployees = async (page) => {
     try {
       const authToken = localStorage.getItem('jwtoken'); // Retrieve token each time
@@ -53,7 +52,6 @@ export default function Employee_List() {
       console.error('Error fetching employee data:', error);
     }
   };
-
 
   const fetchDesignations = () => {
     axios.get('http://77.37.45.224:8000/api/department/getDesignation')
@@ -166,7 +164,7 @@ export default function Employee_List() {
                 <td>{employee.AccountNumber || '-'}</td>
                 <td>{employee.IFSCCode || '-'}</td>
                 <td>{employee.Password || '-'}</td>
-                <td>{employee.Position && employee.Position.length > 0 ? employee.Position.join(', ') : '-'}</td>
+                <td>{Array.isArray(employee.Position) && employee.Position.length > 0 ? employee.Position.join(', ') : '-'}</td>
                 <td>
                   {employee.ManagedBy
                     ? `${employee.ManagedBy.FirstName || ''} ${employee.ManagedBy.LastName || ''}`

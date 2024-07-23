@@ -6,24 +6,34 @@ import {
   RobotOutlined,
   AppstoreOutlined,
   PhoneOutlined,
-  UsergroupAddOutlined ,
+  UsergroupAddOutlined,
   TeamOutlined,
   BookOutlined,
   SolutionOutlined,
   ProjectOutlined,
-  SoundOutlined ,
+  SoundOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
-import logo from '../Images/ShawniksLogo.png'
+import logo from '../Images/ShawniksLogo.png';
 import { Layout, Menu, Button, theme } from 'antd';
 import { useNavigate, Outlet } from "react-router-dom";
+import { message } from "antd";
 
 const { Header, Sider, Content } = Layout;
+
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("jwtoken");
+    message.success("Logged out successfully!");
+    navigate("/");
+  };
 
   return (
     <Layout>
@@ -39,8 +49,8 @@ const MainLayout = () => {
           mode="inline"
           defaultSelectedKeys={[]}
           onClick={({ key }) => {
-            if (key === 'signout') {
-              // Handle signout action
+            if (key === 'logout') {
+              handleLogout();
             } else {
               navigate(key);
             }
@@ -49,7 +59,6 @@ const MainLayout = () => {
           <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
             Dashboard
           </Menu.Item>
-         
           <Menu.Item key="channelpartner" icon={<SoundOutlined />} label="Channel Partner">
             Channel partner
           </Menu.Item>
@@ -59,35 +68,21 @@ const MainLayout = () => {
           <Menu.Item key="employee" icon={<RobotOutlined />} label="employee">
             Employee
           </Menu.Item>
-          <Menu.SubMenu key="Leads" icon={<BookOutlined />} title="All Leads"> 
-          <Menu.Item key="leads" icon={<SolutionOutlined />} label="Leads">
-            Leads
-          </Menu.Item>
-          <Menu.Item key="pendingleads" icon={<SolutionOutlined />} label="Pending Leads">
-            Pending Leads
-          </Menu.Item>
+          <Menu.SubMenu key="Leads" icon={<BookOutlined />} title="All Leads">
+            <Menu.Item key="leads" icon={<SolutionOutlined />} label="Leads">
+              Leads
+            </Menu.Item>
+            <Menu.Item key="pendingleads" icon={<SolutionOutlined />} label="Pending Leads">
+              Pending Leads
+            </Menu.Item>
           </Menu.SubMenu>
-          {/* <Menu.SubMenu key="Hr" icon={<BookOutlined />} title="Hr">
-            <Menu.Item key="new-employee" icon={<UsergroupAddOutlined />} label="Emp Registration">
-              New Employee
-            </Menu.Item>
-            <Menu.Item key="employee-list" icon={<TeamOutlined />} label="Emp list">
-              Employee list
-            </Menu.Item>
-            <Menu.Item key="attendence" icon={<ProjectOutlined />} label="attendence">
-              Attendence
-            </Menu.Item>
-            <Menu.Item key="leave-management" icon={<ScheduleOutlined />} label="Leave management">
-              Leave Management
-            </Menu.Item>
-            <Menu.Item key="hr-docs" icon={<SolutionOutlined />} label="Hr document">
-              Hr Documents
-            </Menu.Item>
-          </Menu.SubMenu> */}
+          <Menu.Item key="logout" icon={<LogoutOutlined />} label="Logout">
+            Logout
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
-        <Header  style={{padding: 0,background: colorBgContainer}}>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -96,11 +91,10 @@ const MainLayout = () => {
               fontSize: '16px',
               width: 64,
               height: 64,
-              border: 'none', 
-              boxShadow: 'none', 
+              border: 'none',
+              boxShadow: 'none',
               outline: 'none',
             }}
-
           />
         </Header>
         <Content
@@ -109,7 +103,7 @@ const MainLayout = () => {
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
-            borderRadius:'10px',
+            borderRadius: '10px',
           }}
         >
           <Outlet />
@@ -118,4 +112,5 @@ const MainLayout = () => {
     </Layout>
   );
 };
+
 export default MainLayout;
