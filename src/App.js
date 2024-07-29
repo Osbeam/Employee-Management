@@ -8,6 +8,9 @@ import Hr from './hr/pages/Hr';
 import Employee from './admin/pages/Employee';
 import ChannelPartner from './admin/pages/ChannelPartner';
 import Leads from './admin/pages/Leads';
+import DirectSales from './admin/pages/Direct sale/DirectSales'
+import DirectLeadInfo from './admin/pages/Direct sale/DirectLeadInfo';
+
 
 import New_employee from './hr/pages/New_employee';
 import Employee_list from './hr/pages/Employee_list';
@@ -33,13 +36,15 @@ function App() {
           <Route path='employee' element={<Employee />} />
           <Route path='leads' element={<Leads />} />
           <Route path='pendingleads' element={<Pending_Leads/>}/>
+          <Route path='directsales' element={<DirectSales/>}/>
+          <Route path='directsales/directleadinfo' element={<DirectLeadInfo/>}/>
         </Route>
         
         <Route path='/hrpanel' element={<ProtectedRoute><Hr_Layout /></ProtectedRoute>}>
           <Route index element={<Hr_Dashboard/>} />
           <Route path='new-employee' element={<New_employee/>} />
           <Route path='employee-list' element={<Employee_list/>} />
-          <Route path='employee-list/edit-employee-list' element={<Edit_Employee_List/>}/>
+          <Route path="employee-list/edit-employee-list/:id" element={<Edit_Employee_List />} />
           <Route path='attendence' element={<Attendence/>} />
           <Route path='leave-management' element={<Leave_management/>} />
           <Route path='hr-docs' element={<Hr_docs/>} />

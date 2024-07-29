@@ -1,0 +1,25 @@
+.DS-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.DS-tr th{
+    background-color: #f2f2f2;
+    padding: 8px;
+    text-align: center;
+    min-width: 18.5rem;
+}
+.DS-table-container{
+    max-width: 100%;
+    overflow-x: auto;
+}
+.DS-editbtn{
+    border: none;
+    padding: 6px;
+    background-color: #4096ff;
+    border-radius: 5px;
+    color: white;
+    width: 70px;
+    margin-right: 5px;
+    cursor: pointer;
+}

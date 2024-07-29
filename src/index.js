@@ -9,6 +9,7 @@ import  './admin/pages/Data_operator.css'
 import  './admin/pages/Employee.css'
 import  './admin/pages/Leads.css'
 import  './admin/pages/Pending_Leads.css'
+import  './admin/pages/Direct sale/DirectSales.css'
 
 import './hr/pages/Employee_list.css'
 import './hr/pages/Leave_management.css'

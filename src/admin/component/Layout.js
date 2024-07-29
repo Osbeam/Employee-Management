@@ -13,6 +13,7 @@ import {
   ProjectOutlined,
   SoundOutlined,
   LogoutOutlined,
+  DollarOutlined
 } from '@ant-design/icons';
 import logo from '../Images/ShawniksLogo.png';
 import { Layout, Menu, Button, theme } from 'antd';
@@ -76,6 +77,9 @@ const MainLayout = () => {
               Pending Leads
             </Menu.Item>
           </Menu.SubMenu>
+          <Menu.Item key="directsales" icon={<DollarOutlined />} label="Direct Sales">
+            Direct Sales
+          </Menu.Item>
           <Menu.Item key="logout" icon={<LogoutOutlined />} label="Logout">
             Logout
           </Menu.Item>

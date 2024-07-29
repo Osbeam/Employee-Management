@@ -9,13 +9,11 @@ export default function Employee_List() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [userCount, setUserCount] = useState(0);
-  const [designations, setDesignations] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees(currentPage);
-    fetchDesignations();
   }, [currentPage]);
 
   const fetchEmployees = async (page) => {
@@ -27,6 +25,8 @@ export default function Employee_List() {
         return;
       }
   
+      console.log('Fetching employees for page:', page);
+  
       const response = await axios.get(
         `http://77.37.45.224:8000/api/user/getEmployee?currentPage=${page}&limit=10`,
         {
@@ -36,15 +36,19 @@ export default function Employee_List() {
         }
       );
   
+      console.log('Response:', response);
+  
       if (response.data.success) {
-        setEmployees(response.data.data.map(employee => ({
+        console.log('Employee data:', response.data.data.employees);
+  
+        setEmployees(response.data.data.employees.map(employee => ({
           ...employee,
           editMode: false,
           original: { ...employee }
         })));
-        setCurrentPage(response.data.currentPage);
-        setTotalPages(response.data.totalPage);
-        setUserCount(response.data.userCount);
+        setCurrentPage(response.data.data.currentPage);
+        setTotalPages(response.data.data.totalPage);
+        setUserCount(response.data.data.userCount);
       } else {
         console.error('Failed to fetch employee data:', response.data.message);
       }
@@ -52,57 +56,44 @@ export default function Employee_List() {
       console.error('Error fetching employee data:', error);
     }
   };
+  
+  
 
-  const fetchDesignations = () => {
-    axios.get('http://77.37.45.224:8000/api/department/getDesignation')
-      .then(response => {
-        if (response.data.success) {
-          setDesignations(response.data.data);
-        } else {
-          console.error('Failed to fetch designations data');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching designations data:', error);
-      });
-  };
 
   const handleEdit = (employee) => {
-    navigate(
-      `/employee-list/edit-employee-list/${employee._id}?firstName=${encodeURIComponent(
-        employee.FirstName || ''
-      )}&middleName=${encodeURIComponent(employee.MiddleName || '')}&lastName=${encodeURIComponent(
-        employee.LastName || ''
-      )}&employeeId=${encodeURIComponent(employee.EmployeeID || '')}&role=${encodeURIComponent(
-        employee.Role ? employee.Role.join(', ') : ''
-      )}&mobileNumber=${encodeURIComponent(
-        employee.MobileNumber || ''
-      )}&emailId=${encodeURIComponent(employee.EmailId || '')}&currentAddress=${encodeURIComponent(
-        employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '' : ''
-      )}&reference1=${encodeURIComponent(employee.Reference1 || '')}&designation=${encodeURIComponent(
-        employee.Designation || ''
-      )}&reportingTo=${encodeURIComponent(
-        employee.ReportingTo ? employee.ReportingTo.join(', ') : ''
-      )}&managerName=${encodeURIComponent(
-        employee.ManagerName ? employee.ManagerName.join(', ') : ''
-      )}&dateOfJoining=${encodeURIComponent(
-        employee.DateOfJoining || ''
-      )}&basicSalary=${encodeURIComponent(
-        employee.BasicSalary || ''
-      )}&officialMobileNumber=${encodeURIComponent(
-        employee.OfficialMobileNumber || ''
-      )}&officialEmailId=${encodeURIComponent(
-        employee.OfficialEmailId || ''
-      )}&bankName=${encodeURIComponent(employee.BankName || '')}&accountNumber=${encodeURIComponent(
-        employee.AccountNumber || ''
-      )}&ifscCode=${encodeURIComponent(
-        employee.IFSCCode || ''
-      )}&password=${encodeURIComponent(employee.Password || '')}&position=${encodeURIComponent(
-        employee.Position ? employee.Position.join(', ') : ''
-      )}&managedBy=${encodeURIComponent(
-        employee.ManagedBy ? `${employee.ManagedBy.FirstName || ''} ${employee.ManagedBy.LastName || ''}` : ''
-      )}&status=${encodeURIComponent(employee.Status || '')}`
-    );
+    navigate(`/hrpanel/employee-list/edit-employee-list/${employee._id}?
+      firstName=${employee.FirstName}&
+      middleName=${employee.MiddleName}&
+      mobileno=${employee.MobileNumber}&
+      password=${employee.Password}&
+      emailid=${employee.EmailId}&
+      employeeid=${employee.EmployeeID}&
+      bloodgroup=${employee.BloodGroup}&
+      HighestQualification=${employee.HighestQualification}&
+      Year=${employee.Year}&
+      TotalExperience=${employee.TotalExperience}&
+      LastCompanyName=${employee.LastCompanyName}&
+      JoiningDate=${employee.JoiningDate}&
+      Reference1=${employee.Reference1}&
+      Relation1=${employee.Relation1}&
+      Address1=${employee.Address1}&
+      ReferenceName2=${employee.ReferenceName2}&
+      Relation2=${employee.Relation2}&
+      Address2=${employee.Address2}&
+      DateOfJoining=${employee.DateOfJoining}&
+      CompanyName=${employee.CompanyName}&
+      BasicSalary=${employee.BasicSalary}&
+      FixedAllowance=${employee.FixedAllowance}&
+      SpecialAllowance=${employee.SpecialAllowance}&
+      VeriableAllowance=${employee.VeriableAllowance}&
+      OfficialMobileNumber=${employee.OfficialMobileNumber}&
+      MobileIMEINumber=${employee.MobileIMEINumber}&
+      BankName=${employee.BankName}&
+      AccountHolderName=${employee.AccountHolderName}&
+      AccountNumber=${employee.AccountNumber}&
+      IFSCCode=${employee.IFSCCode}&
+      Role=${employee.Role}
+      `);
   };
 
   const handlePageChange = (page) => {
@@ -127,8 +118,8 @@ export default function Employee_List() {
               <th>Address</th>
               <th>Reference name</th>
               <th>Designation</th>
-              <th>Report to</th>
-              <th>Reporting Manager</th>
+              {/* <th>Report to</th>
+              <th>Reporting Manager</th> */}
               <th>Joining Date</th>
               <th>Salary p/m</th>
               <th>Off. Mobile no.</th>
@@ -153,9 +144,10 @@ export default function Employee_List() {
                 <td>{employee.EmailId || '-'}</td>
                 <td>{employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '-' : '-'}</td>
                 <td>{employee.Reference1 || '-'}</td>
-                <td>{designations.find(desig => desig._id === employee.Designation)?.name || '-'}</td>
-                <td>{employee.ReportingTo && employee.ReportingTo.length > 0 ? employee.ReportingTo.join(', ') : '-'}</td>
-                <td>{employee.ManagerName && employee.ManagerName.length > 0 ? employee.ManagerName.join(', ') : '-'}</td>
+                <td>{employee.Designation ? employee.Designation.name : '-'}</td>
+                {/* <td>{designations.find(desig => desig._id === employee.Designation)?.name || '-'}</td> */}
+                {/* <td>{employee.ReportingTo && employee.ReportingTo.length > 0 ? employee.ReportingTo.join(', ') : '-'}</td> */}
+                {/* <td>{employee.ManagerName && employee.ManagerName.length > 0 ? employee.ManagerName.join(', ') : '-'}</td> */}
                 <td>{employee.DateOfJoining || '-'}</td>
                 <td>{employee.BasicSalary || '-'}</td>
                 <td>{employee.OfficialMobileNumber || '-'}</td>

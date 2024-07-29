@@ -1,184 +1,519 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Breadcrumb, Typography, Row, Col } from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
-const Edit_Employee_List = () => {
-  const { id } = useParams();  // Extract ID from URL params
-  const navigate = useNavigate();  // For programmatic navigation
-  const location = useLocation();  // To access URL search parameters
+const { TextArea } = Input;
+const { Title } = Typography;
 
-  // Initialize state for employee data
-  const [employee, setEmployee] = useState({
-    fullName: '',
-    employeeId: '',
-    role: '',
-    mobileNo: '',
-    emailId: '',
-    address: '',
-    referenceName: '',
-    designation: '',
-    reportTo: '',
-    reportingManager: '',
-    joiningDate: '',
-    salary: '',
-    offMobileNo: '',
-    offEmailId: '',
-    bankName: '',
-    accountNo: '',
-    ifscCode: '',
-    password: '',
-    position: '',
-    managedBy: '',
-    status: '',
-  });
+export default function Edit_Employee_List() {
+  const { id } = useParams(); // Get employee ID from URL
+  const navigate = useNavigate();
 
-  // Fetch data for the employee based on ID
+  const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await fetch(`http://77.37.45.224:8000/api/user/getEmployee`, {
+          method: 'GET',
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
+          }
+        });
 
-    // Initialize state with query parameters
-    setEmployee({
-      fullName: queryParams.get('fullName') || '',
-      employeeId: queryParams.get('employeeId') || '',
-      role: queryParams.get('role') || '',
-      mobileNo: queryParams.get('mobileNo') || '',
-      emailId: queryParams.get('emailId') || '',
-      address: queryParams.get('address') || '',
-      referenceName: queryParams.get('referenceName') || '',
-      designation: queryParams.get('designation') || '',
-      reportTo: queryParams.get('reportTo') || '',
-      reportingManager: queryParams.get('reportingManager') || '',
-      joiningDate: queryParams.get('joiningDate') || '',
-      salary: queryParams.get('salary') || '',
-      offMobileNo: queryParams.get('offMobileNo') || '',
-      offEmailId: queryParams.get('offEmailId') || '',
-      bankName: queryParams.get('bankName') || '',
-      accountNo: queryParams.get('accountNo') || '',
-      ifscCode: queryParams.get('ifscCode') || '',
-      password: queryParams.get('password') || '',
-      position: queryParams.get('position') || '',
-      managedBy: queryParams.get('managedBy') || '',
-      status: queryParams.get('status') || '',
-    });
-  }, [location.search]);
+        if (response.ok) {
+          const data = await response.json();
+          const employee = data.data.find(emp => emp._id === id);
+          if (employee) {
+            setUser(employee);
+          } else {
+            toast.error("Employee not found");
+          }
+        } else {
+          toast.error("Error fetching employee data");
+        }
+      } catch (error) {
+        toast.error("Error fetching employee data");
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployee((prevEmployee) => ({
-      ...prevEmployee,
-      [name]: value,
+    fetchEmployeeData();
+  }, [id]);
+
+  const handleInputs = (name, value) => {
+    setUser(prevUser => ({
+      ...prevUser,
+      [name]: value
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleEdit = async () => {
     try {
-      const response = await axios.put(`http://77.37.45.224:8000/api/user/updateEmployeeData/${id}`, {
-        ...employee
+      setIsLoading(true);
+      const response = await fetch(`http://77.37.45.224:8000/api/user/updateEmployeeData`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`,
+        },
+        body: JSON.stringify({
+          _id: id,
+          FirstName: user.FirstName,
+          MiddleName: user.MiddleName,
+          LastName: user.LastName,
+          MobileNumber: user.MobileNumber,
+          Password: user.Password,
+          EmailId: user.EmailId,
+          EmployeeID: user.EmployeeID,
+          BloodGroup: user.BloodGroup,
+          HighestQualification: user.HighestQualification,
+          Year: user.Year,
+          TotalExperience: user.TotalExperience,
+          LastCompanyName: user.LastCompanyName,
+          JoiningDate: user.JoiningDate,
+          Reference1: user.Reference1,
+          Relation1: user.Relation1,
+          Address1: user.Address1,
+          ReferenceName2: user.ReferenceName2,
+          Relation2: user.Relation2,
+          Address2: user.Address2,
+          DateOfJoining: user.DateOfJoining,
+          CompanyName: user.CompanyName,
+          BasicSalary: user.BasicSalary,
+          FixedAllowance: user.FixedAllowance,
+          SpecialAllowance: user.SpecialAllowance,
+          VeriableAllowance: user.VeriableAllowance,
+          OfficialMobileNumber: user.OfficialMobileNumber,
+          MobileIMEINumber: user.MobileIMEINumber,
+          BankName: user.BankName,
+          AccountHolderName: user.AccountHolderName,
+          AccountNumber: user.AccountNumber,
+          IFSCCode: user.IFSCCode,
+          Role: user.Role,
+        }),
       });
 
-      if (response.data.success) {
-        navigate('/employee-list'); // Redirect on success
+      if (response.ok) {
+        toast.success("Employee updated successfully");
+        setTimeout(() => navigate('/hrpanel/employee-list'), 1000);
       } else {
-        console.error('Failed to update employee');
+        toast.error("Unable to update employee");
       }
     } catch (error) {
-      console.error('Error updating employee:', error);
+      toast.error("Unable to update employee");
+      console.error("Error updating employee:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return (
-    <form className='emp-edit-form' onSubmit={handleSubmit}>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Fullname</label>
-        <input className='emp-edit-input' type="text" name="fullName" value={employee.fullName} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Employee Id</label>
-        <input className='emp-edit-input' type="text" name="employeeId" value={employee.employeeId} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Role</label>
-        <input className='emp-edit-input' type="text" name="role" value={employee.role} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Mobile no.</label>
-        <input className='emp-edit-input' type="text" name="mobileNo" value={employee.mobileNo} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Email id</label>
-        <input className='emp-edit-input' type="text" name="emailId" value={employee.emailId} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Address</label>
-        <input className='emp-edit-input' type="text" name="address" value={employee.address} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Reference name</label>
-        <input className='emp-edit-input' type="text" name="referenceName" value={employee.referenceName} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Designation</label>
-        <input className='emp-edit-input' type="text" name="designation" value={employee.designation} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Report to</label>
-        <input className='emp-edit-input' type="text" name="reportTo" value={employee.reportTo} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Reporting Manager</label>
-        <input className='emp-edit-input' type="text" name="reportingManager" value={employee.reportingManager} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Joining Date</label>
-        <input className='emp-edit-input' type="date" name="joiningDate" value={employee.joiningDate} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Salary p/m</label>
-        <input className='emp-edit-input' type="text" name="salary" value={employee.salary} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Off. Mobile no.</label>
-        <input className='emp-edit-input' type="text" name="offMobileNo" value={employee.offMobileNo} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Off. Email id</label>
-        <input className='emp-edit-input' type="text" name="offEmailId" value={employee.offEmailId} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Bank name</label>
-        <input className='emp-edit-input' type="text" name="bankName" value={employee.bankName} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Account no</label>
-        <input className='emp-edit-input' type="text" name="accountNo" value={employee.accountNo} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>IFSC code</label>
-        <input className='emp-edit-input' type="text" name="ifscCode" value={employee.ifscCode} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Password</label>
-        <input className='emp-edit-input' type="password" name="password" value={employee.password} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Position</label>
-        <input className='emp-edit-input' type="text" name="position" value={employee.position} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Managed By</label>
-        <input className='emp-edit-input' type="text" name="managedBy" value={employee.managedBy} onChange={handleChange} />
-      </div>
-      <div className='emp-edit-div'>
-        <label className='emp-edit-label'>Status</label>
-        <input className='emp-edit-input' type="text" name="status" value={employee.status} onChange={handleChange} />
-      </div>
-      <button className='emp-edit-btn' type="submit">Save</button>
-    </form>
-  );
-};
+  if (isLoading && !user) {
+    return <div>Loading...</div>;
+  }
 
-export default Edit_Employee_List;
+  return (
+    <>
+      <ToastContainer />
+      <div className="breadcrumb">
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to="/hrpanel/employee-list">Employee List</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Edit Employee</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
+      <div style={{ maxWidth: '100%', margin: "auto" }}>
+        <Title level={2}>Edit Employee</Title>
+        <Form
+          // labelCol={{ span: 8 }}
+          // wrapperCol={{ span: 16 }}
+          layout="horizontal"
+          size="large"
+        >
+          <Form.Item label={<span style={{ marginRight: '65px' }}>Employee Id</span>}>
+            <Input
+              disabled
+              value={user.EmployeeID || ''}
+            />
+          </Form.Item>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item
+                label={<span style={{ marginRight: '74px' }}>First Name</span>}
+              >
+                <Input
+                  placeholder="Enter first name"
+                  autoComplete="off"
+                  name="FirstName"
+                  value={user.FirstName || ''}
+                  onChange={(e) => handleInputs('FirstName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '50px' }}>Middle Name</span>}>
+                <Input
+                  placeholder="Enter middle name"
+                  autoComplete="off"
+                  name="MiddleName"
+                  value={user.MiddleName || ''}
+                  onChange={(e) => handleInputs('MiddleName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '50px' }}>Last Name</span>}>
+                <Input
+                  placeholder="Enter last name"
+                  autoComplete="off"
+                  name="LastName"
+                  value={user.LastName || ''}
+                  onChange={(e) => handleInputs('LastName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '79px' }}>Mobile No</span>}>
+                <Input
+                  placeholder="Enter mobile number"
+                  autoComplete="off"
+                  name="MobileNumber"
+                  value={user.MobileNumber || ''}
+                  onChange={(e) => handleInputs('MobileNumber', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '70px' }}>Password</span>}>
+                <Input
+                  placeholder="Enter password"
+                  autoComplete="off"
+                  name="Password"
+                  value={user.Password || ''}
+                  onChange={(e) => handleInputs('Password', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '67px' }}>Email Id</span>}>
+                <Input
+                  placeholder="Enter email id"
+                  autoComplete="off"
+                  name="EmailId"
+                  value={user.EmailId || ''}
+                  onChange={(e) => handleInputs('EmailId', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '65px' }}>Blood Group</span>}>
+                <Input
+                  placeholder="Enter blood group"
+                  autoComplete="off"
+                  name="BloodGroup"
+                  value={user.BloodGroup || ''}
+                  onChange={(e) => handleInputs('BloodGroup', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '55px' }}>Qualification</span>}>
+                <Input
+                  placeholder="Enter highest qualification"
+                  autoComplete="off"
+                  name="HighestQualification"
+                  value={user.HighestQualification || ''}
+                  onChange={(e) => handleInputs('HighestQualification', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '90px' }}>Year</span>}>
+                <Input
+                  placeholder="Enter year"
+                  autoComplete="off"
+                  name="Year"
+                  value={user.Year || ''}
+                  onChange={(e) => handleInputs('Year', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '40px' }}>Total Experience</span>}>
+                <Input
+                  placeholder="Enter total experience"
+                  autoComplete="off"
+                  name="TotalExperience"
+                  value={user.TotalExperience || ''}
+                  onChange={(e) => handleInputs('TotalExperience', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '42px' }}>Last Company</span>}>
+                <Input
+                  placeholder="Enter last company name"
+                  autoComplete="off"
+                  name="LastCompanyName"
+                  value={user.LastCompanyName || ''}
+                  onChange={(e) => handleInputs('LastCompanyName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '42px' }}>Joining Date</span>}>
+                <Input
+                  placeholder="Enter joining date"
+                  autoComplete="off"
+                  name="JoiningDate"
+                  value={user.JoiningDate || ''}
+                  onChange={(e) => handleInputs('JoiningDate', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '66px' }}>Reference 1</span>}>
+                <Input
+                  placeholder="Enter reference 1"
+                  autoComplete="off"
+                  name="Reference1"
+                  value={user.Reference1 || ''}
+                  onChange={(e) => handleInputs('Reference1', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '69px' }}>Relation 1</span>}>
+                <Input
+                  placeholder="Enter relation 1"
+                  autoComplete="off"
+                  name="Relation1"
+                  value={user.Relation1 || ''}
+                  onChange={(e) => handleInputs('Relation1', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '57px' }}>Address 1</span>}>
+                <Input
+                  placeholder="Enter address 1"
+                  autoComplete="off"
+                  name="Address1"
+                  value={user.Address1 || ''}
+                  onChange={(e) => handleInputs('Address1', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '23px' }}>Reference Name 2</span>}>
+                <Input
+                  placeholder="Enter reference name 2"
+                  autoComplete="off"
+                  name="ReferenceName2"
+                  value={user.ReferenceName2 || ''}
+                  onChange={(e) => handleInputs('ReferenceName2', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '69px' }}>Relation 2</span>}>
+                <Input
+                  placeholder="Enter relation 2"
+                  autoComplete="off"
+                  name="Relation2"
+                  value={user.Relation2 || ''}
+                  onChange={(e) => handleInputs('Relation2', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '57px' }}>Address 2</span>}>
+                <Input
+                  placeholder="Enter address 2"
+                  autoComplete="off"
+                  name="Address2"
+                  value={user.Address2 || ''}
+                  onChange={(e) => handleInputs('Address2', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '50px' }}>Date of Joining</span>}>
+                <Input
+                  placeholder="Enter date of joining"
+                  autoComplete="off"
+                  name="DateOfJoining"
+                  value={user.DateOfJoining || ''}
+                  onChange={(e) => handleInputs('DateOfJoining', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '31px' }}>Company Name</span>}>
+                <Input
+                  placeholder="Enter company name"
+                  autoComplete="off"
+                  name="CompanyName"
+                  value={user.CompanyName || ''}
+                  onChange={(e) => handleInputs('CompanyName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '42px' }}>Basic Salary</span>}>
+                <Input
+                  placeholder="Enter basic salary"
+                  autoComplete="off"
+                  name="BasicSalary"
+                  value={user.BasicSalary || ''}
+                  onChange={(e) => handleInputs('BasicSalary', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '43px' }}>Fixed Allowance</span>}>
+                <Input
+                  placeholder="Enter fixed allowance"
+                  autoComplete="off"
+                  name="FixedAllowance"
+                  value={user.FixedAllowance || ''}
+                  onChange={(e) => handleInputs('FixedAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '21px' }}>Special Allowance</span>}>
+                <Input
+                  placeholder="Enter special allowance"
+                  autoComplete="off"
+                  name="SpecialAllowance"
+                  value={user.SpecialAllowance || ''}
+                  onChange={(e) => handleInputs('SpecialAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '4px' }}>Variable Allowance</span>}>
+                <Input
+                  placeholder="Enter variable allowance"
+                  autoComplete="off"
+                  name="VeriableAllowance"
+                  value={user.VeriableAllowance || ''}
+                  onChange={(e) => handleInputs('VeriableAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '33px' }}>Official Mobile No.</span>}>
+                <Input
+                  placeholder="Enter official mobile number"
+                  autoComplete="off"
+                  name="OfficialMobileNumber"
+                  value={user.OfficialMobileNumber || ''}
+                  onChange={(e) => handleInputs('OfficialMobileNumber', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '35px' }}>Mobile IMEI No.</span>}>
+                <Input
+                  placeholder="Enter mobile IMEI number"
+                  autoComplete="off"
+                  name="MobileIMEINumber"
+                  value={user.MobileIMEINumber || ''}
+                  onChange={(e) => handleInputs('MobileIMEINumber', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '51px' }}>Bank Name</span>}>
+                <Input
+                  placeholder="Enter bank name"
+                  autoComplete="off"
+                  name="BankName"
+                  value={user.BankName || ''}
+                  onChange={(e) => handleInputs('BankName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '50px' }}>Account Holder</span>}>
+                <Input
+                  placeholder="Enter account holder name"
+                  autoComplete="off"
+                  name="AccountHolderName"
+                  value={user.AccountHolderName || ''}
+                  onChange={(e) => handleInputs('AccountHolderName', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '30px' }}>Account Number</span>}>
+                <Input
+                  placeholder="Enter account number"
+                  autoComplete="off"
+                  name="AccountNumber"
+                  value={user.AccountNumber || ''}
+                  onChange={(e) => handleInputs('AccountNumber', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '54px' }}>IFSC Code</span>}>
+                <Input
+                  placeholder="Enter IFSC code"
+                  autoComplete="off"
+                  name="IFSCCode"
+                  value={user.IFSCCode || ''}
+                  onChange={(e) => handleInputs('IFSCCode', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '116px' }}>Role</span>}>
+                <Input
+                  placeholder="Enter role"
+                  autoComplete="off"
+                  name="Role"
+                  value={user.Role || ''}
+                  onChange={(e) => handleInputs('Role', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" onClick={handleEdit} loading={isLoading}>
+              Save
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </>
+  );
+}

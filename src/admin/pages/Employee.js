@@ -74,8 +74,13 @@ export default function Employee() {
   };
 
   const fetchData = async () => {
+    const authToken = localStorage.getItem('jwtoken');
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/admin/getexcelfiles`);
+      const response = await axios.get(`http://77.37.45.224:8000/api/admin/getexcelfiles`,{
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       setUserCount(response.data.userCount);
     } catch (error) {
       console.error('Error fetching data:', error);
