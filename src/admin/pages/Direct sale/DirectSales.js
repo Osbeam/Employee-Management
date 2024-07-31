@@ -8,7 +8,7 @@ const DirectSales = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [userCount, setUserCount] = useState(0);
-    const [pageSize] = useState(10); // Ensure pageSize is set to 10
+    const [pageSize] = useState(10);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -68,36 +68,28 @@ const DirectSales = () => {
                             <th>City</th>
                             <th>Income Type</th>
                             <th>Other Income Type</th>
+                            <th>Loan Type</th> 
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="8">Loading...</td>
+                                <td colSpan="9">Loading...</td>
                             </tr>
                         ) : (
                             employees.length > 0 ? (
                                 employees.map((user, index) => {
                                     const salaryIncome = user.salaryIncome;
                                     const businessIncome = user.businessIncome;
+                                    const loanType = user.LoanType ? user.LoanType.join(', ') : 'No Loan';
 
                                     return (
                                         <tr key={user.userId}>
                                             <td>{index + 1 + (currentPage - 1) * pageSize}</td>
                                             <td>{salaryIncome ? salaryIncome.Name : (businessIncome ? businessIncome.Name : '-')}</td>
                                             <td>{salaryIncome ? salaryIncome.MobileNo1 : (businessIncome ? businessIncome.MobileNo1 : '-')}</td>
-                                            <td>
-                                                {salaryIncome
-                                                    ? (salaryIncome.PropertyLocation && salaryIncome.PropertyLocation.length > 0
-                                                        ? salaryIncome.PropertyLocation[0].village_locality_name
-                                                        : '-')
-                                                    : (businessIncome
-                                                        ? (businessIncome.BusinessLocation && businessIncome.BusinessLocation.length > 0
-                                                            ? businessIncome.BusinessLocation[0].village_locality_name
-                                                            : '-')
-                                                        : '-')}
-                                            </td>
+                                            <td>{salaryIncome ? salaryIncome.PropertyLocation : (businessIncome ? businessIncome.PropertyLocation : '-')}</td>
                                             <td>
                                                 {salaryIncome
                                                     ? (Array.isArray(salaryIncome.City) ? salaryIncome.City.join(', ') : salaryIncome.City)
@@ -105,9 +97,16 @@ const DirectSales = () => {
                                                         ? (Array.isArray(businessIncome.City) ? businessIncome.City.join(', ') : businessIncome.City)
                                                         : '-')}
                                             </td>
-                                            <td>{getIncomeType(salaryIncome, businessIncome) || '-'}</td> {/* New column with default value */}
+                                            <td>{getIncomeType(salaryIncome, businessIncome) || '-'}</td>
                                             <td>
                                                 {salaryIncome && businessIncome ? businessIncome.Name : 'No Other Income'}
+                                            </td>
+                                            <td>
+                                                {salaryIncome
+                                                    ? (Array.isArray(salaryIncome.LoanType) ? salaryIncome.LoanType.join(', ') : salaryIncome.LoanType)
+                                                    : (businessIncome
+                                                        ? (Array.isArray(businessIncome.LoanType) ? businessIncome.LoanType.join(', ') : businessIncome.LoanType)
+                                                        : '-')}
                                             </td>
                                             <td className="statusbtn">
                                                 <button
@@ -119,11 +118,10 @@ const DirectSales = () => {
                                             </td>
                                         </tr>
                                     );
-                                    
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="8">No data available</td>
+                                    <td colSpan="9">No data available</td>
                                 </tr>
                             )
                         )}
