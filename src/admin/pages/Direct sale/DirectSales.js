@@ -86,7 +86,7 @@ const DirectSales = () => {
                                         <tr key={user.userId}>
                                             <td>{index + 1 + (currentPage - 1) * pageSize}</td>
                                             <td>{salaryIncome ? salaryIncome.Name : (businessIncome ? businessIncome.Name : '-')}</td>
-                                            <td>{salaryIncome ? salaryIncome.MobileNo : (businessIncome ? businessIncome.MobileNo : '-')}</td>
+                                            <td>{salaryIncome ? salaryIncome.MobileNo1 : (businessIncome ? businessIncome.MobileNo1 : '-')}</td>
                                             <td>
                                                 {salaryIncome
                                                     ? (salaryIncome.PropertyLocation && salaryIncome.PropertyLocation.length > 0
