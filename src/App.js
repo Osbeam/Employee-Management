@@ -22,6 +22,9 @@ import Hr_Dashboard from './hr/pages/Hr_Dashboard';
 import Pending_Leads from './admin/pages/Pending_Leads';
 import Edit_Employee_List from './hr/pages/Edit_Employee_List';
 import ProtectedRoute from './ProtectedRoute';
+import SalaryIncome from './admin/pages/Direct sale/SalaryIncome';
+import BusinessIncome from './admin/pages/Direct sale/BusinessIncome';
+import ProfessionalIncome from './admin/pages/Direct sale/ProfessionalIncome'
 
 function App() {
   return (
@@ -37,7 +40,9 @@ function App() {
           <Route path='leads' element={<Leads />} />
           <Route path='pendingleads' element={<Pending_Leads/>}/>
           <Route path='directsales' element={<DirectSales/>}/>
-          <Route path='directsales/directleadinfo' element={<DirectLeadInfo/>}/>
+          <Route path='directsales/salaryincome' element={<SalaryIncome/>}/>
+          <Route path='directsales/businessincome' element={<BusinessIncome/>}/>
+          <Route path='directsales/professionalincome' element={<ProfessionalIncome/>}/>
         </Route>
         
         <Route path='/hrpanel' element={<ProtectedRoute><Hr_Layout /></ProtectedRoute>}>

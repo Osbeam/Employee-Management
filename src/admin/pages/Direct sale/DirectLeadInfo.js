@@ -1,13 +1,17 @@
-import React from "react";
+// import React, { useRef, useState } from "react";
+// import SalaryIncome from "./SalaryIncome";
+// import BusinessIncome from "./BusinessIncome";
 
+// const DirectLeadInfo = () => {
 
-const DirectLeadInfo = () =>{
-    return(
-        <>
-        Direct Lead Info
-        </>
-    )
-}
+//     return (
+//         <>
+       
+//             <div>
+//             {/* <SalaryIncome/> */}
+//             <BusinessIncome/>
+//             </div>
+//         </>);
+// }
 
-
-export default DirectLeadInfo;
+// export default DirectLeadInfo;

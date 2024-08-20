@@ -1,0 +1,43 @@
+
+/* Salary Income css*/
+.directlead-header{
+    margin-bottom: 10px;
+    margin-top: 15px;
+}
+.FormItem .ant-input{
+    width: 134% !important;
+}
+.FormItemAdd .ant-input{
+    width: 167% !important;
+}
+.dl-btn{
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+}
+.dl-btn button{
+    padding: 10px 40px 10px 40px;
+    border: 1px solid;
+    border-radius: 8px;
+    color: white;
+    background: seagreen;
+}
+.dl-btn-sbmt{
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+}
+.dl-btn-sbmt button{
+    padding: 10px 40px 10px 40px;
+    border: 1px solid;
+    border-radius: 8px;
+    color: white;
+    background: seagreen;
+}
+
+.breadcrumb{
+    margin-bottom: 25px;
+}
+.breadcrumb a{
+    color: black;
+}

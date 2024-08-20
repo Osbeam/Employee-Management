@@ -681,7 +681,7 @@ export default function New_employee() {
               {subDepartments && subDepartments.map((subDepartment) => (
                 <option key={subDepartment._id} value={subDepartment._id}>
                   {subDepartment.name}
-                </option>
+                </option>  
               ))}
             </select>
 
@@ -711,7 +711,7 @@ export default function New_employee() {
               <option value="">Select</option>
               <option value="Boss">Boss</option>
               <option value="Manager">Manager</option>
-              <option value="TeamLeader">TeamLeader</option>
+              <option value="TeamLeader">Team Leader</option>
               <option value="None">None</option>
             </select>
 

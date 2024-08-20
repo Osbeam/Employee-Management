@@ -23,10 +23,16 @@ export default function Edit_Employee_List() {
             "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
           }
         });
-
+    
         if (response.ok) {
           const data = await response.json();
-          const employee = data.data.find(emp => emp._id === id);
+          // Inspect data structure
+          console.log("API response:", data);
+    
+          // Assuming data.data is an object with a nested array
+          const employeeData = data.data.employees || []; // Adjust this based on actual response
+          const employee = employeeData.find(emp => emp._id === id);
+          
           if (employee) {
             setUser(employee);
           } else {
@@ -42,6 +48,7 @@ export default function Edit_Employee_List() {
         setIsLoading(false);
       }
     };
+    
 
     fetchEmployeeData();
   }, [id]);

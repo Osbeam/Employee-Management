@@ -40,7 +40,12 @@ const DirectSales = () => {
     };
 
     const handleEdit = (employee) => {
-        navigate('directleadinfo', { state: { employee } });
+        const { salaryIncome, businessIncome } = employee;
+        if (salaryIncome) {
+            navigate('salaryincome', { state: { employee } });
+        } else if (businessIncome) {
+            navigate('businessincome', { state: { employee } });
+        }
     };
 
     const getIncomeType = (salaryIncome, businessIncome) => {
@@ -68,7 +73,7 @@ const DirectSales = () => {
                             <th>City</th>
                             <th>Income Type</th>
                             <th>Other Income Type</th>
-                            <th>Loan Type</th> 
+                            <th>Loan Type</th>
                             <th>Action</th>
                         </tr>
                     </thead>
