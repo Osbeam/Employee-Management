@@ -40,9 +40,9 @@ function App() {
           <Route path='leads' element={<Leads />} />
           <Route path='pendingleads' element={<Pending_Leads/>}/>
           <Route path='directsales' element={<DirectSales/>}/>
-          <Route path='directsales/salaryincome' element={<SalaryIncome/>}/>
-          <Route path='directsales/businessincome' element={<BusinessIncome/>}/>
-          <Route path='directsales/professionalincome' element={<ProfessionalIncome/>}/>
+          <Route path='directsales/salaryincome/:userId' element={<SalaryIncome />} />
+          <Route path='directsales/businessincome/:userId' element={<BusinessIncome/>}/>
+          <Route path='directsales/professionalincome/userId' element={<ProfessionalIncome/>}/>
         </Route>
         
         <Route path='/hrpanel' element={<ProtectedRoute><Hr_Layout /></ProtectedRoute>}>

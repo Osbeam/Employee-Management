@@ -1,14 +1,39 @@
-import React, { useState, useRef } from "react";
-import { Col, Row, Form, Input, Tabs, Select } from 'antd';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Col, Row, Form, Input, Tabs, Button, Select } from 'antd';
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const { TabPane } = Tabs;
-const { Option } = Select;
 
 const BusinessIncome = () => {
     const [activeKey, setActiveKey] = useState("1");
     const tabsRef = useRef(null);
     const navigate = useNavigate();
+    const { userId } = useParams();
+    const { search } = useLocation();
+    const { Option } = Select;
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        const query = new URLSearchParams(search);
+
+        // Create an object with the parsed query parameters
+        const userData = {};
+        query.forEach((value, key) => {
+            userData[key] = value;
+        });
+
+        // Set the state with the parsed data
+        setUser(userData);
+    }, [search]);
+
+    const handleInputs = (name, value) => {
+        setUser(prevUser => ({
+            ...prevUser,
+            [name]: value
+        }));
+    };
+
 
     const handleNext = () => {
         const nextKey = activeKey === "1" ? "2" : "1";
@@ -16,9 +41,122 @@ const BusinessIncome = () => {
         tabsRef.current?.scrollIntoView();
     };
 
-    const handleSubmit = () => {
+    const handleEdit = async () => {
+        try {
+            const payload = {
+                _id: userId,
+                Name: user.Name || '',
+                MobileNo1: user.MobileNo1 || '',
+                LoanType: user.LoanType || '',
+                IncomeType: user.IncomeType || '',
+                LoanAmount: user.LoanAmount || '',
+                PropertyLocation: user.PropertyLocation || '',
+                City: user.City || '',
+                BusinessName: user.BusinessName || '',
+                TypeOfBusiness: user.TypeOfBusiness || '',
+                BusinessIndustry: user.BusinessIndustry || '',
+                BusinessFormationType: user.BusinessFormationType || '',
+                BusinessFormationDate: user.BusinessFormationDate || '',
+                OfficeType: user.OfficeType || '',
+                OfficeOwnership: user.OfficeOwnership || '',
+                BusinessLocation: user.BusinessLocation || '',
+                ITRStatus: user.ITRStatus || '',
+                YearWiseITR: user.YearWiseITR || [],
+                GstRegistration: user.GstRegistration || '',
+                GstNumber: user.GstNumber || '',
+                DateOfGstRegistration: user.DateOfGstRegistration || '',
+                IndustryRegistration: user.IndustryRegistration || '',
+                IndustryNumber: user.IndustryNumber || '',
+                DateOfIndustryRegistration: user.DateOfIndustryRegistration || '',
+                CurrentAccount: user.CurrentAccount || '',
+                AccountNumber: user.AccountNumber || '',
+                DateOfOpening: user.DateOfOpening || '',
+                BankAnalysis: user.BankAnalysis || '',
+                Exporter: user.Exporter || '',
+                ExportTurnoverLastYear: user.ExportTurnoverLastYear || '',
+                TDSDeduction: user.TDSDeduction || '',
+                LeadId: user.LeadId || '',
+                LeadDate: user.LeadDate || '',
+                SourcingChanel: user.SourcingChanel || '',
+                SourceName: user.SourceName || '',
+                LeadName: user.LeadName || '',
+                EmailId: user.EmailId || '',
+                DateOfBirth: user.DateOfBirth || '',
+                Age: user.Age || '',
+                Sex: user.Sex || '',
+                MaritalStatus: user.MaritalStatus || '',
+                ResidenceType: user.ResidenceType || '',
+                ResidenceCity: user.ResidenceCity || '',
+                PermanentAddress: user.PermanentAddress || '',
+                PCity: user.PCity || '',
+                PPinCode: user.PPinCode || '',
+                PState: user.PState || '',
+                FormationType: user.FormationType || '',
+                OrganizationName: user.OrganizationName || '',
+                OfficeType: user.OfficeType || '',
+                Designation: user.Designation || '',
+                CurrentExperience: user.CurrentExperience || '',
+                IndustryType: user.IndustryType || '',
+                Dated: user.Dated || '',
+                ExperienceProof: user.ExperienceProof || '',
+                Form26AS: user.Form26AS || '',
+                PFApplicability: user.PFApplicability || '',
+                IncomeDetails: user.IncomeDetails || [],
+                TurnOverDetails: user.TurnOverDetails || [],
+                BankDetails: user.BankDetails || []
+            };
 
-    }
+            console.log('Payload:', payload);
+
+            const response = await fetch(`http://77.37.45.224:8000/api/bussinessIncome/EditBusinessData`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json(); // Parse response JSON
+            if (response.ok) {
+                toast.success("Business income updated successfully");
+                setTimeout(() => navigate('/admin/directsales'), 1000);
+            } else {
+                toast.error("Unable to update business income");
+                console.error("API Error:", result);
+            }
+        } catch (error) {
+            toast.error("Unable to update business income");
+            console.error("Error updating business income:", error);
+        }
+    };
+    const handleSelectChange = (value) => {
+        handleInputs('ITRStatus', value);
+    };
+    const handleSelectChangeGstRegi = (value) => {
+        handleInputs('GstRegistration', value);
+    };
+    const handleSelectChangeIndustryRegi = (value) => {
+        handleInputs('IndustryRegistration', value);
+    };
+    const handleSelectChangeCurrentAcc = (value) => {
+        handleInputs('CurrentAccount', value);
+    };
+    const handleSelectChangeExporter = (value) => {
+        handleInputs('Exporter', value);
+    };
+    const handleSelectChangeTDSDeduction = (value) => {
+        handleInputs('TDSDeduction', value);
+    };
+    const handleSelectChangeForm26AS = (value) => {
+        handleInputs('Form26AS', value);
+    };
+    const handleSelectChangePFApplicability = (value) => {
+        handleInputs('PFApplicability', value);
+    };
+    
+
+    
     return (
         <>
             <div className="directlead-header">
@@ -36,48 +174,97 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Name of the Business" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="BusinessName"
+                                            value={user.BusinessName || ''}
+                                            onChange={(e) => handleInputs('BusinessName', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Type of Business" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="TypeOfBusiness"
+                                            value={user.TypeOfBusiness || ''}
+                                            onChange={(e) => handleInputs('TypeOfBusiness', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Business Industry" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="BusinessIndustry  "
+                                            value={user.BusinessIndustry || ''}
+                                            onChange={(e) => handleInputs('BusinessIndustry', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Business Formation Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="BusinessFormationType"
+                                            value={user.BusinessFormationType || ''}
+                                            onChange={(e) => handleInputs('BusinessFormationType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Business Formation Date" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            type="Date"
+                                            name="BusinessFormationDate"
+                                            value={user.BusinessFormationDate || ''}
+                                            onChange={(e) => handleInputs('BusinessFormationDate', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Office Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="OfficeType"
+                                            value={user.OfficeType || ''}
+                                            onChange={(e) => handleInputs('OfficeType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Office Ownership" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="OfficeOwnership"
+                                            value={user.OfficeOwnership || ''}
+                                            onChange={(e) => handleInputs('OfficeOwnership', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Business Location" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="BusinessLocation"
+                                            value={user.BusinessLocation || ''}
+                                            onChange={(e) => handleInputs('BusinessLocation', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -86,24 +273,52 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="ITR Status" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Select
+                                            placeholder="Please select"
+                                            value={user.ITRStatus || []}
+                                            onChange={handleSelectChange}
+                                            autoComplete="off"
+                                            name="ITRStatus"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="AY Wise ( 2023-24) Filing Date  " className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="FillingDate"
+                                            value={user.FillingDate || ''}
+                                            onChange={(e) => handleInputs('FillingDate', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="AY Wise ( 2023-24) Profit" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="Profit"
+                                            value={user.Profit || ''}
+                                            onChange={(e) => handleInputs('Profit', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item label="AY Wise ( 2023-24) Profit" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                    <Form.Item label="AY Wise ( 2023-24) Turn Over" className="FormItem">
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="TurnOver"
+                                            value={user.TurnOver || ''}
+                                            onChange={(e) => handleInputs('TurnOver', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -112,40 +327,86 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="GST Registration" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                            <Select
+                                            placeholder="Please select"
+                                            value={user.GstRegistration || []}
+                                            onChange={handleSelectChangeGstRegi}
+                                            autoComplete="off"
+                                            name="GstRegistration"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="GST Number" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GstNumber"
+                                            value={user.GstNumber || ''}
+                                            onChange={(e) => handleInputs('GstNumber', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Date of Registration" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="DateOfGstRegistration"
+                                            value={user.DateOfGstRegistration || ''}
+                                            onChange={(e) => handleInputs('DateOfGstRegistration', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <hr style={{ marginBottom: '50px' }} />
 
                             <Row gutter={[8, 8]}>
+                            <Col span={12}>
+                                    <Form.Item label="Industry specific registration" className="FormItem">
+                               
+                                              <Select
+                                            placeholder="Please select"
+                                            value={user.IndustryRegistration || []}
+                                            onChange={handleSelectChangeIndustryRegi}
+                                            autoComplete="off"
+                                            name="IndustryRegistration"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
                                 <Col span={12}>
                                     <Form.Item label="Industry specific registration number" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="IndustryNumber"
+                                            value={user.IndustryNumber || ''}
+                                            onChange={(e) => handleInputs('IndustryNumber', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Industry specific registration" className="FormItem">
-                                        <Input placeholder="Please enter" />
-                                    </Form.Item>
-                                </Col>
+                            
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Date of Registration" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="DateOfIndustryRegistration"
+                                            value={user.DateOfIndustryRegistration || ''}
+                                            onChange={(e) => handleInputs('DateOfIndustryRegistration', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -154,19 +415,41 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Current Account" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                               <Select
+                                            placeholder="Please select"
+                                            value={user.CurrentAccount || []}
+                                            onChange={handleSelectChangeCurrentAcc}
+                                            autoComplete="off"
+                                            name="CurrentAccount"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Account Number" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="AccountNumber"
+                                            value={user.AccountNumber || ''}
+                                            onChange={(e) => handleInputs('AccountNumber', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Date of Opening" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="DateOfOpening"
+                                            value={user.DateOfOpening || ''}
+                                            onChange={(e) => handleInputs('DateOfOpening', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -175,24 +458,48 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Bank Analysis" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="BankAnalysis"
+                                            value={user.BankAnalysis || ''}
+                                            onChange={(e) => handleInputs('BankAnalysis', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Bank Analysis" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GrossSalaryPerMonth"
+                                            value={user.GrossSalaryPerMonth || ''}
+                                            onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Bank Analysis" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GrossSalaryPerMonth"
+                                            value={user.GrossSalaryPerMonth || ''}
+                                            onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Bank Analysis" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GrossSalaryPerMonth"
+                                            value={user.GrossSalaryPerMonth || ''}
+                                            onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -201,19 +508,45 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Exporter" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                 
+                                                  <Select
+                                            placeholder="Please select"
+                                            value={user.Exporter || []}
+                                            onChange={handleSelectChangeExporter}
+                                            autoComplete="off"
+                                            name="Exporter"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Exporter Turnover last Year" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="ExportTurnoverLastYear"
+                                            value={user.ExportTurnoverLastYear || ''}
+                                            onChange={(e) => handleInputs('ExportTurnoverLastYear', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="TDS Deduction" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                
+                                                   <Select
+                                            placeholder="Please select"
+                                            value={user.TDSDeduction || []}
+                                            onChange={handleSelectChangeTDSDeduction}
+                                            autoComplete="off"
+                                            name="TDSDeduction"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -222,12 +555,24 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Do you have any other source of Income?" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GrossSalaryPerMonth"
+                                            value={user.GrossSalaryPerMonth || ''}
+                                            onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Specify Other source of Income" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="GrossSalaryPerMonth"
+                                            value={user.GrossSalaryPerMonth || ''}
+                                            onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -242,43 +587,86 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Lead Id" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="LeadId"
+                                            value={user.LeadId || ''}
+                                            onChange={(e) => handleInputs('LeadId', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Lead Date" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="LeadDate"
+                                            value={user.LeadDate || ''}
+                                            onChange={(e) => handleInputs('LeadDate', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Sourcing Channel" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="SourcingChanel"
+                                            value={user.SourcingChanel || ''}
+                                            onChange={(e) => handleInputs('SourcingChanel', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Source Name" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="SourceName"
+                                            value={user.SourceName || ''}
+                                            onChange={(e) => handleInputs('SourceName', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Loan Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="LoanType"
+                                            value={user.LoanType || ''}
+                                            onChange={(e) => handleInputs('LoanType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Loan Amount" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="LoanAmount"
+                                            value={user.LoanAmount || ''}
+                                            onChange={(e) => handleInputs('LoanAmount', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Lead Name" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="LeadName"
+                                            value={user.LeadName || ''}
+                                            onChange={(e) => handleInputs('LeadName', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -286,85 +674,145 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Mobile Number" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="MobileNo1"
+                                            value={user.MobileNo1 || ''}
+                                            onChange={(e) => handleInputs('MobileNo1', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Email Id" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="EmailId"
+                                            value={user.EmailId || ''}
+                                            onChange={(e) => handleInputs('EmailId', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Date of Birth" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="DateOfBirth"
+                                            value={user.DateOfBirth || ''}
+                                            onChange={(e) => handleInputs('DateOfBirth', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Age" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="Age"
+                                            value={user.Age || ''}
+                                            onChange={(e) => handleInputs('Age', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Sex" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="Sex"
+                                            value={user.Sex || ''}
+                                            onChange={(e) => handleInputs('Sex', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Marital Status" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="MaritalStatus"
+                                            value={user.MaritalStatus || ''}
+                                            onChange={(e) => handleInputs('MaritalStatus', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Residence Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="ResidenceType"
+                                            value={user.ResidenceType || ''}
+                                            onChange={(e) => handleInputs('ResidenceType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Residence City" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="ResidenceCity"
+                                            value={user.ResidenceCity || ''}
+                                            onChange={(e) => handleInputs('ResidenceCity', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={24}>
                                     <Form.Item label="Permanent Address" className="FormItemAdd" >
-                                        <Input placeholder="Please enter" style={{ marginBottom: '15px' }} />
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="PermanentAddress"
+                                            value={user.PermanentAddress || ''}
+                                            onChange={(e) => handleInputs('PermanentAddress', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={8}>
                                     <Form.Item label="City " className="FormItem">
-                                        <Select placeholder="Please select">
-                                            <Option value="apartment">Apartment</Option>
-                                            <Option value="house">House</Option>
-                                            <Option value="villa">Villa</Option>
-                                        </Select>
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="PCity"
+                                            value={user.PCity || ''}
+                                            onChange={(e) => handleInputs('PCity', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
                                     <Form.Item label="State" className="FormItem">
-                                        <Select placeholder="Please select">
-                                            <Option value="new-york">New York</Option>
-                                            <Option value="los-angeles">Los Angeles</Option>
-                                            <Option value="chicago">Chicago</Option>
-                                        </Select>
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="PState"
+                                            value={user.PState || ''}
+                                            onChange={(e) => handleInputs('PState', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
                                     <Form.Item label="Pincode" className="FormItem">
-                                        <Select placeholder="Please select">
-                                            <Option value="option1">Option 1</Option>
-                                            <Option value="option2">Option 2</Option>
-                                            <Option value="option3">Option 3</Option>
-                                        </Select>
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="PPinCode"
+                                            value={user.PPinCode || ''}
+                                            onChange={(e) => handleInputs('PPinCode', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -373,7 +821,13 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Income Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="IncomeType"
+                                            value={user.IncomeType || ''}
+                                            onChange={(e) => handleInputs('IncomeType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
 
@@ -381,19 +835,37 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Organization Name" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="OrganizationName"
+                                            value={user.OrganizationName || ''}
+                                            onChange={(e) => handleInputs('OrganizationName', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Designation" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="Designation"
+                                            value={user.Designation || ''}
+                                            onChange={(e) => handleInputs('Designation', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Office Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="OfficeType"
+                                            value={user.OfficeType || ''}
+                                            onChange={(e) => handleInputs('OfficeType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
 
@@ -401,48 +873,104 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Formation Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="FormationType"
+                                            value={user.FormationType || ''}
+                                            onChange={(e) => handleInputs('FormationType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Industry Type" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="IndustryType"
+                                            value={user.IndustryType || ''}
+                                            onChange={(e) => handleInputs('IndustryType', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Mobile Number" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="MobileNo1"
+                                            value={user.MobileNo1 || ''}
+                                            onChange={(e) => handleInputs('MobileNo1', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Current Experience" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="CurrentExperience"
+                                            value={user.CurrentExperience || ''}
+                                            onChange={(e) => handleInputs('CurrentExperience', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Experience Proof" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                            name="ExperienceProof"
+                                            value={user.ExperienceProof || ''}
+                                            onChange={(e) => handleInputs('ExperienceProof', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Dated" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                        <Input
+                                            placeholder="Please enter"
+                                            autoComplete="off"
+                                             type="Date"
+                                            name="Dated"
+                                            value={user.Dated || ''}
+                                            onChange={(e) => handleInputs('Dated', e.target.value)}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
-                                    <Form.Item label="GST Applicability" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                    <Form.Item label="PFA Applicability" className="FormItem">
+                                        <Select
+                                            placeholder="Please select"
+                                            value={user.PFApplicability || []}
+                                            onChange={handleSelectChangePFApplicability}
+                                            autoComplete="off"
+                                            name="PFApplicability"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Form 16/ 26AS" className="FormItem">
-                                        <Input placeholder="Please enter" />
+                                
+                                                      <Select
+                                            placeholder="Please select"
+                                            value={user.Form26AS || []}
+                                            onChange={handleSelectChangeForm26AS}
+                                            autoComplete="off"
+                                            name="Form26AS"
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -555,7 +1083,7 @@ const BusinessIncome = () => {
                                 </tbody>
                             </table>
                             <div className="dl-btn-sbmt">
-                                <button type="button" onClick={handleSubmit}>Submit</button>
+                                <button type="button" onClick={handleEdit}>Submit</button>
                             </div>
                         </Form>
                     </TabPane>

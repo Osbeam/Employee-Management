@@ -40,23 +40,126 @@ const DirectSales = () => {
     };
 
     const handleEdit = (employee) => {
-        const { salaryIncome, businessIncome } = employee;
+        const { salaryIncome, businessIncome, professionalIncome } = employee;
+    
+        // Serialize the salaryIncome or businessIncome data into query parameters
+        const serializeIncome = (income, type) => {
+            const serializeArray = (arr) => Array.isArray(arr) ? arr.join(', ') : arr || '';
+    
+            if (type === 'salary') {
+                return `Name=${encodeURIComponent(income.Name || '')}&` +
+                    `LoanType=${encodeURIComponent(income.LoanType || '')}&` +
+                    `LoanAmount=${encodeURIComponent(income.LoanAmount || '')}&` +
+                    `PropertyLocation=${encodeURIComponent(income.PropertyLocation || '')}&` +
+                    `City=${encodeURIComponent(serializeArray(income.City))}&` +
+                    `IncomeType=${encodeURIComponent(serializeArray(income.IncomeType))}&` +
+                    `GrossSalaryPerMonth=${encodeURIComponent(income.GrossSalaryPerMonth || '')}&` +
+                    `NetSalaryPerMonth=${encodeURIComponent(income.NetSalaryPerMonth || '')}&` +
+                    `DeductionFromSalary=${encodeURIComponent(serializeArray(income.DeductionFromSalary))}&` +
+                    `Form16=${encodeURIComponent(serializeArray(income.Form16))}&` +
+                    `LastTwoYearsForm16=${encodeURIComponent(serializeArray(income.LastTwoYearsForm16))}&` +
+                    `CompanyName=${encodeURIComponent(income.CompanyName || '')}&` +
+                    `DateOfJoining=${encodeURIComponent(income.DateOfJoining || '')}&` +
+                    `CompanyFormedAs=${encodeURIComponent(income.CompanyFormedAs || '')}&` +
+                    `BelongFromIndustry=${encodeURIComponent(income.BelongFromIndustry || '')}&` +
+                    `PreviousCompanyName=${encodeURIComponent(income.PreviousCompanyName || '')}&` +
+                    `TotalWorkExperience=${encodeURIComponent(income.TotalWorkExperience || '')}&` +
+                    `AnotherSourceOfIncome=${encodeURIComponent(serializeArray(income.AnotherSourceOfIncome))}&` +
+                    `OtherSourceOfIncome=${encodeURIComponent(serializeArray(income.OtherSourceOfIncome))}`;
+            } else if (type === 'business') {
+                return `Name=${encodeURIComponent(income.Name || '')}&` +
+                    `LoanType=${encodeURIComponent(income.LoanType || '')}&` +
+                    `LeadId=${encodeURIComponent(income.LeadId || '')}&` +
+                    `LoanAmount=${encodeURIComponent(income.LoanAmount || '')}&` +
+                    `PropertyLocation=${encodeURIComponent(income.PropertyLocation || '')}&` +
+                    `City=${encodeURIComponent(serializeArray(income.City))}&` +
+                    `IncomeType=${encodeURIComponent(serializeArray(income.IncomeType))}&` +
+                    `BusinessName=${encodeURIComponent(income.BusinessName || '')}&` +
+                    `TypeOfBusiness=${encodeURIComponent(income.TypeOfBusiness || '')}&` +
+                    `BusinessIndustry=${encodeURIComponent(income.BusinessIndustry || '')}&` +
+                    `BusinessFormationType=${encodeURIComponent(income.BusinessFormationType || '')}&` +
+                    `BusinessFormationDate=${encodeURIComponent(income.BusinessFormationDate || '')}&` +
+                    `OfficeType=${encodeURIComponent(income.OfficeType || '')}&` +
+                    `OfficeOwnership=${encodeURIComponent(income.OfficeOwnership || '')}&` +
+                    `BusinessLocation=${encodeURIComponent(income.BusinessLocation || '')}&` +
+                    `ITRStatus=${encodeURIComponent(serializeArray(income.ITRStatus))}&` +
+                    `FillingDate=${encodeURIComponent(income.FillingDate || '')}&` +
+                    `Profit=${encodeURIComponent(income.Profit || '')}&` +
+                    `TurnOver=${encodeURIComponent(income.TurnOver || '')}&` +
+                    `GstRegistration=${encodeURIComponent(serializeArray(income.GstRegistration))}&` +
+                    `GstNumber=${encodeURIComponent(income.GstNumber || '')}&` +
+                    `DateOfGstRegistration=${encodeURIComponent(income.DateOfGstRegistration || '')}&` +
+                    `IndustryRegistration=${encodeURIComponent(serializeArray(income.IndustryRegistration))}&` +
+                    `IndustryNumber=${encodeURIComponent(income.IndustryNumber || '')}&` +
+                    `DateOfIndustryRegistration=${encodeURIComponent(income.DateOfIndustryRegistration || '')}&` +
+                    `CurrentAccount=${encodeURIComponent(serializeArray(income.CurrentAccount))}&` +
+                    `AccountNumber=${encodeURIComponent(income.AccountNumber || '')}&` +
+                    `DateOfOpening=${encodeURIComponent(income.DateOfOpening || '')}&` +
+                    `BankAnalysis=${encodeURIComponent(income.BankAnalysis || '')}&` +
+                    `Exporter=${encodeURIComponent(serializeArray(income.Exporter))}&` +
+                    `ExportTurnoverLastYear=${encodeURIComponent(income.ExportTurnoverLastYear || '')}&` +
+                    `LeadDate=${encodeURIComponent(income.LeadDate || '')}&` +
+                    `SourcingChanel=${encodeURIComponent(income.SourcingChanel || '')}&` +
+                    `SourceName=${encodeURIComponent(income.SourceName || '')}&` +
+                    `LeadName=${encodeURIComponent(income.LeadName || '')}&` +
+                    `EmailId=${encodeURIComponent(income.EmailId || '')}&` + 
+
+                    `MobileNo1=${encodeURIComponent(income.MobileNo1 || '')}&` + 
+                    `DateOfBirth=${encodeURIComponent(income.DateOfBirth || '')}&` + 
+                    `Age=${encodeURIComponent(income.Age || '')}&` + 
+                    `Sex=${encodeURIComponent(income.Sex || '')}&` + 
+                    `MaritalStatus=${encodeURIComponent(income.MaritalStatus || '')}&` + 
+                    `ResidenceType=${encodeURIComponent(income.ResidenceType || '')}&` + 
+                    `ResidenceCity=${encodeURIComponent(income.ResidenceCity || '')}&` + 
+                    `PermanentAddress=${encodeURIComponent(income.PermanentAddress || '')}&` + 
+                    `PCity=${encodeURIComponent(income.PCity || '')}&` + 
+                    `PPinCode=${encodeURIComponent(income.PPinCode || '')}&` + 
+                    `PState=${encodeURIComponent(income.PState || '')}&` + 
+                    `FormationType=${encodeURIComponent(income.FormationType || '')}&` + 
+                    `OrganizationName=${encodeURIComponent(income.OrganizationName || '')}&` + 
+                    `OfficeType=${encodeURIComponent(income.OfficeType || '')}&` + 
+                    `Designation=${encodeURIComponent(income.Designation || '')}&` + 
+                    `CurrentExperience=${encodeURIComponent(income.CurrentExperience || '')}&` + 
+                    `IndustryType=${encodeURIComponent(income.IndustryType || '')}&` + 
+                    `Dated=${encodeURIComponent(income.Dated || '')}&` + 
+                    `ExperienceProof=${encodeURIComponent(income.ExperienceProof || '')}&` + 
+                    `Form26AS=${encodeURIComponent(income.Form26AS || '')}&` + 
+                    `PFApplicability=${encodeURIComponent(income.PFApplicability || '')}&` + 
+                    `TDSDeduction=${encodeURIComponent(serializeArray(income.TDSDeduction))}`;
+
+                    
+            } else if (type === 'professional') {
+                // Add serialization logic for professional income if needed
+            }
+        };
+    
+        let path = '';
+        let queryParams = '';
+    
         if (salaryIncome) {
-            navigate('salaryincome', { state: { employee } });
+            path = 'salaryincome';
+            queryParams = serializeIncome(salaryIncome, 'salary');
         } else if (businessIncome) {
-            navigate('businessincome', { state: { employee } });
+            path = 'businessincome';
+            queryParams = serializeIncome(businessIncome, 'business');
+        } else if (professionalIncome) {
+            path = 'professionalincome';
+            queryParams = serializeIncome(professionalIncome, 'professional');
+        }
+    
+        if (path) {
+            const fullUrl = `/admin/directsales/${path}/${employee.userId}?${queryParams}`;
+            navigate(fullUrl);
         }
     };
+    
 
-    const getIncomeType = (salaryIncome, businessIncome) => {
-        if (salaryIncome && businessIncome) {
-            return 'Both';
-        } else if (salaryIncome) {
-            return 'Salary';
-        } else if (businessIncome) {
-            return 'Business';
-        }
-        return 'None';
+    const getIncomeType = (salaryIncome, businessIncome, professionalIncome) => {
+        const incomeTypes = [];
+        if (salaryIncome) incomeTypes.push('Salary');
+        if (businessIncome) incomeTypes.push('Business');
+        if (professionalIncome) incomeTypes.push('Professional');
+        return incomeTypes.length > 0 ? incomeTypes.join(', ') : 'None';
     };
 
     return (
@@ -85,33 +188,27 @@ const DirectSales = () => {
                         ) : (
                             employees.length > 0 ? (
                                 employees.map((user, index) => {
-                                    const salaryIncome = user.salaryIncome;
-                                    const businessIncome = user.businessIncome;
-                                    const loanType = user.LoanType ? user.LoanType.join(', ') : 'No Loan';
+                                    const { salaryIncome, businessIncome, professionalIncome } = user;
+                                    const loanType = salaryIncome?.LoanType || businessIncome?.LoanType || '-';
 
                                     return (
                                         <tr key={user.userId}>
                                             <td>{index + 1 + (currentPage - 1) * pageSize}</td>
-                                            <td>{salaryIncome ? salaryIncome.Name : (businessIncome ? businessIncome.Name : '-')}</td>
-                                            <td>{salaryIncome ? salaryIncome.MobileNo1 : (businessIncome ? businessIncome.MobileNo1 : '-')}</td>
-                                            <td>{salaryIncome ? salaryIncome.PropertyLocation : (businessIncome ? businessIncome.PropertyLocation : '-')}</td>
+                                            <td>{salaryIncome?.Name || businessIncome?.Name || professionalIncome?.Name || '-'}</td>
+                                            <td>{salaryIncome?.MobileNo1 || businessIncome?.MobileNo1 || professionalIncome?.MobileNo1 || '-'}</td>
+                                            <td>{salaryIncome?.PropertyLocation || businessIncome?.PropertyLocation || '-'}</td>
                                             <td>
-                                                {salaryIncome
-                                                    ? (Array.isArray(salaryIncome.City) ? salaryIncome.City.join(', ') : salaryIncome.City)
-                                                    : (businessIncome
-                                                        ? (Array.isArray(businessIncome.City) ? businessIncome.City.join(', ') : businessIncome.City)
-                                                        : '-')}
+                                                {(salaryIncome?.City && Array.isArray(salaryIncome.City) ? salaryIncome.City.join(', ') : salaryIncome?.City) ||
+                                                (businessIncome?.City && Array.isArray(businessIncome.City) ? businessIncome.City.join(', ') : businessIncome?.City) ||
+                                                (professionalIncome?.City && Array.isArray(professionalIncome.City) ? professionalIncome.City.join(', ') : professionalIncome?.City) ||
+                                                '-'}
                                             </td>
-                                            <td>{getIncomeType(salaryIncome, businessIncome) || '-'}</td>
+                                            <td>{getIncomeType(salaryIncome, businessIncome, professionalIncome) || '-'}</td>
                                             <td>
-                                                {salaryIncome && businessIncome ? businessIncome.Name : 'No Other Income'}
+                                                {salaryIncome && businessIncome && professionalIncome ? professionalIncome.Name : '-'}
                                             </td>
                                             <td>
-                                                {salaryIncome
-                                                    ? (Array.isArray(salaryIncome.LoanType) ? salaryIncome.LoanType.join(', ') : salaryIncome.LoanType)
-                                                    : (businessIncome
-                                                        ? (Array.isArray(businessIncome.LoanType) ? businessIncome.LoanType.join(', ') : businessIncome.LoanType)
-                                                        : '-')}
+                                                {(Array.isArray(loanType) ? loanType.join(', ') : loanType) || '-'}
                                             </td>
                                             <td className="statusbtn">
                                                 <button

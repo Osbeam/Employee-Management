@@ -58,8 +58,6 @@ export default function Employee_List() {
   };
   
   
-
-
   const handleEdit = (employee) => {
     navigate(`/hrpanel/employee-list/edit-employee-list/${employee._id}?
       firstName=${employee.FirstName}&
