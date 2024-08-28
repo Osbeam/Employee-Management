@@ -12,33 +12,146 @@ const BusinessIncome = () => {
     const { userId } = useParams();
     const { search } = useLocation();
     const { Option } = Select;
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState({
+        IncomeDetails: [],
+        TurnOverDetails: [],
+        BankDetails: []
+    });
 
-    useEffect(() => {
-        const query = new URLSearchParams(search);
+    console.log('User IncomeDetails:', user.IncomeDetails);
+    const parseIncomeDetails = (queryString) => {
+        const query = new URLSearchParams(queryString);
+        const details = [];
+        let currentDetail = {};
 
-        // Create an object with the parsed query parameters
-        const userData = {};
         query.forEach((value, key) => {
-            userData[key] = value;
+            if (key.startsWith('AssesmentYear')) {
+                if (Object.keys(currentDetail).length > 0) {
+                    details.push(currentDetail);
+                    currentDetail = {};
+                }
+                currentDetail['AssesmentYear'] = value;
+            } else if (key.startsWith('GrossIncome')) {
+                currentDetail['GrossIncome'] = value;
+            } else if (key.startsWith('NetIncome')) {
+                currentDetail['NetIncome'] = value;
+            } else if (key.startsWith('OtherIncome')) {
+                currentDetail['OtherIncome'] = value;
+            } else if (key.startsWith('TotalIncome')) {
+                currentDetail['TotalIncome'] = value;
+            } else if (key.startsWith('PaymentMode')) {
+                currentDetail['PaymentMode'] = value;
+            } else if (key.startsWith('DateOfFilling')) {
+                currentDetail['DateOfFilling'] = value;
+            }
         });
 
-        // Set the state with the parsed data
-        setUser(userData);
-    }, [search]);
+        if (Object.keys(currentDetail).length > 0) {
+            details.push(currentDetail);
+        }
 
-    const handleInputs = (name, value) => {
-        setUser(prevUser => ({
-            ...prevUser,
-            [name]: value
-        }));
+        return details;
+    };
+
+    const parseTurnOverDetails = (queryString) => {
+        const query = new URLSearchParams(queryString);
+        const details = [];
+        let currentDetail = {};
+
+        query.forEach((value, key) => {
+            if (key.startsWith('TurnOver')) {
+                if (Object.keys(currentDetail).length > 0) {
+                    details.push(currentDetail);
+                    currentDetail = {};
+                }
+                currentDetail['TurnOver'] = value;
+            } else if (key.startsWith('ITR')) {
+                currentDetail['ITR'] = value;
+            } else if (key.startsWith('GST')) {
+                currentDetail['GST'] = value;
+            } else if (key.startsWith('Banking')) {
+                currentDetail['Banking'] = value;
+            } else if (key.startsWith('Export')) {
+                currentDetail['Export'] = value;
+            } else if (key.startsWith('Other')) {
+                currentDetail['Other'] = value;
+            }
+        });
+
+        if (Object.keys(currentDetail).length > 0) {
+            details.push(currentDetail);
+        }
+
+        return details;
+    };
+
+    const parseBankDetails = (queryString) => {
+        const query = new URLSearchParams(queryString);
+        const details = [];
+        let currentDetail = {};
+
+        query.forEach((value, key) => {
+            if (key.startsWith('ABB')) {
+                if (Object.keys(currentDetail).length > 0) {
+                    details.push(currentDetail);
+                    currentDetail = {};
+                }
+                currentDetail['ABB'] = value;
+            } else if (key.startsWith('DR1')) {
+                currentDetail['DR1'] = value;
+            } else if (key.startsWith('DR2')) {
+                currentDetail['DR2'] = value;
+            } else if (key.startsWith('DR3')) {
+                currentDetail['DR3'] = value;
+            } else if (key.startsWith('DR4')) {
+                currentDetail['DR4'] = value;
+            } else if (key.startsWith('DR5')) {
+                currentDetail['DR5'] = value;
+            }
+        });
+
+        if (Object.keys(currentDetail).length > 0) {
+            details.push(currentDetail);
+        }
+
+        return details;
     };
 
 
-    const handleNext = () => {
-        const nextKey = activeKey === "1" ? "2" : "1";
-        setActiveKey(nextKey);
-        tabsRef.current?.scrollIntoView();
+    useEffect(() => {
+        const query = new URLSearchParams(search);
+        const userData = {};
+
+        query.forEach((value, key) => {
+            if (key === 'IncomeDetails') {
+                userData[key] = parseIncomeDetails(decodeURIComponent(value));
+            } else if (key === 'TurnOverDetails') {
+                userData[key] = parseTurnOverDetails(decodeURIComponent(value));
+            } else if (key === 'BankDetails') {
+                userData[key] = parseBankDetails(decodeURIComponent(value));
+            } else {
+                userData[key] = value;
+            }
+        });
+
+        setUser(userData);
+    }, [search]);
+
+    const handleInputs = (name, value, index = null, detailType = 'IncomeDetails') => {
+        setUser(prevUser => {
+            let newDetails = [...(prevUser[detailType] || [])];
+
+            if (index !== null) {
+                if (!newDetails[index]) {
+                    newDetails[index] = {};  // Initialize if it doesn't exist
+                }
+                newDetails[index][name] = value;
+            } else {
+                return { ...prevUser, [name]: value };
+            }
+
+            return { ...prevUser, [detailType]: newDetails };
+        });
     };
 
     const handleEdit = async () => {
@@ -130,6 +243,31 @@ const BusinessIncome = () => {
             console.error("Error updating business income:", error);
         }
     };
+
+    const addNewRow = () => {
+        setUser(prevUser => ({
+            ...prevUser,
+            IncomeDetails: [...(prevUser.IncomeDetails || []), {}] // Add an empty object to the array
+        }));
+    };
+    const addNewRowTurnOver = () => {
+        setUser(prevUser => ({
+            ...prevUser,
+            TurnOverDetails: [...(prevUser.TurnOverDetails || []), {}] // Add an empty object to the array
+        }));
+    };
+    const addNewRowBankDetails = () => {
+        setUser(prevUser => ({
+            ...prevUser,
+            BankDetails: [...(prevUser.BankDetails || []), {}] // Add an empty object to the array
+        }));
+    };
+    const handleNext = () => {
+        const nextKey = activeKey === "1" ? "2" : "1";
+        setActiveKey(nextKey);
+        tabsRef.current?.scrollIntoView();
+    };
+
     const handleSelectChange = (value) => {
         handleInputs('ITRStatus', value);
     };
@@ -154,9 +292,8 @@ const BusinessIncome = () => {
     const handleSelectChangePFApplicability = (value) => {
         handleInputs('PFApplicability', value);
     };
-    
 
-    
+
     return (
         <>
             <div className="directlead-header">
@@ -290,7 +427,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="FillingDate"
                                             value={user.FillingDate || ''}
                                             onChange={(e) => handleInputs('FillingDate', e.target.value)}
@@ -327,7 +464,7 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="GST Registration" className="FormItem">
-                                            <Select
+                                        <Select
                                             placeholder="Please select"
                                             value={user.GstRegistration || []}
                                             onChange={handleSelectChangeGstRegi}
@@ -357,7 +494,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="DateOfGstRegistration"
                                             value={user.DateOfGstRegistration || ''}
                                             onChange={(e) => handleInputs('DateOfGstRegistration', e.target.value)}
@@ -368,10 +505,10 @@ const BusinessIncome = () => {
                             <hr style={{ marginBottom: '50px' }} />
 
                             <Row gutter={[8, 8]}>
-                            <Col span={12}>
+                                <Col span={12}>
                                     <Form.Item label="Industry specific registration" className="FormItem">
-                               
-                                              <Select
+
+                                        <Select
                                             placeholder="Please select"
                                             value={user.IndustryRegistration || []}
                                             onChange={handleSelectChangeIndustryRegi}
@@ -394,7 +531,7 @@ const BusinessIncome = () => {
                                         />
                                     </Form.Item>
                                 </Col>
-                            
+
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
@@ -402,7 +539,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="DateOfIndustryRegistration"
                                             value={user.DateOfIndustryRegistration || ''}
                                             onChange={(e) => handleInputs('DateOfIndustryRegistration', e.target.value)}
@@ -415,7 +552,7 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Current Account" className="FormItem">
-                                               <Select
+                                        <Select
                                             placeholder="Please select"
                                             value={user.CurrentAccount || []}
                                             onChange={handleSelectChangeCurrentAcc}
@@ -445,7 +582,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="DateOfOpening"
                                             value={user.DateOfOpening || ''}
                                             onChange={(e) => handleInputs('DateOfOpening', e.target.value)}
@@ -508,8 +645,8 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Exporter" className="FormItem">
-                                 
-                                                  <Select
+
+                                        <Select
                                             placeholder="Please select"
                                             value={user.Exporter || []}
                                             onChange={handleSelectChangeExporter}
@@ -536,8 +673,8 @@ const BusinessIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="TDS Deduction" className="FormItem">
-                                
-                                                   <Select
+
+                                        <Select
                                             placeholder="Please select"
                                             value={user.TDSDeduction || []}
                                             onChange={handleSelectChangeTDSDeduction}
@@ -601,7 +738,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="LeadDate"
                                             value={user.LeadDate || ''}
                                             onChange={(e) => handleInputs('LeadDate', e.target.value)}
@@ -701,7 +838,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="DateOfBirth"
                                             value={user.DateOfBirth || ''}
                                             onChange={(e) => handleInputs('DateOfBirth', e.target.value)}
@@ -935,7 +1072,7 @@ const BusinessIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
-                                             type="Date"
+                                            type="Date"
                                             name="Dated"
                                             value={user.Dated || ''}
                                             onChange={(e) => handleInputs('Dated', e.target.value)}
@@ -960,8 +1097,8 @@ const BusinessIncome = () => {
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Form 16/ 26AS" className="FormItem">
-                                
-                                                      <Select
+
+                                        <Select
                                             placeholder="Please select"
                                             value={user.Form26AS || []}
                                             onChange={handleSelectChangeForm26AS}
@@ -976,13 +1113,12 @@ const BusinessIncome = () => {
                             </Row>
                             <hr style={{ marginBottom: '35px' }} />
 
-
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Assessment Year</th>
-                                        <th>Gross Salary</th>
-                                        <th>Net Salary</th>
+                                        <th>Gross Income</th>
+                                        <th>Net Income</th>
                                         <th>Other Income</th>
                                         <th>Total Income</th>
                                         <th>Payment Mode</th>
@@ -990,35 +1126,111 @@ const BusinessIncome = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th>AY 2023-24</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>AY 2022-23</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>AY 2021-22</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                    {Array.isArray(user.IncomeDetails) && user.IncomeDetails.length > 0 ? (
+                                        user.IncomeDetails.map((detail, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Assessment Year"
+                                                        value={detail.AssesmentYear || ''}
+                                                        onChange={(e) => handleInputs('AssesmentYear', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Gross Income"
+                                                        value={detail.GrossIncome || ''}
+                                                        onChange={(e) => handleInputs('GrossIncome', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Net Income"
+                                                        value={detail.NetIncome || ''}
+                                                        onChange={(e) => handleInputs('NetIncome', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Other Income"
+                                                        value={detail.OtherIncome || ''}
+                                                        onChange={(e) => handleInputs('OtherIncome', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Total Income"
+                                                        value={detail.TotalIncome || ''}
+                                                        onChange={(e) => handleInputs('TotalIncome', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Payment Mode"
+                                                        value={detail.PaymentMode || ''}
+                                                        onChange={(e) => handleInputs('PaymentMode', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Date of Filing"
+                                                        value={detail.DateOfFilling || ''}
+                                                        onChange={(e) => handleInputs('DateOfFilling', e.target.value, index)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        // Render empty inputs for entering new data if no income details are available
+                                        <tr>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Assessment Year"
+                                                    onChange={(e) => handleInputs('AssesmentYear', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Gross Income"
+                                                    onChange={(e) => handleInputs('GrossIncome', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Net Income"
+                                                    onChange={(e) => handleInputs('NetIncome', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Other Income"
+                                                    onChange={(e) => handleInputs('OtherIncome', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Total Income"
+                                                    onChange={(e) => handleInputs('TotalIncome', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Payment Mode"
+                                                    onChange={(e) => handleInputs('PaymentMode', e.target.value, 0)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Enter Date of Filing"
+                                                    onChange={(e) => handleInputs('DateOfFilling', e.target.value, 0)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
+
                             </table>
+                            <Button onClick={addNewRow}>Add New Row</Button>
 
                             <table style={{ marginTop: '35px' }}>
                                 <thead>
@@ -1029,28 +1241,102 @@ const BusinessIncome = () => {
                                         <th>Banking</th>
                                         <th>Export</th>
                                         <th>Other</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th>6 Months</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>12 Months</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                    {Array.isArray(user.TurnOverDetails) && user.TurnOverDetails.length > 0 ? (
+                                        user.TurnOverDetails.map((detail, index) => (
+                                            <tr key={index}>
+
+                                                <td>
+                                                    <Input
+                                                        placeholder="TurnOver"
+                                                        value={detail.TurnOver || ''}
+                                                        onChange={(e) => handleInputs('TurnOver', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="ITR"
+                                                        value={detail.ITR || ''}
+                                                        onChange={(e) => handleInputs('ITR', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="GST"
+                                                        value={detail.GST || ''}
+                                                        onChange={(e) => handleInputs('GST', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Banking"
+                                                        value={detail.Banking || ''}
+                                                        onChange={(e) => handleInputs('Banking', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Export"
+                                                        value={detail.Export || ''}
+                                                        onChange={(e) => handleInputs('Export', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Other"
+                                                        value={detail.Other || ''}
+                                                        onChange={(e) => handleInputs('Other', e.target.value, index, 'TurnOverDetails')}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td>
+                                                <Input
+                                                    placeholder="TurnOver"
+                                                    onChange={(e) => handleInputs('TurnOver', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="ITR"
+                                                    onChange={(e) => handleInputs('ITR', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="GST"
+                                                    onChange={(e) => handleInputs('GST', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Banking"
+                                                    onChange={(e) => handleInputs('Banking', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Export"
+                                                    onChange={(e) => handleInputs('Export', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="Other"
+                                                    onChange={(e) => handleInputs('Other', e.target.value, 0, 'TurnOverDetails')}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
+
+
+                            <Button onClick={addNewRowTurnOver}>Add New Row</Button>
 
                             <table style={{ marginTop: '35px' }}>
                                 <thead>
@@ -1064,24 +1350,96 @@ const BusinessIncome = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th>Bank Name</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Loan Eligibilty</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                    {Array.isArray(user.BankDetails) && user.BankDetails.length > 0 ? (
+                                        user.BankDetails.map((detail, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <Input
+                                                        placeholder="ABB"
+                                                        value={detail.ABB || ''}
+                                                        onChange={(e) => handleInputs('ABB', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="DR-1"
+                                                        value={detail.DR1 || ''}
+                                                        onChange={(e) => handleInputs('DR1', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="DR-2"
+                                                        value={detail.DR2 || ''}
+                                                        onChange={(e) => handleInputs('DR2', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="DR-3"
+                                                        value={detail.DR3 || ''}
+                                                        onChange={(e) => handleInputs('DR3', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="DR-4"
+                                                        value={detail.DR4 || ''}
+                                                        onChange={(e) => handleInputs('DR4', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="DR-5"
+                                                        value={detail.DR5 || ''}
+                                                        onChange={(e) => handleInputs('DR5', e.target.value, index, 'BankDetails')}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td>
+                                                <Input
+                                                    placeholder="ABB"
+                                                    onChange={(e) => handleInputs('ABB', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="DR-1"
+                                                    onChange={(e) => handleInputs('DR1', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="DR-2"
+                                                    onChange={(e) => handleInputs('DR2', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="DR-3"
+                                                    onChange={(e) => handleInputs('DR3', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="DR-4"
+                                                    onChange={(e) => handleInputs('DR4', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                            <td>
+                                                <Input
+                                                    placeholder="DR-5"
+                                                    onChange={(e) => handleInputs('DR5', e.target.value, 0, 'BankDetails')}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
+                            <Button onClick={addNewRowBankDetails}>Add New Row</Button>
                             <div className="dl-btn-sbmt">
                                 <button type="button" onClick={handleEdit}>Submit</button>
                             </div>

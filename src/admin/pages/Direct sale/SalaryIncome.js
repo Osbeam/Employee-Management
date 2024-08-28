@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Col, Row, Form, Input, Tabs, Select } from 'antd';
+import { Col, Row, Form, Input, Tabs, Button, Select, DatePicker } from 'antd';
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import moment from "moment";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -9,19 +10,51 @@ const { Option } = Select;
 const SalaryIncome = () => {
     const [activeKey, setActiveKey] = useState("1");
     const tabsRef = useRef(null);
-    const { userId } = useParams();
+    const { dataId } = useParams();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [user, setUser] = useState({});
-    const [salaryDetails, setSalaryDetails] = useState([]);
-    const [bankDetails, setBankDetails] = useState([]);
+    const [data, setData] = useState({
+        SalaryDetails: [],
+        BankDetails: [],
+        Analysis: [],
+        Score: [] // Ensure this is initialized as an array
+    });
 
-    const handleInputs = (name, value) => {
-        setUser(prevUser => ({
-            ...prevUser,
-            [name]: value
+    useEffect(() => {
+        console.log("data state updated:", data);
+    }, [data]);
+
+    // Debugging log
+    console.log("data State:", data);
+
+    const handleInputs = (fieldName, value) => {
+        setData(prevData => ({
+            ...prevData,
+            [fieldName]: value,
         }));
+    };
+
+    const handleInputsSalary = (fieldName, value, index) => {
+        const updatedSalaryDetails = [...data.SalaryDetails];
+        updatedSalaryDetails[index] = { ...updatedSalaryDetails[index], [fieldName]: value };
+        setData({ ...data, SalaryDetails: updatedSalaryDetails });
+    };
+
+    const handleInputsAnalysis = (fieldName, value, index) => {
+        setData(prevdata => {
+            const updatedAnalysis = Array.isArray(prevdata.Analysis) ? [...prevdata.Analysis] : [];
+            if (updatedAnalysis[index]) {
+                updatedAnalysis[index] = { ...updatedAnalysis[index], [fieldName]: value };
+            }
+            return { ...prevdata, Analysis: updatedAnalysis };
+        });
+    };
+
+    const handleInputsBankDetails = (fieldName, value, index) => {
+        const updatedBankDetails = [...data.BankDetails];
+        updatedBankDetails[index] = { ...updatedBankDetails[index], [fieldName]: value };
+        setData({ ...data, BankDetails: updatedBankDetails });
     };
 
     const handleNext = () => {
@@ -30,10 +63,80 @@ const SalaryIncome = () => {
         tabsRef.current?.scrollIntoView();
     };
 
+    const addNewRow = () => {
+        setData((prevdata) => ({
+            ...prevdata,
+            SalaryDetails: [...prevdata.SalaryDetails, {
+                Month: '',
+                GrossSalary: '',
+                NetSalary: '',
+                OtherIncome: '',
+                TotalIncome: '',
+                PaymentMode: '',
+                DateOfPayment: ''
+            }]
+        }));
+    };
+
+    const addNewRowToSecondTable = () => {
+        setData(prevdata => ({
+            ...prevdata,
+            BankDetails: [...prevdata.BankDetails, {
+                ABB: '',
+                DR1: '',
+                DR2: '',
+                DR3: '',
+                DR4: '',
+                DR5: ''
+            }]
+        }));
+    };
+
+    const addNewRowToAnalysis = () => {
+        setData(prevdata => ({
+            ...prevdata,
+            Analysis: [
+                ...(Array.isArray(prevdata.Analysis) ? prevdata.Analysis : []),
+                {
+                    CibilAnalysis: '',
+                    Bounce: '',
+                    Enquiry: '',
+                    RecentFunding: '',
+                }
+            ]
+        }));
+    };
+
+    const handleInputsScore = (fieldName, value, index) => {
+        setData(prevdata => {
+            const updatedScore = Array.isArray(prevdata.Score) ? [...prevdata.Score] : [];
+            if (updatedScore[index]) {
+                updatedScore[index] = { ...updatedScore[index], [fieldName]: value };
+            }
+            return { ...prevdata, Score: updatedScore };
+        });
+    };
+
+    const addNewRowToScore = () => {
+        setData(prevdata => ({
+            ...prevdata,
+            Score: [
+                ...(Array.isArray(prevdata.Score) ? prevdata.Score : []),
+                {
+                    CibilScore: '',
+                    PayOut: '',
+                    Settelement1Yr: '',
+                    Settelement2Yr: ''
+                }
+            ]
+        }));
+    };
+
     useEffect(() => {
         const fetchEmployeeData = async () => {
             try {
-                const response = await fetch(`http://77.37.45.224:8000/api/bussinessIncome/getAllBusinessIncome`, {
+                setIsLoading(true);
+                const response = await fetch('http://77.37.45.224:8000/api/bussinessIncome/getAllBusinessIncome', {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
@@ -45,14 +148,18 @@ const SalaryIncome = () => {
                     console.log("API response:", data);
 
                     const employeeData = data.data || [];
-                    const employee = employeeData.find(emp => emp.userId === userId);
+                    const employee = employeeData.find(emp => emp.dataId === dataId);
 
-                    if (employee && employee.salaryIncome) {
-                        setUser(employee.salaryIncome);
-                        setSalaryDetails(employee.salaryIncome.SalaryDetails || []);
-                        setBankDetails(employee.salaryIncome.BankDetails || []);
+                    if (employee) {
+                        console.log("Employee found:", employee);
+                        if (employee.salaryIncome) {
+                            console.log("Setting salaryIncome:", employee.salaryIncome);
+                            setData(employee.salaryIncome);
+                        } else {
+                            console.log("No salaryIncome data available");
+                        }
                     } else {
-                        toast.error("Employee not found or salary income data missing");
+                        console.log("No employee found with dataId:", dataId);
                     }
                 } else {
                     toast.error("Error fetching employee data");
@@ -66,16 +173,12 @@ const SalaryIncome = () => {
         };
 
         fetchEmployeeData();
-    }, [userId]);
+    }, [dataId]);
+
 
     const handleEdit = async () => {
         try {
             setIsLoading(true);
-
-            // Ensure Form16 is handled correctly based on its type
-            const formattedForm16 = Array.isArray(user.Form16)
-                ? user.Form16.join(', ')
-                : user.Form16;
 
             const response = await fetch(`http://77.37.45.224:8000/api/salaryIncome/EditSalaryData`, {
                 method: "PUT",
@@ -83,57 +186,7 @@ const SalaryIncome = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`,
                 },
-                body: JSON.stringify({
-                    _id: userId,
-                    Name: user.Name,
-                    MobileNo1: user.MobileNo1,
-                    LoanType: user.LoanType,
-                    LoanAmount: user.LoanAmount,
-                    PropertyLocation: user.PropertyLocation,
-                    City: user.City,
-                    IncomeType: user.IncomeType,
-                    GrossSalaryPerMonth: user.GrossSalaryPerMonth,
-                    NetSalaryPerMonth: user.NetSalaryPerMonth,
-                    DeductionFromSalary: user.DeductionFromSalary,
-                    Form16: formattedForm16,  // Handle Form16 correctly
-                    LastTwoYearsForm16: user.LastTwoYearsForm16,
-                    CompanyName: user.CompanyName,
-                    DateOfJoining: user.DateOfJoining,
-                    CompanyFormedAs: user.CompanyFormedAs,
-                    BelongFromIndustry: user.BelongFromIndustry,
-                    PreviousCompanyName: user.PreviousCompanyName,
-                    TotalWorkExperience: user.TotalWorkExperience,
-                    AnotherSourceOfIncome: user.AnotherSourceOfIncome,
-                    OtherSourceOfIncome: user.OtherSourceOfIncome,
-                    LeadId: user.LeadId,
-                    LeadDate: user.LeadDate,
-                    SourcingChanel: user.SourcingChanel,
-                    SourceName: user.SourceName,
-                    LeadName: user.LeadName,
-                    EmailId: user.EmailId,
-                    DateOfBirth: user.DateOfBirth,
-                    Age: user.Age,
-                    Sex: user.Sex,
-                    MaritalStatus: user.MaritalStatus,
-                    ResidenceType: user.ResidenceType,
-                    ResidenceCity: user.ResidenceCity,
-                    PermanentAddress: user.PermanentAddress,
-                    PCity: user.PCity,
-                    PPinCode: user.PPinCode,
-                    PState: user.PState,
-                    FormationType: user.FormationType,
-                    OrganizationName: user.OrganizationName,
-                    OfficeType: user.OfficeType,
-                    Designation: user.Designation,
-                    CurrentExperience: user.CurrentExperience,
-                    IndustryType: user.IndustryType,
-                    Dated: user.Dated,
-                    ExperienceProof: user.ExperienceProof,
-                    Form26AS: user.Form26AS,
-                    PFApplicability: user.PFApplicability,
-                    SalaryDetails: salaryDetails,
-                    BankDetails: bankDetails,
-                }),
+                body: JSON.stringify(data),
             });
 
             if (response.ok) {
@@ -148,20 +201,6 @@ const SalaryIncome = () => {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleBankDetailChange = (index, field, value) => {
-        const updatedBankDetails = [...bankDetails];
-
-        if (updatedBankDetails[index]) {
-            updatedBankDetails[index][field] = value;
-        } else {
-            const newBankDetail = { ABB: '', DR1: '', DR2: '', DR3: '', DR4: '', DR5: '' };
-            newBankDetail[field] = value;
-            updatedBankDetails.push(newBankDetail);
-        }
-
-        setBankDetails(updatedBankDetails);
     };
 
     const handleSelectChange = (value) => {
@@ -188,6 +227,12 @@ const SalaryIncome = () => {
     const handleSelectChangeForm26AS = (value) => {
         handleInputs('Form26AS', value);
     };
+    const handleSelectChangeSex = (value) => {
+        handleInputs('Sex', value);
+    };
+    const handleSelectChangeMaritalStatus = (value) => {
+        handleInputs('MaritalStatus', value);
+    };
 
     return (
         <>
@@ -210,7 +255,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="GrossSalaryPerMonth"
-                                            value={user.GrossSalaryPerMonth || ''}
+                                            value={data.GrossSalaryPerMonth || ''}
                                             onChange={(e) => handleInputs('GrossSalaryPerMonth', e.target.value)}
                                         />
                                     </Form.Item>
@@ -221,7 +266,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="NetSalaryPerMonth"
-                                            value={user.NetSalaryPerMonth || ''}
+                                            value={data.NetSalaryPerMonth || ''}
                                             onChange={(e) => handleInputs('NetSalaryPerMonth', e.target.value)}
                                         />
                                     </Form.Item>
@@ -233,7 +278,7 @@ const SalaryIncome = () => {
                                         <Select
                                             mode="multiple"
                                             placeholder="Please select"
-                                            value={user.DeductionFromSalary || []}
+                                            value={data.DeductionFromSalary || []}
                                             onChange={handleSelectChange}
                                             autoComplete="off"
                                             name="DeductionFromSalary"
@@ -249,7 +294,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="Is Form 16 Available?" className="FormItem">
                                         <Select
                                             placeholder="Select"
-                                            value={user.Form16 || ''}
+                                            value={data.Form16 || ''}
                                             onChange={(value) => handleSelectChangeForm16(value, 'Form16')}
                                             autoComplete="off"
                                             name="Form16"
@@ -265,7 +310,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="If Yes, Do you have Form 16 for last 2 years?" className="FormItem">
                                         <Select
                                             placeholder="Please select"
-                                            value={user.LastTwoYearsForm16 || []}
+                                            value={data.LastTwoYearsForm16 || []}
                                             onChange={handleSelectChangeForm16Last2Year}
                                             autoComplete="off"
                                             name="LastTwoYearsForm16"
@@ -289,7 +334,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="CompanyName"
-                                            value={user.CompanyName || ''}
+                                            value={data.CompanyName || ''}
                                             onChange={(e) => handleInputs('CompanyName', e.target.value)}
                                         />
                                     </Form.Item>
@@ -299,8 +344,9 @@ const SalaryIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
+                                            type="Date"
                                             name="DateOfJoining"
-                                            value={user.DateOfJoining || ''}
+                                            value={data.DateOfJoining || ''}
                                             onChange={(e) => handleInputs('DateOfJoining', e.target.value)}
                                         />
                                     </Form.Item>
@@ -313,7 +359,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="CompanyFormedAs"
-                                            value={user.CompanyFormedAs || ''}
+                                            value={data.CompanyFormedAs || ''}
                                             onChange={(e) => handleInputs('CompanyFormedAs', e.target.value)}
                                         />
                                     </Form.Item>
@@ -324,7 +370,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="BelongFromIndustry"
-                                            value={user.BelongFromIndustry || ''}
+                                            value={data.BelongFromIndustry || ''}
                                             onChange={(e) => handleInputs('BelongFromIndustry', e.target.value)}
                                         />
                                     </Form.Item>
@@ -337,7 +383,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="PreviousCompanyName"
-                                            value={user.PreviousCompanyName || ''}
+                                            value={data.PreviousCompanyName || ''}
                                             onChange={(e) => handleInputs('PreviousCompanyName', e.target.value)}
                                         />
                                     </Form.Item>
@@ -348,7 +394,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="TotalWorkExperience"
-                                            value={user.TotalWorkExperience || ''}
+                                            value={data.TotalWorkExperience || ''}
                                             onChange={(e) => handleInputs('TotalWorkExperience', e.target.value)}
                                         />
                                     </Form.Item>
@@ -359,7 +405,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="Do you have another source of Income?" className="FormItem">
                                         <Select
                                             placeholder="Please select"
-                                            value={user.AnotherSourceOfIncome || []}
+                                            value={data.AnotherSourceOfIncome || []}
                                             onChange={handleSelectChangeOtherIncomeSource}
                                             autoComplete="off"
                                             name="AnotherSourceOfIncome"
@@ -373,7 +419,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="Other sources of Income?" className="FormItem">
                                         <Select
                                             placeholder="Please select"
-                                            value={user.OtherSourceOfIncome || []}
+                                            value={data.OtherSourceOfIncome || []}
                                             onChange={handleSelectChangeOtherSourceIncome}
                                             autoComplete="off"
                                             name="OtherSourceOfIncome"
@@ -400,7 +446,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="LeadId"
-                                            value={user.LeadId || ''}
+                                            value={data.LeadId || ''}
                                             onChange={(e) => handleInputs('LeadId', e.target.value)}
                                         />
                                     </Form.Item>
@@ -410,8 +456,9 @@ const SalaryIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
+                                            type="Date"
                                             name="LeadDate"
-                                            value={user.LeadDate || ''}
+                                            value={data.LeadDate || ''}
                                             onChange={(e) => handleInputs('LeadDate', e.target.value)}
                                         />
                                     </Form.Item>
@@ -424,7 +471,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="SourcingChanel"
-                                            value={user.SourcingChanel || ''}
+                                            value={data.SourcingChanel || ''}
                                             onChange={(e) => handleInputs('SourcingChanel', e.target.value)}
                                         />
                                     </Form.Item>
@@ -435,7 +482,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="SourceName"
-                                            value={user.SourceName || ''}
+                                            value={data.SourceName || ''}
                                             onChange={(e) => handleInputs('SourceName', e.target.value)}
                                         />
                                     </Form.Item>
@@ -448,7 +495,7 @@ const SalaryIncome = () => {
                                             placeholder="Enter Loan Type"
                                             autoComplete="off"
                                             name="LoanType"
-                                            value={user.LoanType || ''}
+                                            value={data.LoanType || ''}
                                             onChange={(e) => handleInputs('LoanType', e.target.value)}
                                         />
                                     </Form.Item>
@@ -460,7 +507,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="LoanAmount"
-                                            value={user.LoanAmount || ''}
+                                            value={data.LoanAmount || ''}
                                             onChange={(e) => handleInputs('LoanAmount', e.target.value)}
                                         />
                                     </Form.Item>
@@ -473,13 +520,12 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="LeadName"
-                                            value={user.LeadName || ''}
+                                            value={data.LeadName || ''}
                                             onChange={(e) => handleInputs('LeadName', e.target.value)}
                                         />
                                     </Form.Item>
                                 </Col>
                             </Row>
-
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Mobile Number" className="FormItem">
@@ -487,7 +533,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="MobileNo1"
-                                            value={user.MobileNo1 || ''}
+                                            value={data.MobileNo1 || ''}
                                             onChange={(e) => handleInputs('MobileNo1', e.target.value)}
                                         />
                                     </Form.Item>
@@ -498,7 +544,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="EmailId"
-                                            value={user.EmailId || ''}
+                                            value={data.EmailId || ''}
                                             onChange={(e) => handleInputs('EmailId', e.target.value)}
                                         />
                                     </Form.Item>
@@ -510,8 +556,9 @@ const SalaryIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
+                                            type="Date"
                                             name="DateOfBirth"
-                                            value={user.DateOfBirth || ''}
+                                            value={data.DateOfBirth || ''}
                                             onChange={(e) => handleInputs('DateOfBirth', e.target.value)}
                                         />
                                     </Form.Item>
@@ -522,7 +569,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="Age"
-                                            value={user.Age || ''}
+                                            value={data.Age || ''}
                                             onChange={(e) => handleInputs('Age', e.target.value)}
                                         />
                                     </Form.Item>
@@ -531,24 +578,34 @@ const SalaryIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Sex" className="FormItem">
-                                        <Input
-                                            placeholder="Please enter"
+
+                                        <Select
+                                            placeholder="Select"
+                                            value={data.Sex || ''}
+                                            onChange={(value) => handleSelectChangeSex(value, 'Sex')}
                                             autoComplete="off"
                                             name="Sex"
-                                            value={user.Sex || ''}
-                                            onChange={(e) => handleInputs('Sex', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Male">Male</Option>
+                                            <Option value="Female">Female</Option>
+                                            <Option value="Other">Other</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Marital Status" className="FormItem">
-                                        <Input
-                                            placeholder="Please enter"
+
+                                        <Select
+                                            placeholder="Select"
+                                            value={data.MaritalStatus || ''}
+                                            onChange={(value) => handleSelectChangeMaritalStatus(value, 'MaritalStatus')}
                                             autoComplete="off"
                                             name="MaritalStatus"
-                                            value={user.MaritalStatus || ''}
-                                            onChange={(e) => handleInputs('MaritalStatus', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Married">Married</Option>
+                                            <Option value="Un-Married">Un-Married</Option>
+                                            <Option value="Other">Other</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -559,7 +616,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="ResidenceType"
-                                            value={user.ResidenceType || ''}
+                                            value={data.ResidenceType || ''}
                                             onChange={(e) => handleInputs('ResidenceType', e.target.value)}
                                         />
                                     </Form.Item>
@@ -570,7 +627,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="ResidenceCity"
-                                            value={user.ResidenceCity || ''}
+                                            value={data.ResidenceCity || ''}
                                             onChange={(e) => handleInputs('ResidenceCity', e.target.value)}
                                         />
                                     </Form.Item>
@@ -584,7 +641,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="PermanentAddress"
-                                            value={user.PermanentAddress || ''}
+                                            value={data.PermanentAddress || ''}
                                             onChange={(e) => handleInputs('PermanentAddress', e.target.value)}
                                         />
                                     </Form.Item>
@@ -597,7 +654,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="PCity"
-                                            value={user.PCity || ''}
+                                            value={data.PCity || ''}
                                             onChange={(e) => handleInputs('PCity', e.target.value)}
                                         />
                                     </Form.Item>
@@ -608,7 +665,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="PState"
-                                            value={user.PState || ''}
+                                            value={data.PState || ''}
                                             onChange={(e) => handleInputs('PState', e.target.value)}
                                         />
                                     </Form.Item>
@@ -619,21 +676,19 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="PPinCode"
-                                            value={user.PPinCode || ''}
+                                            value={data.PPinCode || ''}
                                             onChange={(e) => handleInputs('PPinCode', e.target.value)}
                                         />
                                     </Form.Item>
                                 </Col>
                             </Row>
-
                             <hr style={{ marginBottom: '35px' }} />
-
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Income Type" className="FormItem">
                                         <Select
                                             placeholder="Select"
-                                            value={user.IncomeType || ''}
+                                            value={data.IncomeType || ''}
                                             onChange={(value) => handleSelectChangeIncomType(value, 'IncomeType')}
                                             autoComplete="off"
                                             name="IncomeType"
@@ -652,7 +707,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="OrganizationName"
-                                            value={user.OrganizationName || ''}
+                                            value={data.OrganizationName || ''}
                                             onChange={(e) => handleInputs('OrganizationName', e.target.value)}
                                         />
                                     </Form.Item>
@@ -663,7 +718,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="Designation"
-                                            value={user.Designation || ''}
+                                            value={data.Designation || ''}
                                             onChange={(e) => handleInputs('Designation', e.target.value)}
                                         />
                                     </Form.Item>
@@ -676,7 +731,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="FormationType"
-                                            value={user.FormationType || ''}
+                                            value={data.FormationType || ''}
                                             onChange={(e) => handleInputs('FormationType', e.target.value)}
                                         />
                                     </Form.Item>
@@ -687,7 +742,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="IndustryType"
-                                            value={user.IndustryType || ''}
+                                            value={data.IndustryType || ''}
                                             onChange={(e) => handleInputs('IndustryType', e.target.value)}
                                         />
                                     </Form.Item>
@@ -700,7 +755,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="MobileNo1"
-                                            value={user.MobileNo1 || ''}
+                                            value={data.MobileNo1 || ''}
                                             onChange={(e) => handleInputs('MobileNo1', e.target.value)}
                                         />
                                     </Form.Item>
@@ -711,7 +766,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="CurrentExperience"
-                                            value={user.CurrentExperience || ''}
+                                            value={data.CurrentExperience || ''}
                                             onChange={(e) => handleInputs('CurrentExperience', e.target.value)}
                                         />
                                     </Form.Item>
@@ -724,7 +779,7 @@ const SalaryIncome = () => {
                                             placeholder="Please enter"
                                             autoComplete="off"
                                             name="ExperienceProof"
-                                            value={user.ExperienceProof || ''}
+                                            value={data.ExperienceProof || ''}
                                             onChange={(e) => handleInputs('ExperienceProof', e.target.value)}
                                         />
                                     </Form.Item>
@@ -734,8 +789,9 @@ const SalaryIncome = () => {
                                         <Input
                                             placeholder="Please enter"
                                             autoComplete="off"
+                                            type="Date"
                                             name="Dated"
-                                            value={user.Dated || ''}
+                                            value={data.Dated || ''}
                                             onChange={(e) => handleInputs('Dated', e.target.value)}
                                         />
                                     </Form.Item>
@@ -746,7 +802,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="PF Applicability" className="FormItem">
                                         <Select
                                             placeholder="Select"
-                                            value={user.PFApplicability || ''}
+                                            value={data.PFApplicability || ''}
                                             onChange={(value) => handleSelectChangePFAapplicability(value, 'PFApplicability')}
                                             autoComplete="off"
                                             name="PFApplicability"
@@ -760,7 +816,7 @@ const SalaryIncome = () => {
                                     <Form.Item label="Form 16/ 26AS" className="FormItem">
                                         <Select
                                             placeholder="Select"
-                                            value={user.Form26AS || ''}
+                                            value={data.Form26AS || ''}
                                             onChange={(value) => handleSelectChangeForm26AS(value, 'Form26AS')}
                                             autoComplete="off"
                                             name="Form26AS"
@@ -772,6 +828,7 @@ const SalaryIncome = () => {
                                 </Col>
                             </Row>
                             <hr style={{ marginBottom: '35px' }} />
+
 
                             <table>
                                 <thead>
@@ -786,171 +843,83 @@ const SalaryIncome = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {salaryDetails.length > 0 ? (
-                                        salaryDetails.map((detail, index) => (
+                                    {data.SalaryDetails && data.SalaryDetails.length > 0 ? (
+                                        data.SalaryDetails.map((detail, index) => (
                                             <tr key={index}>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Month"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`Month_${index}`}
+                                                        name="Month"
                                                         value={detail.Month || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].Month = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('Month', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Gross Salary"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`GrossSalary_${index}`}
+                                                        name="GrossSalary"
                                                         value={detail.GrossSalary || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].GrossSalary = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('GrossSalary', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Net Salary"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`NetSalary_${index}`}
+                                                        name="NetSalary"
                                                         value={detail.NetSalary || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].NetSalary = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('NetSalary', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Other Income"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`OtherIncome_${index}`}
+                                                        name="OtherIncome"
                                                         value={detail.OtherIncome || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].OtherIncome = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('OtherIncome', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Total Income"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`TotalIncome_${index}`}
+                                                        name="TotalIncome"
                                                         value={detail.TotalIncome || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].TotalIncome = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('TotalIncome', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter Payment Mode"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`PaymentMode_${index}`}
+                                                        name="PaymentMode"
                                                         value={detail.PaymentMode || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].PaymentMode = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                        onChange={(e) => handleInputsSalary('PaymentMode', e.target.value, index)}
                                                     />
                                                 </td>
                                                 <td>
-                                                    <Input
-                                                        placeholder="Enter Date of Payment"
-                                                        autoComplete="off"
-                                                        name={`DateOfPayment_${index}`}
-                                                        value={detail.DateOfPayment || ''}
-                                                        onChange={(e) => {
-                                                            const updatedSalaryDetails = [...salaryDetails];
-                                                            updatedSalaryDetails[index].DateOfPayment = e.target.value;
-                                                            setSalaryDetails(updatedSalaryDetails);
-                                                        }}
+                                                    <DatePicker
+                                                        style={{ width: "100%" }}
+                                                        value={detail.DateOfPayment ? moment(detail.DateOfPayment) : null}
+                                                        onChange={(date, dateString) => handleInputsSalary('DateOfPayment', dateString, index)}
                                                     />
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Month"
-                                                    autoComplete="off"
-                                                    name="Month"
-                                                    value={user.Month || ''}
-                                                    onChange={(e) => handleInputs('Month', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Gross Salary"
-                                                    autoComplete="off"
-                                                    name="GrossSalary"
-                                                    value={user.GrossSalary || ''}
-                                                    onChange={(e) => handleInputs('GrossSalary', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Net Salary"
-                                                    autoComplete="off"
-                                                    name="NetSalary"
-                                                    value={user.NetSalary || ''}
-                                                    onChange={(e) => handleInputs('NetSalary', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Other Income"
-                                                    autoComplete="off"
-                                                    name="OtherIncome"
-                                                    value={user.OtherIncome || ''}
-                                                    onChange={(e) => handleInputs('OtherIncome', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Total Income"
-                                                    autoComplete="off"
-                                                    name="TotalIncome"
-                                                    value={user.TotalIncome || ''}
-                                                    onChange={(e) => handleInputs('TotalIncome', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Payment Mode"
-                                                    autoComplete="off"
-                                                    name="PaymentMode"
-                                                    value={user.PaymentMode || ''}
-                                                    onChange={(e) => handleInputs('PaymentMode', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter Date of Payment"
-                                                    autoComplete="off"
-                                                    name="DateOfPayment"
-                                                    value={user.DateOfPayment || ''}
-                                                    onChange={(e) => handleInputs('DateOfPayment', e.target.value)}
-                                                />
-                                            </td>
+                                            <td colSpan="7">No salary details available.</td>
                                         </tr>
                                     )}
                                 </tbody>
                             </table>
+                            <Button onClick={addNewRow} type="primary" style={{ marginBottom: "20px" }}>
+                                Add Record
+                            </Button>
+
 
                             <table style={{ marginTop: '35px' }}>
                                 <thead>
@@ -964,173 +933,223 @@ const SalaryIncome = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {bankDetails.length > 0 ? (
-                                        bankDetails.map((detail, index) => (
+                                    {data.BankDetails.length > 0 ? (
+                                        data.BankDetails.map((detail, index) => (
                                             <tr key={index}>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter ABB"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`ABB_${index}`}
+                                                        name="ABB"
                                                         value={detail.ABB || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'ABB', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('ABB', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter DR-1"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`DR1_${index}`}
+                                                        name="DR1"
                                                         value={detail.DR1 || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'DR1', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('DR1', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter DR-2"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`DR2_${index}`}
+                                                        name="DR2"
                                                         value={detail.DR2 || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'DR2', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('DR2', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter DR-3"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`DR3_${index}`}
+                                                        name="DR3"
                                                         value={detail.DR3 || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'DR3', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('DR3', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter DR-4"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`DR4_${index}`}
+                                                        name="DR4"
                                                         value={detail.DR4 || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'DR4', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('DR4', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <Input
-                                                        placeholder="Enter DR-5"
+                                                        placeholder="Please enter"
                                                         autoComplete="off"
-                                                        name={`DR5_${index}`}
+                                                        name="DR5"
                                                         value={detail.DR5 || ''}
-                                                        onChange={(e) => handleBankDetailChange(index, 'DR5', e.target.value)}
+                                                        onChange={(e) => handleInputsBankDetails('DR5', e.target.value, index, 'BankDetails')}
                                                     />
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter ABB"
-                                                    autoComplete="off"
-                                                    name="ABB"
-                                                    value={user.ABB || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'ABB', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter DR-1"
-                                                    autoComplete="off"
-                                                    name="DR1"
-                                                    value={user.DR1 || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'DR1', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter DR-2"
-                                                    autoComplete="off"
-                                                    name="DR2"
-                                                    value={user.DR2 || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'DR2', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter DR-3"
-                                                    autoComplete="off"
-                                                    name="DR3"
-                                                    value={user.DR3 || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'DR3', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter DR-4"
-                                                    autoComplete="off"
-                                                    name="DR4"
-                                                    value={user.DR4 || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'DR4', e.target.value)}
-                                                />
-                                            </td>
-                                            <td>
-                                                <Input
-                                                    placeholder="Enter DR-5"
-                                                    autoComplete="off"
-                                                    name="DR5"
-                                                    value={user.DR5 || ''}
-                                                    onChange={(e) => handleBankDetailChange(0, 'DR5', e.target.value)}
-                                                />
-                                            </td>
+                                            <td colSpan="6">No data available.</td>
                                         </tr>
                                     )}
                                 </tbody>
-
                             </table>
+                            <Button onClick={addNewRowToSecondTable} type="primary" style={{ marginBottom: "20px", marginTop: "35px" }}>
+                                Add Record
+                            </Button>
 
                             <table style={{ marginTop: '35px' }}>
                                 <thead>
                                     <tr>
-                                        <th>CIBIL ANALYSIS</th>
-                                        <th>3 Months</th>
-                                        <th>6 Months</th>
-                                        <th>12 Months</th>
-                                        <th>CIBIL SCORE</th>
-                                        <th>Payment Mode</th>
+                                        <th>Cibil Analysis</th>
+                                        <th>Bounce</th>
+                                        <th>Enquiry</th>
+                                        <th>Recent Funding</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th>Bounces</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Enquiry</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Recent Funding</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Loan Eligibility</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                    {Array.isArray(data.Analysis) && data.Analysis.length > 0 ? (
+                                        data.Analysis.map((detail, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Please enter"
+                                                        autoComplete="off"
+                                                        name="CibilAnalysis"
+                                                        value={detail.CibilAnalysis || ''}
+                                                        onChange={(e) => handleInputsAnalysis('CibilAnalysis', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Please enter"
+                                                        autoComplete="off"
+                                                        name="Bounce"
+                                                        value={detail.Bounce || ''}
+                                                        onChange={(e) => handleInputsAnalysis('Bounce', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Please enter"
+                                                        autoComplete="off"
+                                                        name="Enquiry"
+                                                        value={detail.Enquiry || ''}
+                                                        onChange={(e) => handleInputsAnalysis('Enquiry', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Please enter"
+                                                        autoComplete="off"
+                                                        name="RecentFunding"
+                                                        value={detail.RecentFunding || ''}
+                                                        onChange={(e) => handleInputsAnalysis('RecentFunding', e.target.value, index)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No data available.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
+
+                            <Button type="primary" onClick={addNewRowToAnalysis} style={{ marginTop: '10px' }}>
+                                Add New Row
+                            </Button>
+
+                            <table style={{ marginTop: '35px' }}>
+                                <thead>
+                                    <tr>
+                                        <th>CIBIL SCORE</th>
+                                        <th>PAYOUT</th>
+                                        <th>SETTLEMENT 1 YEAR</th>
+                                        <th>SETTLEMENT 2 YEAR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Array.isArray(data.Score) && data.Score.length > 0 ? (
+                                        data.Score.map((score, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Cibil Score"
+                                                        autoComplete="off"
+                                                        name="CibilScore"
+                                                        value={score.CibilScore || ''}
+                                                        onChange={(e) => handleInputsScore('CibilScore', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Payout"
+                                                        autoComplete="off"
+                                                        name="PayOut"
+                                                        value={score.PayOut || ''}
+                                                        onChange={(e) => handleInputsScore('PayOut', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Settlement 1 Yr"
+                                                        autoComplete="off"
+                                                        name="Settelement1Yr"
+                                                        value={score.Settelement1Yr || ''}
+                                                        onChange={(e) => handleInputsScore('Settelement1Yr', e.target.value, index)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        placeholder="Enter Settlement 2 Yr"
+                                                        autoComplete="off"
+                                                        name="Settelement2Yr"
+                                                        value={score.Settelement2Yr || ''}
+                                                        onChange={(e) => handleInputsScore('Settelement2Yr', e.target.value, index)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No data available.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                            <Button type="primary" onClick={addNewRowToScore} style={{ marginTop: '10px' }}>
+                                Add New Row
+                            </Button>
+
+                            <div style={{ marginTop: '35px' }}>
+                                <label>
+                                    Loan Eligibility:
+                                    <Input
+                                        placeholder="Enter Loan Eligibility"
+                                        autoComplete="off"
+                                        value={data.LoanEligibility || ''}
+                                        onChange={(e) => setData({ ...data, LoanEligibility: e.target.value })}
+                                    />
+                                </label>
+                                <label style={{ marginLeft: '20px' }}>
+                                    Loan Stage:
+                                    <Input
+                                        placeholder="Enter Loan Stage"
+                                        autoComplete="off"
+                                        value={data.LoanStage || ''}
+                                        onChange={(e) => setData({ ...data, LoanStage: e.target.value })}
+                                    />
+                                </label>
+                            </div>
+
+
                             <div className="dl-btn">
                                 <button type="button" onClick={handleEdit}>Save</button>
                             </div>

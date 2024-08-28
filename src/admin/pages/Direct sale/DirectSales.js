@@ -42,30 +42,43 @@ const DirectSales = () => {
     const handleEdit = (employee) => {
         const { salaryIncome, businessIncome, professionalIncome } = employee;
     
-        // Serialize the salaryIncome or businessIncome data into query parameters
+        // Serialize the salaryIncome, businessIncome, or professionalIncome data into query parameters
         const serializeIncome = (income, type) => {
             const serializeArray = (arr) => Array.isArray(arr) ? arr.join(', ') : arr || '';
+            const serializeIncomeDetails = (details) => {
+                return details.map(detail => 
+                    `AssesmentYear=${encodeURIComponent(detail.AssesmentYear || '')}&` +
+                    `GrossIncome=${encodeURIComponent(detail.GrossIncome || '')}&` +
+                    `NetIncome=${encodeURIComponent(detail.NetIncome || '')}&` +
+                    `OtherIncome=${encodeURIComponent(detail.OtherIncome || '')}&` +
+                    `TotalIncome=${encodeURIComponent(detail.TotalIncome || '')}&` +
+                    `PaymentMode=${encodeURIComponent(detail.PaymentMode || '')}&` +
+                    `DateOfFilling=${encodeURIComponent(detail.DateOfFilling || '')}`
+                ).join('&');
+            };
+            const serializeTurnOverDetails = (details) => {
+                return details.map(detail => 
+                    `TurnOver=${encodeURIComponent(detail.TurnOver || '')}&` +
+                    `ITR=${encodeURIComponent(detail.ITR || '')}&` +
+                    `GST=${encodeURIComponent(detail.GST || '')}&` +
+                    `Banking=${encodeURIComponent(detail.Banking || '')}&` +
+                    `Export=${encodeURIComponent(detail.Export || '')}&` +
+                    `Other=${encodeURIComponent(detail.Other || '')}`
+                ).join('&');
+            };
+            const serializeBankDetails = (details) => {
+                return details.map(detail => 
+                    `ABB=${encodeURIComponent(detail.ABB || '')}&` +
+                    `DR1=${encodeURIComponent(detail.DR1 || '')}&` +
+                    `DR2=${encodeURIComponent(detail.DR2 || '')}&` +
+                    `DR3=${encodeURIComponent(detail.DR3 || '')}&` +
+                    `DR4=${encodeURIComponent(detail.DR4 || '')}&` +
+                    `DR5=${encodeURIComponent(detail.DR5 || '')}`
+                ).join('&');
+            };
     
             if (type === 'salary') {
-                return `Name=${encodeURIComponent(income.Name || '')}&` +
-                    `LoanType=${encodeURIComponent(income.LoanType || '')}&` +
-                    `LoanAmount=${encodeURIComponent(income.LoanAmount || '')}&` +
-                    `PropertyLocation=${encodeURIComponent(income.PropertyLocation || '')}&` +
-                    `City=${encodeURIComponent(serializeArray(income.City))}&` +
-                    `IncomeType=${encodeURIComponent(serializeArray(income.IncomeType))}&` +
-                    `GrossSalaryPerMonth=${encodeURIComponent(income.GrossSalaryPerMonth || '')}&` +
-                    `NetSalaryPerMonth=${encodeURIComponent(income.NetSalaryPerMonth || '')}&` +
-                    `DeductionFromSalary=${encodeURIComponent(serializeArray(income.DeductionFromSalary))}&` +
-                    `Form16=${encodeURIComponent(serializeArray(income.Form16))}&` +
-                    `LastTwoYearsForm16=${encodeURIComponent(serializeArray(income.LastTwoYearsForm16))}&` +
-                    `CompanyName=${encodeURIComponent(income.CompanyName || '')}&` +
-                    `DateOfJoining=${encodeURIComponent(income.DateOfJoining || '')}&` +
-                    `CompanyFormedAs=${encodeURIComponent(income.CompanyFormedAs || '')}&` +
-                    `BelongFromIndustry=${encodeURIComponent(income.BelongFromIndustry || '')}&` +
-                    `PreviousCompanyName=${encodeURIComponent(income.PreviousCompanyName || '')}&` +
-                    `TotalWorkExperience=${encodeURIComponent(income.TotalWorkExperience || '')}&` +
-                    `AnotherSourceOfIncome=${encodeURIComponent(serializeArray(income.AnotherSourceOfIncome))}&` +
-                    `OtherSourceOfIncome=${encodeURIComponent(serializeArray(income.OtherSourceOfIncome))}`;
+               
             } else if (type === 'business') {
                 return `Name=${encodeURIComponent(income.Name || '')}&` +
                     `LoanType=${encodeURIComponent(income.LoanType || '')}&` +
@@ -102,32 +115,32 @@ const DirectSales = () => {
                     `SourcingChanel=${encodeURIComponent(income.SourcingChanel || '')}&` +
                     `SourceName=${encodeURIComponent(income.SourceName || '')}&` +
                     `LeadName=${encodeURIComponent(income.LeadName || '')}&` +
-                    `EmailId=${encodeURIComponent(income.EmailId || '')}&` + 
-
-                    `MobileNo1=${encodeURIComponent(income.MobileNo1 || '')}&` + 
-                    `DateOfBirth=${encodeURIComponent(income.DateOfBirth || '')}&` + 
-                    `Age=${encodeURIComponent(income.Age || '')}&` + 
-                    `Sex=${encodeURIComponent(income.Sex || '')}&` + 
-                    `MaritalStatus=${encodeURIComponent(income.MaritalStatus || '')}&` + 
-                    `ResidenceType=${encodeURIComponent(income.ResidenceType || '')}&` + 
-                    `ResidenceCity=${encodeURIComponent(income.ResidenceCity || '')}&` + 
-                    `PermanentAddress=${encodeURIComponent(income.PermanentAddress || '')}&` + 
-                    `PCity=${encodeURIComponent(income.PCity || '')}&` + 
-                    `PPinCode=${encodeURIComponent(income.PPinCode || '')}&` + 
-                    `PState=${encodeURIComponent(income.PState || '')}&` + 
-                    `FormationType=${encodeURIComponent(income.FormationType || '')}&` + 
-                    `OrganizationName=${encodeURIComponent(income.OrganizationName || '')}&` + 
-                    `OfficeType=${encodeURIComponent(income.OfficeType || '')}&` + 
-                    `Designation=${encodeURIComponent(income.Designation || '')}&` + 
-                    `CurrentExperience=${encodeURIComponent(income.CurrentExperience || '')}&` + 
-                    `IndustryType=${encodeURIComponent(income.IndustryType || '')}&` + 
-                    `Dated=${encodeURIComponent(income.Dated || '')}&` + 
-                    `ExperienceProof=${encodeURIComponent(income.ExperienceProof || '')}&` + 
-                    `Form26AS=${encodeURIComponent(income.Form26AS || '')}&` + 
-                    `PFApplicability=${encodeURIComponent(income.PFApplicability || '')}&` + 
-                    `TDSDeduction=${encodeURIComponent(serializeArray(income.TDSDeduction))}`;
-
-                    
+                    `EmailId=${encodeURIComponent(income.EmailId || '')}&` +
+                    `MobileNo1=${encodeURIComponent(income.MobileNo1 || '')}&` +
+                    `DateOfBirth=${encodeURIComponent(income.DateOfBirth || '')}&` +
+                    `Age=${encodeURIComponent(income.Age || '')}&` +
+                    `Sex=${encodeURIComponent(income.Sex || '')}&` +
+                    `MaritalStatus=${encodeURIComponent(income.MaritalStatus || '')}&` +
+                    `ResidenceType=${encodeURIComponent(income.ResidenceType || '')}&` +
+                    `ResidenceCity=${encodeURIComponent(income.ResidenceCity || '')}&` +
+                    `PermanentAddress=${encodeURIComponent(income.PermanentAddress || '')}&` +
+                    `PCity=${encodeURIComponent(income.PCity || '')}&` +
+                    `PPinCode=${encodeURIComponent(income.PPinCode || '')}&` +
+                    `PState=${encodeURIComponent(income.PState || '')}&` +
+                    `FormationType=${encodeURIComponent(income.FormationType || '')}&` +
+                    `OrganizationName=${encodeURIComponent(income.OrganizationName || '')}&` +
+                    `OfficeType=${encodeURIComponent(income.OfficeType || '')}&` +
+                    `Designation=${encodeURIComponent(income.Designation || '')}&` +
+                    `CurrentExperience=${encodeURIComponent(income.CurrentExperience || '')}&` +
+                    `IndustryType=${encodeURIComponent(income.IndustryType || '')}&` +
+                    `Dated=${encodeURIComponent(income.Dated || '')}&` +
+                    `ExperienceProof=${encodeURIComponent(income.ExperienceProof || '')}&` +
+                    `Form26AS=${encodeURIComponent(income.Form26AS || '')}&` +
+                    `PFApplicability=${encodeURIComponent(income.PFApplicability || '')}&` +
+                    `TDSDeduction=${encodeURIComponent(serializeArray(income.TDSDeduction))}&` +
+                    `IncomeDetails=${encodeURIComponent(serializeIncomeDetails(income.IncomeDetails))}&` +
+                    `TurnOverDetails=${encodeURIComponent(serializeTurnOverDetails(income.TurnOverDetails))}&` +
+                    `BankDetails=${encodeURIComponent(serializeBankDetails(income.BankDetails))}`;
             } else if (type === 'professional') {
                 // Add serialization logic for professional income if needed
             }
@@ -152,6 +165,8 @@ const DirectSales = () => {
             navigate(fullUrl);
         }
     };
+    
+    
     
 
     const getIncomeType = (salaryIncome, businessIncome, professionalIncome) => {
