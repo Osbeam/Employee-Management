@@ -16,7 +16,7 @@ import New_employee from './hr/pages/New_employee';
 import Employee_list from './hr/pages/Employee_list';
 import Hr_Layout from './hr/component/Hr_Layout'
 import Attendence from './hr/pages/Attendence';
-import Leave_management from './hr/pages/Leave_management';
+import Leave_management from './hr/pages/Leave-Management/Leave_management';
 import Hr_docs from './hr/pages/Hr_docs';
 import Hr_Dashboard from './hr/pages/Hr_Dashboard';
 import Pending_Leads from './admin/pages/Pending_Leads';

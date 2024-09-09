@@ -13,7 +13,7 @@ import  './admin/pages/Direct sale/DirectSales.css'
 import  './admin/pages/Direct sale/DirectLeadInfo.css'
 
 import './hr/pages/Employee_list.css'
-import './hr/pages/Leave_management.css'
+import './hr/pages/Leave-Management/Leave_management.css'
 import './hr/pages/Attendence.css'
 import './hr/pages/New_Employee.css'
 import './hr/pages/Edit_Employee_List.css'
