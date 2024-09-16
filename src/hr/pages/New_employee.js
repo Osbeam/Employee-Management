@@ -265,7 +265,7 @@ export default function New_employee() {
       console.log("Form submitted successfully!", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Email or mobile number already exists.");
+      toast.error("Please fill all the fields.");
     }
   };
 
