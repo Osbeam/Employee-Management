@@ -295,10 +295,7 @@ export default function New_employee() {
         // Deductions: deductionsArray,
       };
 
-      const response = await axios.post(
-        "http://77.37.45.224:8000/api/user/employeeInfo",
-        updatedFormData
-      );
+      const response = await axios.post("http://77.37.45.224:8000/api/user/employeeInfo",updatedFormData);
 
       if (response.status === 200) {
         toast.success("Employee registered successfully!");
