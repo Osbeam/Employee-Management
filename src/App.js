@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-
 import Layout from './admin/component/Layout';
 import Dashboard from './admin/pages/Dashboard'
 import Data_operator from './admin/pages/Data_operator';
@@ -33,7 +32,6 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<Login />} />
-        
         <Route path='/admin' element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={< Dashboard />} />
           <Route path='dataoperator' element={<Data_operator />} />
