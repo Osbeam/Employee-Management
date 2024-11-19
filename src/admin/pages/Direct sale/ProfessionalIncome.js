@@ -156,7 +156,7 @@ const ProfessionalIncome = () => {
         setData(prevData => ({
             ...prevData,
             IncomeDetails: [
-                ...prevData.IncomeDetails,
+                ...(prevData.IncomeDetails || []),  // Ensure it's always an array, fallback to empty array if undefined or null
                 {
                     AssesmentYear: '',
                     GrossIncome: '',
@@ -169,12 +169,13 @@ const ProfessionalIncome = () => {
             ]
         }));
     };
+    
 
     const addTurnOverDetailRow = () => {
         setData(prevData => ({
             ...prevData,
             TurnOverDetails: [
-                ...prevData.TurnOverDetails,
+                ...(prevData.TurnOverDetails || []),
                 {
                     TurnOver: '',
                     ITR: '',
@@ -191,7 +192,7 @@ const ProfessionalIncome = () => {
         setData(prevData => ({
             ...prevData,
             BankDetails: [
-                ...prevData.BankDetails,
+                ...(prevData.BankDetails || []),
                 {
                     ABB: '',
                     DR1: '',
@@ -230,9 +231,27 @@ const ProfessionalIncome = () => {
     const handleSelectChangeForm26AS = (value) => {
         handleInputs('Form26AS', value);
     };
+    const handleSelectChangeCertificateOfPractice = (value) => {
+        handleInputs('CertificateOfPractice', value);
+    };
+    const handleSelectChangeGstRegistration = (value) => {
+        handleInputs('GstRegistration', value);
+    };
+    const handleSelectChangeShopActLicence = (value) => {
+        handleInputs('ShopActLicence', value);
+    };
+    const handleSelectChangeAadharUdhyog = (value) => {
+        handleInputs('AadharUdhyog', value);
+    };
+    const handleSelectChangeCurrentAccount = (value) => {
+        handleInputs('CurrentAccount', value);
+    };
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error fetching data: {error.message}</p>;
+
+
     return (
         <>
             <div className="directlead-header">
@@ -392,10 +411,16 @@ const ProfessionalIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Do  you have Certificate of practice number ?" className="FormItem">
-                                        <Input value={data?.CertificateOfPractice || ''}
+                                            <Select
+                                            placeholder="Select"
+                                            value={data?.CertificateOfPractice || ''}
+                                            onChange={(value) => handleSelectChangeCertificateOfPractice(value, 'CertificateOfPractice')}
+                                            autoComplete="off"
                                             name="CertificateOfPractice"
-                                            onChange={(e) => handleInputs('CertificateOfPractice', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -415,6 +440,7 @@ const ProfessionalIncome = () => {
                                             type="Date"
                                             onChange={(e) => handleInputs('DateOfCertificateOfPracticeNumber', e.target.value)}
                                         />
+                               
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -423,10 +449,17 @@ const ProfessionalIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Do you have GST Registration number ?" className="FormItem">
-                                        <Input value={data?.GstRegistration || ''}
+                                   
+                                                         <Select
+                                            placeholder="Select"
+                                            value={data?.GstRegistration || ''}
+                                            onChange={(value) => handleSelectChangeGstRegistration(value, 'GstRegistration')}
+                                            autoComplete="off"
                                             name="GstRegistration"
-                                            onChange={(e) => handleInputs('GstRegistration', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -455,10 +488,17 @@ const ProfessionalIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Do you have Shop Act License Number ?" className="FormItem">
-                                        <Input value={data?.ShopActLicence || ''}
+                                    
+                                           <Select
+                                            placeholder="Select"
+                                            value={data?.ShopActLicence || ''}
+                                            onChange={(value) => handleSelectChangeShopActLicence(value, 'ShopActLicence')}
+                                            autoComplete="off"
                                             name="ShopActLicence"
-                                            onChange={(e) => handleInputs('ShopActLicence', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -486,10 +526,17 @@ const ProfessionalIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Do you have Aadhaar Udhyog Number ?" className="FormItem">
-                                        <Input value={data?.AadharUdhyog || ''}
+                                 
+                                              <Select
+                                            placeholder="Select"
+                                            value={data?.AadharUdhyog || ''}
+                                            onChange={(value) => handleSelectChangeAadharUdhyog(value, 'AadharUdhyog')}
+                                            autoComplete="off"
                                             name="AadharUdhyog"
-                                            onChange={(e) => handleInputs('AadharUdhyog', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -518,10 +565,17 @@ const ProfessionalIncome = () => {
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
                                     <Form.Item label="Current Account" className="FormItem">
-                                        <Input value={data?.CurrentAccount || ''}
+                                     
+                                        <Select
+                                            placeholder="Select"
+                                            value={data?.CurrentAccount || ''}
+                                            onChange={(value) => handleSelectChangeCurrentAccount(value, 'CurrentAccount')}
+                                            autoComplete="off"
                                             name="CurrentAccount"
-                                            onChange={(e) => handleInputs('CurrentAccount', e.target.value)}
-                                        />
+                                        >
+                                            <Option value="Yes">Yes</Option>
+                                            <Option value="No">No</Option>
+                                        </Select>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>

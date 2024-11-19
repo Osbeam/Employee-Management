@@ -1,0 +1,65 @@
+.hrdoc-container{
+
+}
+.HrHeading-container{
+    margin: 0px 0px 50px 0px;
+}
+.hrdoc-container h1{
+    font-size: 35px;
+    color: #3d3a3a;
+}
+
+/* Offer letter */
+
+.offerContainer{
+    display: flex;
+    gap: 25px;
+    margin: 0px 0px 20px 0px;
+}
+.user-select-label  {
+    font-size: 20px;
+    align-self: center;
+}
+#user-select{
+    width: 20%;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 6px;
+    outline: none;
+}
+.OfferLetterDownloadBtn button{
+    padding: 10px;
+    color: white;
+    background-color: #05a705;
+    border: 1px solid #05a705;
+    outline: none;
+    border-radius: 5px;
+}
+
+
+/* Salary slip */
+
+.salarySlipDropdown{
+    display: flex;
+    gap: 25px;
+    margin: 0px 0px 20px 0px;
+}
+.salarySlipDropdown p{
+    font-size: 20px;
+    align-self: center;
+}
+.salarySlipDropdown select{
+    width: 20%;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 6px;
+    outline: none;
+        align-self: center;
+}
+.salary-slip {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    width: 40%;
+    border-collapse: collapse;
+    border: 2px solid #b7b3b3;
+}

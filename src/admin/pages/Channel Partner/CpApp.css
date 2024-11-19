@@ -1,0 +1,12 @@
+.table-container{overflow: auto; width: 100%;}
+
+.cpapptable{ width: 100%; border-collapse: collapse;}
+
+.cpapptable th , .cpapptable td{border: 1px solid #ddd; padding: 8px; text-align: left;}
+
+.cpapptable th{background-color: #f2f2f2; font-weight: bold;}
+
+.table-container::-webkit-scrollbar{ height: 8px;}
+
+.ant-tabs-content-holder{ margin-top: -42px !important;}
+

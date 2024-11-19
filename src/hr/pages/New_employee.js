@@ -7,10 +7,31 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Country, State, City } from 'country-state-city';
 
 export default function New_employee() {
+  const [sameAsAbove, setSameAsAbove] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [subDepartments, setSubDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [currentStates, setCurrentStates] = useState([]);
+  const [currentCities, setCurrentCities] = useState([]);
+  const [permanentStates, setPermanentStates] = useState([]);
+  const [permanentCities, setPermanentCities] = useState([]);
+  const [activeTabKey, setActiveTabKey] = useState("1");
+
   const initialFormData = {
     FirstName: "",
     MiddleName: "",
     LastName: "",
+    EmployeeID: "",
+    Designation: "",
+    PanNumber:"",
+    UANNumber:"",
+    DateOfJoining: "",
+    CalenderDays:"",
+    WorkingDays:"",
+    BankName: "",
+    AccountNumber: "",
+
     MobileNumber: "",
     EmailId: "",
     BloodGroup: "",
@@ -38,18 +59,25 @@ export default function New_employee() {
     Relation2: "",
     ContactNumber2: "",
     Address2: "",
-    EmployeeID: "",
     Department: "",
     SubDepartment: "",
-    Designation: "",
     Position: "",
     ManagedBy: "",
     CompanyName: "",
+
     BasicSalary: "",
+    HRA: "",
+    MedicalAllowance: "",
     FixedAllowance: "",
+    Reimbursment: "",
+    PF: "",
+    PT: "",
     SpecialAllowance: "",
-    VeriableAllowance: "",
-    Deductions: [],
+    NetSalary:"",
+    NetSalaryInWords:"",
+    SalaryMonth:"",
+
+    // Deductions: [],
     NoteBook: "",
     Stationery: "",
     JoiningKit: "",
@@ -62,32 +90,16 @@ export default function New_employee() {
     HighestQuaCertificate: "",
     LastComRellievingLetter: "",
     BankDetails: "",
-    BankName: "",
     AccountHolderName: "",
-    AccountNumber: "",
     IFSCCode: "",
-    PF: false,
-    ESI: false,
-    PT: false,
-    TDS: false,
     Password: "",
     Role: [],
     MrMissMrs: "",
-    DateOfJoining: "",
   };
-
   const [formData, setFormData] = useState(initialFormData);
-  const [sameAsAbove, setSameAsAbove] = useState(false);
-  const [departments, setDepartments] = useState([]);
-  const [subDepartments, setSubDepartments] = useState([]);
-  const [designations, setDesignations] = useState([]);
-  const [managers, setManagers] = useState([]);
-  const [currentStates, setCurrentStates] = useState([]);
-  const [currentCities, setCurrentCities] = useState([]);
-  const [permanentStates, setPermanentStates] = useState([]);
-  const [permanentCities, setPermanentCities] = useState([]);
-  const [activeTabKey, setActiveTabKey] = useState("1");
 
+
+//Get manager and leaders name
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -228,11 +240,41 @@ export default function New_employee() {
     e.preventDefault();
 
     try {
-      const deductionsArray = [];
-      if (formData.PF) deductionsArray.push("PF");
-      if (formData.ESI) deductionsArray.push("ESI");
-      if (formData.PT) deductionsArray.push("PT");
-      if (formData.TDS) deductionsArray.push("TDS");
+
+      const requiredFields = [
+        { field: formData.FirstName, fieldName: "FirstName" },
+        { field: formData.MiddleName, fieldName: "MiddleName" },
+        { field: formData.LastName, fieldName: "LastName" },
+        { field: formData.BloodGroup, fieldName: "BloodGroup" }, 
+        { field: formData.MobileNumber, fieldName: "MobileNumber" }, 
+        { field: formData.EmailId, fieldName: "EmailId" }, 
+        { field: formData.NoteBook, fieldName: "NoteBook" }, 
+        { field: formData.Stationery, fieldName: "Stationery" }, 
+        { field: formData.JoiningKit, fieldName: "JoiningKit" }, 
+        { field: formData.Designation, fieldName: "Designation" }, 
+        { field: formData.Department, fieldName: "Department" }, 
+        { field: formData.SubDepartment, fieldName: "SubDepartment" }, 
+        { field: formData.Position, fieldName: "Position" }, 
+        { field: formData.ManagedBy, fieldName: "ManagedBy" }, 
+        { field: formData.CompanyName, fieldName: "CompanyName" }, 
+      ];
+  
+      const missingFields = requiredFields
+        .filter(item => !item.field) // Check if the field is empty
+        .map(item => item.fieldName); // Get the name of the missing fields
+  
+      if (missingFields.length > 0) {
+        // Show the names of the missing fields
+        toast.error(`Please fill the  ${missingFields.join(", ")} fields`);
+        return; // Stop form submission if there are missing fields
+      }
+
+
+      // const deductionsArray = [];
+      // if (formData.PF) deductionsArray.push("PF");
+      // if (formData.ESI) deductionsArray.push("ESI");
+      // if (formData.PT) deductionsArray.push("PT");
+      // if (formData.TDS) deductionsArray.push("TDS");
 
       const updatedFormData = {
         ...formData,
@@ -250,7 +292,7 @@ export default function New_employee() {
           State2: formData.PermanentState,
           Pincode2: formData.PermanentPincode,
         },
-        Deductions: deductionsArray,
+        // Deductions: deductionsArray,
       };
 
       const response = await axios.post(
@@ -681,7 +723,7 @@ export default function New_employee() {
               {subDepartments && subDepartments.map((subDepartment) => (
                 <option key={subDepartment._id} value={subDepartment._id}>
                   {subDepartment.name}
-                </option>  
+                </option>
               ))}
             </select>
 
@@ -798,7 +840,6 @@ export default function New_employee() {
                 <div className="grid-item1">Salary Component</div>
                 <div className="grid-item2">Amount</div>
                 <div className="grid-item3">Per Month</div>
-                <div className="grid-item4">Per Annual</div>
 
                 <div className="grid-item5">Basic Salary</div>
                 <div className="grid-item6">
@@ -810,12 +851,31 @@ export default function New_employee() {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="grid-item7">
-                  <input type="text" id="basicSalaryPerAnnual" disabled />
+
+                <div className="grid-item7">HRA</div>
+                <div className="grid-item8">
+                  <input
+                    type="number"
+                    id="HRAPerMonth"
+                    name="HRA"
+                    value={formData.HRA}
+                    onChange={handleInputChange}
+                  />
                 </div>
 
-                <div className="grid-item8">Fixed Allowance</div>
-                <div className="grid-item9">
+                <div className="grid-item9">Medical Allowance</div>
+                <div className="grid-item10">
+                  <input
+                    type="number"
+                    id="MedicalAllowancePerMonth"
+                    name="MedicalAllowance"
+                    value={formData.MedicalAllowance}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="grid-item11">Fixed Allowance</div>
+                <div className="grid-item12">
                   <input
                     type="number"
                     id="FixedAllowancePerMonth"
@@ -824,46 +884,26 @@ export default function New_employee() {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="grid-item10">
-                  <input type="text" id="FixedAllowancePerAnnual" disabled />
-                </div>
 
-                <div className="grid-item11">Special Allowance</div>
-                <div className="grid-item12">
+                <div className="grid-item13">Reimbursment</div>
+                <div className="grid-item14">
                   <input
                     type="number"
-                    id="specialallowncePerMonth"
-                    name="SpecialAllowance"
-                    value={formData.SpecialAllowance}
+                    id="ReimbursmentPerMonth"
+                    name="Reimbursment"
+                    value={formData.Reimbursment}
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="grid-item13">
-                  <input type="text" id="specialallowncePerAnnual" disabled />
-                </div>
 
-                <div className="grid-item14">Variable Allowance</div>
                 <div className="grid-item15">
-                  <input
-                    type="number"
-                    id="variableAllowancePerMonth"
-                    name="VeriableAllowance"
-                    value={formData.VeriableAllowance}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="grid-item16">
-                  <input type="text" id="variableAllowancePerAnnual" disabled />
-                </div>
-
-                <div className="grid-item17">
                   <p>Deductions</p>
                   <div style={{ display: "flex", marginLeft: "30px" }}>
                     <div style={{ marginRight: "40px" }}>
                       <label>
                         PF
                         <input
-                          type="checkbox"
+                          type="input"
                           name="PF"
                           checked={formData.PF}
                           onChange={handleInputChange}
@@ -872,33 +912,11 @@ export default function New_employee() {
                     </div>
                     <div style={{ marginRight: "40px" }}>
                       <label>
-                        ESI
-                        <input
-                          type="checkbox"
-                          name="ESI"
-                          checked={formData.ESI}
-                          onChange={handleInputChange}
-                        />
-                      </label>
-                    </div>
-                    <div style={{ marginRight: "40px" }}>
-                      <label>
                         PT
                         <input
-                          type="checkbox"
+                          type="input"
                           name="PT"
                           checked={formData.PT}
-                          onChange={handleInputChange}
-                        />
-                      </label>
-                    </div>
-                    <div>
-                      <label>
-                        TDS
-                        <input
-                          type="checkbox"
-                          name="TDS"
-                          checked={formData.TDS}
                           onChange={handleInputChange}
                         />
                       </label>
@@ -908,6 +926,7 @@ export default function New_employee() {
               </div>
             </div>
           </div>
+
 
           <div>
             <div className="submit-container">
@@ -1130,6 +1149,23 @@ export default function New_employee() {
               placeholder="IFSC Code"
             />
             <br />
+            <label style={{ marginRight: "126px" }}>Pan Number :</label>
+            <input
+              name="PanNumber"
+              value={formData.PanNumber}
+              onChange={handleInputChange}
+              placeholder="Enter Pan Number"
+              style={{ width: "34%" }}
+            />
+            <br/>
+              <label style={{ marginRight: "121px" }}>UAN Number :</label>
+            <input
+              name="UANNumber"
+              value={formData.UANNumber}
+              onChange={handleInputChange}
+              placeholder="Enter Pan Number"
+              style={{ width: "34%" }}
+            />
           </div>
         </div>
         <div>

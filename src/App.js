@@ -6,7 +6,7 @@ import Data_operator from './admin/pages/Data_operator';
 import Login from './Login';
 import Hr from './hr/pages/Hr';
 import Employee from './admin/pages/Employee';
-import ChannelPartner from './admin/pages/ChannelPartner';
+import ChannelPartner from './admin/pages/Channel Partner/ChannelPartner';
 import Leads from './admin/pages/Leads';
 import DirectSales from './admin/pages/Direct sale/DirectSales'
 import DirectLeadInfo from './admin/pages/Direct sale/DirectLeadInfo';
@@ -25,6 +25,8 @@ import ProtectedRoute from './ProtectedRoute';
 import SalaryIncome from './admin/pages/Direct sale/SalaryIncome';
 import BusinessIncome from './admin/pages/Direct sale/BusinessIncome';
 import ProfessionalIncome from './admin/pages/Direct sale/ProfessionalIncome'
+import SnsCp from './admin/pages/Channel Partner/SnsCp';
+import CpApp from './admin/pages/Channel Partner/CpApp';
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
           <Route index element={< Dashboard />} />
           <Route path='dataoperator' element={<Data_operator />} />
           <Route path='channelpartner' element={<ChannelPartner />} />
+          <Route path='snscp' element={<SnsCp/>}/>
+          <Route path='cpapp' element={<CpApp/>}/>
           <Route path='employee' element={<Employee />} />
           <Route path='leads' element={<Leads />} />
           <Route path='pendingleads' element={<Pending_Leads/>}/>

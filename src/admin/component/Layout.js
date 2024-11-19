@@ -60,15 +60,21 @@ const MainLayout = () => {
           <Menu.Item key="" icon={<AppstoreOutlined />} label="Dashboard">
             Dashboard
           </Menu.Item>
-          <Menu.Item key="channelpartner" icon={<SoundOutlined />} label="Channel Partner">
-            Channel partner
-          </Menu.Item>
+          <Menu.SubMenu key="channelpartner" icon={<SoundOutlined />} title="Channel Partner">
+            <Menu.Item key="snscp" icon={<SoundOutlined/>} label='Sns Cp'>
+              Sns Cp
+            </Menu.Item>
+            <Menu.Item key="cpapp" icon={<SoundOutlined/>} label="Cp App">
+              Cp App
+            </Menu.Item>
+          </Menu.SubMenu>
           <Menu.Item key="dataoperator" icon={<PhoneOutlined />} label="Data Operator">
             Data Operator
           </Menu.Item>
           <Menu.Item key="employee" icon={<RobotOutlined />} label="employee">
             Employee
           </Menu.Item>
+
           <Menu.SubMenu key="Leads" icon={<BookOutlined />} title="All Leads">
             <Menu.Item key="leads" icon={<SolutionOutlined />} label="Leads">
               Leads
@@ -77,6 +83,7 @@ const MainLayout = () => {
               Pending Leads
             </Menu.Item>
           </Menu.SubMenu>
+
           <Menu.Item key="directsales" icon={<DollarOutlined />} label="Direct Sales">
             Direct Sales
           </Menu.Item>
