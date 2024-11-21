@@ -31,7 +31,6 @@ export default function New_employee() {
     WorkingDays:"",
     BankName: "",
     AccountNumber: "",
-
     MobileNumber: "",
     EmailId: "",
     BloodGroup: "",

@@ -17,7 +17,7 @@ export default function Edit_Employee_List() {
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
-        const response = await fetch(`http://77.37.45.224:8000/api/user/getEmployee`, {
+        const response = await fetch(`http://77.37.45.224.:8000/api/user/getAllEmployee`, {
           method: 'GET',
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
