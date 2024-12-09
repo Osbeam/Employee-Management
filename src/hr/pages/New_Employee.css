@@ -30,3 +30,8 @@
     float: right;
     cursor: pointer;
   }
+
+  .mandatory {
+    color: red;
+  }
+  

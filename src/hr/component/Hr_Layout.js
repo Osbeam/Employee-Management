@@ -13,6 +13,8 @@ import {
   ProjectOutlined,
   SoundOutlined,
   LogoutOutlined,
+  HarmonyOSOutlined,
+  AuditOutlined
 } from '@ant-design/icons';
 import logo from '../Images/ShawniksLogo.png';
 import { Layout, Menu, Button, theme } from 'antd';
@@ -74,6 +76,17 @@ const MainLayout = () => {
           <Menu.Item key="hr-docs" icon={<SolutionOutlined />} label="Hr document">
             Hr Documents
           </Menu.Item>
+          <Menu.SubMenu key="leader" icon={<HarmonyOSOutlined />} title="Leader">
+            <Menu.Item key="newreg" icon={<UsergroupAddOutlined />} label='New Registration'>
+              New Registration
+            </Menu.Item>
+            <Menu.Item key="leaderattendence" icon={<ProjectOutlined />} label="Attendence">
+              Attendence
+            </Menu.Item>
+            <Menu.Item key="empreport" icon={<AuditOutlined />} label="Employee Report">
+              Employee Report
+            </Menu.Item>
+          </Menu.SubMenu>
           <Menu.Item key="logout" icon={<LogoutOutlined />} label="Logout">
             Logout
           </Menu.Item>

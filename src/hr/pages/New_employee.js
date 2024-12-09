@@ -25,6 +25,7 @@ export default function New_employee() {
     EmployeeID: "",
     Designation: "",
     PanNumber:"",
+    AadharCard:"",
     UANNumber:"",
     DateOfJoining: "",
     CalenderDays:"",
@@ -239,7 +240,6 @@ export default function New_employee() {
     e.preventDefault();
 
     try {
-
       const requiredFields = [
         { field: formData.FirstName, fieldName: "FirstName" },
         { field: formData.MiddleName, fieldName: "MiddleName" },
@@ -256,6 +256,8 @@ export default function New_employee() {
         { field: formData.Position, fieldName: "Position" }, 
         { field: formData.ManagedBy, fieldName: "ManagedBy" }, 
         { field: formData.CompanyName, fieldName: "CompanyName" }, 
+        { field: formData.Password, fieldName: "Password" }, 
+        { field: formData.Role, fieldName: "Role" }, 
       ];
   
       const missingFields = requiredFields
@@ -315,6 +317,11 @@ export default function New_employee() {
   const handleTabChange = (key) => {
     setActiveTabKey(key);
   };
+
+
+
+
+  
   return (
     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
       <TabPane className="new_emp_tabs" tab="Basic Information" key="1">
@@ -323,7 +330,7 @@ export default function New_employee() {
             <h2>Employee Registration Form</h2>
             <p>Basic Information</p>
             <div className="inner-container">
-              <label style={{ marginRight: "66px" }}>Full Name :</label>
+              <label style={{ marginRight: "61px" }}>Full Name :<span className="mandatory">*</span></label>
               <select
                 style={{ marginRight: '5px', width: '8%' }}
                 name="MrMissMrs"
@@ -362,7 +369,7 @@ export default function New_employee() {
                 placeholder="Last Name"
               />
               <br />
-              <label style={{ marginRight: "59px" }}>Mobile no. :</label>
+              <label style={{ marginRight: "54px" }}>Mobile no. :<span className="mandatory">*</span></label>
               <input
                 type="number"
                 style={{ width: "26%" }}
@@ -371,9 +378,7 @@ export default function New_employee() {
                 value={formData.MobileNumber}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "15px", marginLeft: "23px" }}>
-                Email id :
-              </label>
+              <label style={{ marginRight: "15px", marginLeft: "28px" }}>Email id :<span className="mandatory">*</span></label>
               <input
                 type="Email"
                 style={{ width: "26%" }}
@@ -383,7 +388,7 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
-              <label style={{ marginRight: "51px" }}>Blood Group :</label>
+              <label style={{ marginRight: "46px" }}>Blood Group :<span className="mandatory">*</span></label>
               <select
                 name="BloodGroup"
                 value={formData.BloodGroup}
@@ -581,7 +586,7 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
-              <label style={{ marginRight: "59px" }}>Joining Date :</label>
+              <label style={{ marginRight: "13px" }}> Last Company DOB :</label>
               <input
                 type="date"
                 style={{ width: "27%" }}
@@ -695,7 +700,7 @@ export default function New_employee() {
           <div className="inner-container">
             <h2>Job Profile</h2>
 
-            <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:</label>
+            <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:<span className="mandatory">*</span></label>
             <select
               style={{ width: '20%' }}
               onChange={handleDepartmentChange}
@@ -709,7 +714,7 @@ export default function New_employee() {
               ))}
             </select>
 
-            <label style={{ marginRight: "39px" }}>Sub Department:</label>
+            <label style={{ marginRight: "40px" }}>Sub Department:<span className="mandatory">*</span></label>
             <select
               style={{ width: '20%' }}
               onChange={handleSubDepartmentChange}
@@ -725,7 +730,7 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "42px" }}>Designation:</label>
+            <label style={{ marginRight: "40px" }}>Designation:<span className="mandatory">*</span></label>
             <select
               style={{ width: '20%' }}
               onChange={handleDesignationChange}
@@ -739,7 +744,7 @@ export default function New_employee() {
               ))}
             </select>
 
-            <label style={{ marginRight: "86px" }}>Position :</label>
+            <label style={{ marginRight: "90px" }}>Position :<span className="mandatory">*</span></label>
             <select
               style={{ width: "20%" }}
               name="Position"
@@ -755,7 +760,7 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "33px" }}>Managed By :</label>
+            <label style={{ marginRight: "32px" }}>Managed By :<span className="mandatory">*</span></label>
             <select
               style={{ width: "20%" }}
               name="ManagedBy"
@@ -773,7 +778,7 @@ export default function New_employee() {
 
 
 
-            <label style={{ marginRight: "52px" }}>Joining Date :</label>
+            <label style={{ marginRight: "62px" }}>Joining Date :</label>
             <input
               type="date"
               style={{ width: "20%" }}
@@ -785,7 +790,7 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "16px" }}>Company name :</label>
+            <label style={{ marginRight: "16px" }}>Company name :<span className="mandatory">*</span></label>
             <select
               style={{ width: "20%", marginLeft: '-5px' }}
               name="CompanyName"
@@ -799,7 +804,7 @@ export default function New_employee() {
               <option value="Damaru Properties">Damaru Properties</option>
             </select>
 
-            <label style={{ marginRight: '108px' }}>Role :</label>
+            <label style={{ marginRight: '113px' }}>Role :<span className="mandatory">*</span></label>
             <select
               name='Role'
               style={{ width: "20.00%" }}
@@ -814,7 +819,7 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "43px" }}>Password :</label>
+            <label style={{ marginRight: "42px" }}>Password :<span className="mandatory">*</span></label>
             <input
               type="text"
               placeholder="Enter password"
@@ -937,7 +942,7 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Joining Kit</h2>
-            <label style={{ marginRight: "78px" }}>Notebook :</label>
+            <label style={{ marginRight: "78px" }}>Notebook :<span className="mandatory">*</span></label>
             <label htmlFor="noteBookYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -960,7 +965,7 @@ export default function New_employee() {
               onChange={handleInputChange}
             />
             <br />
-            <label style={{ marginRight: "75px" }}>Stationery :</label>
+            <label style={{ marginRight: "75px" }}>Stationery :<span className="mandatory">*</span></label>
             <label htmlFor="stationeryYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -983,7 +988,7 @@ export default function New_employee() {
               onChange={handleInputChange}
             />
             <br />
-            <label style={{ marginRight: "74px" }}>Joining Kit :</label>
+            <label style={{ marginRight: "74px" }}>Joining Kit :<span className="mandatory">*</span></label>
             <label htmlFor="joiningKitYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -1043,6 +1048,15 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Documents</h2>
+            <label style={{ marginRight: "126px" }}>Pan Number :</label>
+            <input
+              name="PanNumber"
+              value={formData.PanNumber}
+              onChange={handleInputChange}
+              placeholder="Enter Pan Number"
+              style={{ width: "34%" }}
+            />
+            <br/>
             <label style={{ marginRight: "147px" }}>Pan Card :</label>
             <input
               type="file"
@@ -1051,6 +1065,15 @@ export default function New_employee() {
               style={{ width: "34%" }}
             />
             <br />
+            <label style={{ marginRight: "105px" }}>Aadhar Number :</label>
+            <input
+              name="AadharCard"
+              value={formData.AadharCard}
+              onChange={handleInputChange}
+              placeholder="Enter Aadhar Number"
+              style={{ width: "34%" }}
+            />
+            <br/>
             <label style={{ marginRight: "126px" }}>Aadhar Card :</label>
             <input
               type="file"
@@ -1145,15 +1168,6 @@ export default function New_employee() {
               placeholder="IFSC Code"
             />
             <br />
-            <label style={{ marginRight: "126px" }}>Pan Number :</label>
-            <input
-              name="PanNumber"
-              value={formData.PanNumber}
-              onChange={handleInputChange}
-              placeholder="Enter Pan Number"
-              style={{ width: "34%" }}
-            />
-            <br/>
               <label style={{ marginRight: "121px" }}>UAN Number :</label>
             <input
               name="UANNumber"

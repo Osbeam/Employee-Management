@@ -32,3 +32,27 @@
     background-color: #4a864c;
     color: white;
   } */
+
+  .pagination-number {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  .pagination-number.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .pagination-number:hover {
+    background-color: #ddd;
+  }
+
+  .pagination-emp{
+    padding: 25px;
+    display: flex;
+    justify-content: end;
+  }

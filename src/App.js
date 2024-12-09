@@ -26,6 +26,9 @@ import BusinessIncome from './admin/pages/Direct sale/BusinessIncome';
 import ProfessionalIncome from './admin/pages/Direct sale/ProfessionalIncome'
 import SnsCp from './admin/pages/Channel Partner/SnsCp';
 import CpApp from './admin/pages/Channel Partner/CpApp';
+import NewRegi from './hr/pages/Leader/NewRegi';
+import Attendnc from './hr/pages/Leader/Attendnc';
+import EmpReport from './hr/pages/Leader/EmpReport';
 
 function App() {
   return (
@@ -55,6 +58,9 @@ function App() {
           <Route path='attendence' element={<Attendence/>} />
           <Route path='leave-management' element={<Leave_management/>} />
           <Route path='hr-docs' element={<Hr_docs/>} />
+          <Route path='newreg' element={<NewRegi/>}/>
+          <Route path='leaderattendence' element={<Attendnc/>}/>
+          <Route path='empreport' element={<EmpReport/>}/>
         </Route>
       </Routes>
     </Router>

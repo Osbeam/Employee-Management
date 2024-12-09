@@ -73,18 +73,6 @@ export default function Attendance() {
     fetchUsers();
   }, []);
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      fetchUsers(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      fetchUsers(currentPage + 1);
-    }
-  };
-
   //Fetch approved users with authtoken
   const fetchAllUsers = async (page = 1) => {
     const today = new Date();
@@ -96,7 +84,7 @@ export default function Attendance() {
       const response = await axios.get(
         `http://77.37.45.224:8000/api/user/getApprovedLogUsers?approved=true&startDate=${startDate}&endDate=${endDate}&currentPage=${page}&pageSize=${pageSize}`,
         {
-          headers:{
+          headers: {
             Authorization: `Bearer ${authToken}`
           }
         }
@@ -113,18 +101,6 @@ export default function Attendance() {
   useEffect(() => {
     fetchAllUsers();
   }, []);
-
-  const handlePrevPageAllUsers = () => {
-    if (currentReportPage > 1) {
-      fetchAllUsers(currentReportPage - 1);
-    }
-  };
-
-  const handleNextPageAllUsers = () => {
-    if (currentReportPage < totalReportPages) {
-      fetchAllUsers(currentReportPage + 1);
-    }
-  };
 
   //Approve users with authtoken
   const handleApprove = async (_id) => {
@@ -149,11 +125,11 @@ export default function Attendance() {
         isPresent: true,
         approved: true,
       },
-    {
-      headers: {
-        Authorization:`Bearer ${authToken}`
-      }
-    });
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        });
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== _id));
       fetchAllUsers();
       // Show success message
@@ -202,7 +178,7 @@ export default function Attendance() {
     setEditUserId(_id);
     setUsers(updatedUsers);
   };
-  
+
   // Edit and save data with authtoken
   const handleSave = async (_id) => {
     try {
@@ -210,7 +186,7 @@ export default function Attendance() {
       const formData = new FormData();
       formData.append("inTime", new Date(userToSave.inTime).toISOString());
       formData.append("outTime", new Date(userToSave.outTime).toISOString());
-  
+
       // Note: No image logic here
       const authToken = localStorage.getItem('jwtoken')
       const response = await axios.put(
@@ -223,20 +199,20 @@ export default function Attendance() {
           },
         }
       );
-  
+
       const updatedUsers = users.map((user) =>
         user._id === _id
           ? {
-              ...user,
-              editMode: false,
-              totalHours: response.data.log.totalHours,
-              // Ensure inTimeImage remains unchanged
-              inTimeImage: user.inTimeImage,
-            }
+            ...user,
+            editMode: false,
+            totalHours: response.data.log.totalHours,
+            // Ensure inTimeImage remains unchanged
+            inTimeImage: user.inTimeImage,
+          }
           : user
       );
       setUsers(updatedUsers);
-  
+
       message.success("Attendance edited successfully");
     } catch (error) {
       console.log("Error editing user:", error);
@@ -257,23 +233,23 @@ export default function Attendance() {
   //Delete user data with authtoken
   const handleDelete = async (_id) => {
     const authToken = localStorage.getItem('jwtoken'); // Retrieve the token from local storage
-  
+
     if (!authToken) {
       console.error('No auth token found in local storage');
       return;
     }
-  
+
     console.log('Auth Token:', authToken); // Debugging: Log the token to make sure it's retrieved
-  
+
     try {
       const response = await axios.delete(`http://77.37.45.224:8000/api/user/deleteLog/${_id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`, // Include the token in the headers
         },
       });
-  
+
       console.log('Response:', response.data); // Log the response for debugging
-  
+
       fetchUsers(currentPage);
     } catch (error) {
       console.log('Error deleting log:', error.response?.data || error.message); // More detailed error message
@@ -313,7 +289,62 @@ export default function Attendance() {
     fetchEmployeeDetails();
   }, []);
 
+  const handlePrevPageAllUsers = () => {
+    if (currentReportPage > 1) {
+      fetchAllUsers(currentReportPage - 1);
+    }
+  };
 
+  const handleNextPageAllUsers = () => {
+    if (currentReportPage < totalReportPages) {
+      fetchAllUsers(currentReportPage + 1);
+    }
+  };
+
+  /* Existing code for pagination*/
+  // const handlePrevPage = () => {
+  //   if (currentPage > 1) {
+  //     fetchUsers(currentPage - 1);
+  //   }
+  // };
+
+  // const handleNextPage = () => {
+  //   if (currentPage < totalPages) {
+  //     fetchUsers(currentPage + 1);
+  //   }
+  // };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const visiblePages = 5; // Number of pages to display in the pagination bar
+    let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+    // Adjust if startPage or endPage goes out of bounds
+    if (endPage - startPage + 1 < visiblePages) {
+      startPage = Math.max(1, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          className={`pagination-number ${i === currentPage ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -444,7 +475,8 @@ export default function Attendance() {
                     </tbody>
 
                   </table>
-                  <div className="pagination">
+                  { /* Existing code for pagination*/}
+                  {/* <div className="pagination">
                     <button
                       className="pagination-btn"
                       disabled={currentPage === 1}
@@ -465,7 +497,17 @@ export default function Attendance() {
                     >
                       Next
                     </button>
+                  </div> */}
+                  <div className="pagination-emp">
+                    <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                      Previous
+                    </button>
+                    {renderPageNumbers()}
+                    <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                      Next
+                    </button>
                   </div>
+                  <div>User Count: {totalRecords}</div>
                 </>
               )}
               {activeTab === "allReports" && (

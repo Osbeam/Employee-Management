@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const { Title } = Typography;
 
 export default function Edit_Employee_List() {
-  const { id } = useParams(); // Get employee ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [user, setUser] = useState({});
@@ -103,6 +103,13 @@ export default function Edit_Employee_List() {
           AccountNumber: user.AccountNumber,
           IFSCCode: user.IFSCCode,
           Role: user.Role,
+          // PanCard: user.PanCard,
+          // AadharCard: user.AadharCard,
+          // Photo: user.Photo,
+          // AddressProof: user.AddressProof,
+          // HighestQuaCertificate: user.HighestQuaCertificate,
+          // LastComRellievingLetter: user.LastComRellievingLetter,
+          // BankDetails: user.BankDetails,
         }),
       });
 
@@ -119,6 +126,7 @@ export default function Edit_Employee_List() {
       setIsLoading(false);
     }
   };
+  
 
   if (isLoading && !user) {
     return <div>Loading...</div>;
