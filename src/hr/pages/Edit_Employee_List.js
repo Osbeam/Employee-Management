@@ -521,6 +521,28 @@ export default function Edit_Employee_List() {
                 />
               </Form.Item>
             </Col>
+            {/* <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '74px' }}>Pan Card</span>}>
+                <Input
+                  placeholder="Enter Pan Card no"
+                  autoComplete="off"
+                  name="PanCard"
+                  value={user.PanCard || ''}
+                  onChange={(e) => handleInputs('PanCard', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '42px' }}>Aadhar Card</span>}>
+                <Input
+                  placeholder="Enter Aadhar Card no"
+                  autoComplete="off"
+                  name="AadharCard"
+                  value={user.AadharCard || ''}
+                  onChange={(e) => handleInputs('AadharCard', e.target.value)}
+                />
+              </Form.Item>
+            </Col> */}
           </Row>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" onClick={handleEdit} loading={isLoading}>

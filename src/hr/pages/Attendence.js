@@ -302,49 +302,49 @@ export default function Attendance() {
   };
 
   /* Existing code for pagination*/
-  // const handlePrevPage = () => {
-  //   if (currentPage > 1) {
-  //     fetchUsers(currentPage - 1);
-  //   }
-  // };
-
-  // const handleNextPage = () => {
-  //   if (currentPage < totalPages) {
-  //     fetchUsers(currentPage + 1);
-  //   }
-  // };
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      fetchUsers(currentPage - 1);
     }
   };
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    const visiblePages = 5; // Number of pages to display in the pagination bar
-    let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + visiblePages - 1);
-
-    // Adjust if startPage or endPage goes out of bounds
-    if (endPage - startPage + 1 < visiblePages) {
-      startPage = Math.max(1, endPage - visiblePages + 1);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      fetchUsers(currentPage + 1);
     }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          className={`pagination-number ${i === currentPage ? 'active' : ''}`}
-          onClick={() => handlePageChange(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    return pageNumbers;
   };
+
+  // const handlePageChange = (page) => {
+  //   if (page >= 1 && page <= totalPages) {
+  //     setCurrentPage(page);
+  //   }
+  // };
+
+  // const renderPageNumbers = () => {
+  //   const pageNumbers = [];
+  //   const visiblePages = 5; // Number of pages to display in the pagination bar
+  //   let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+  //   let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+  //   // Adjust if startPage or endPage goes out of bounds
+  //   if (endPage - startPage + 1 < visiblePages) {
+  //     startPage = Math.max(1, endPage - visiblePages + 1);
+  //   }
+
+  //   for (let i = startPage; i <= endPage; i++) {
+  //     pageNumbers.push(
+  //       <button
+  //         key={i}
+  //         className={`pagination-number ${i === currentPage ? 'active' : ''}`}
+  //         onClick={() => handlePageChange(i)}
+  //       >
+  //         {i}
+  //       </button>
+  //     );
+  //   }
+
+  //   return pageNumbers;
+  // };
 
   return (
     <>
@@ -476,7 +476,7 @@ export default function Attendance() {
 
                   </table>
                   { /* Existing code for pagination*/}
-                  {/* <div className="pagination">
+                  <div className="pagination">
                     <button
                       className="pagination-btn"
                       disabled={currentPage === 1}
@@ -497,8 +497,8 @@ export default function Attendance() {
                     >
                       Next
                     </button>
-                  </div> */}
-                  <div className="pagination-emp">
+                  </div>
+                  {/* <div className="pagination-emp">
                     <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                       Previous
                     </button>
@@ -507,7 +507,7 @@ export default function Attendance() {
                       Next
                     </button>
                   </div>
-                  <div>User Count: {totalRecords}</div>
+                  <div>User Count: {totalRecords}</div> */}
                 </>
               )}
               {activeTab === "allReports" && (
