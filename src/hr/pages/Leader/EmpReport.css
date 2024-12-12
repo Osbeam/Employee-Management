@@ -1,0 +1,15 @@
+.empHead{padding: 10px; display: flex; justify-content: space-between; align-items: center;}
+
+.empHead p{font-size: 18px; font-weight: 400;}
+
+.empDrop{padding: 10px; margin-top: 15px;}
+
+.empDrop label{font-size: 16px; font-weight: 400; padding: 10px 10px 10px 0px;}
+
+.empDrop select{border: 1px solid black; border-radius: 2px; padding: 4px 40px 4px 40px;}
+
+.emp-report-table{margin-top: 20px; overflow-x: auto;}
+
+.emp-report-table-head tr{background-color: #f2f2f2;}
+
+.emp-report-table-body th{font-weight: 300;}

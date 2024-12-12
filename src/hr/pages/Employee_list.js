@@ -57,7 +57,6 @@ export default function Employee_List() {
     }
   };
 
-  
   const handleEdit = (employee) => {
     navigate(`/hrpanel/employee-list/edit-employee-list/${employee._id}`);
   };
@@ -73,12 +72,26 @@ export default function Employee_List() {
     const visiblePages = 5; // Number of pages to display in the pagination bar
     let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
     let endPage = Math.min(totalPages, startPage + visiblePages - 1);
-
+  
     // Adjust if startPage or endPage goes out of bounds
     if (endPage - startPage + 1 < visiblePages) {
       startPage = Math.max(1, endPage - visiblePages + 1);
     }
-
+  
+    // Add "First" button if not on the first page
+    if (currentPage > 1) {
+      pageNumbers.push(
+        <button
+          key="first"
+          className="pagination-number"
+          onClick={() => handlePageChange(1)}
+        >
+          First
+        </button>
+      );
+    }
+  
+    // Render page numbers dynamically
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <button
@@ -90,13 +103,32 @@ export default function Employee_List() {
         </button>
       );
     }
-
+  
+    // Add "Last" button if not on the last page
+    if (currentPage < totalPages) {
+      pageNumbers.push(
+        <button
+          key="last"
+          className="pagination-number"
+          onClick={() => handlePageChange(totalPages)}
+        >
+          Last
+        </button>
+      );
+    }
+  
     return pageNumbers;
   };
 
   return (
     <>
       <div><h2 style={{ marginBottom: '25px', fontSize: '25px' }}>Employee List</h2></div>
+      <div className='emp-list-search-bar'>
+        <input
+        type='text'
+        placeholder='Search name, designation, emp id, role'
+        />
+      </div>
       <div className="table-container">
         <table className="el-table">
           <thead>
@@ -167,16 +199,19 @@ export default function Employee_List() {
           </tbody>
         </table>
       </div>
+      <div className='emp-list-pagination'>
+      <span>User Count: {userCount}</span>
       <div className="pagination-emp">
-        <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+        {/* <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
           Previous
-        </button>
+        </button> */}
         {renderPageNumbers()}
-        <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        {/* <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
           Next
-        </button>
+        </button> */}
       </div>
-      <div>User Count: {userCount}</div>
+      </div>
+
     </>
   );
 }

@@ -301,7 +301,6 @@ export default function Attendance() {
     }
   };
 
-  /* Existing code for pagination*/
   const handlePrevPage = () => {
     if (currentPage > 1) {
       fetchUsers(currentPage - 1);
@@ -314,37 +313,17 @@ export default function Attendance() {
     }
   };
 
-  // const handlePageChange = (page) => {
-  //   if (page >= 1 && page <= totalPages) {
-  //     setCurrentPage(page);
-  //   }
-  // };
+  const handlePageClick = (pageNumber) => {
+    fetchUsers(pageNumber);
+  };
+  // Determine page range
+  const getPageNumbers = () => {
+    const range = 3; // Number of pages to show before and after the current page
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
 
-  // const renderPageNumbers = () => {
-  //   const pageNumbers = [];
-  //   const visiblePages = 5; // Number of pages to display in the pagination bar
-  //   let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
-  //   let endPage = Math.min(totalPages, startPage + visiblePages - 1);
-
-  //   // Adjust if startPage or endPage goes out of bounds
-  //   if (endPage - startPage + 1 < visiblePages) {
-  //     startPage = Math.max(1, endPage - visiblePages + 1);
-  //   }
-
-  //   for (let i = startPage; i <= endPage; i++) {
-  //     pageNumbers.push(
-  //       <button
-  //         key={i}
-  //         className={`pagination-number ${i === currentPage ? 'active' : ''}`}
-  //         onClick={() => handlePageChange(i)}
-  //       >
-  //         {i}
-  //       </button>
-  //     );
-  //   }
-
-  //   return pageNumbers;
-  // };
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  };
 
   return (
     <>
@@ -475,39 +454,58 @@ export default function Attendance() {
                     </tbody>
 
                   </table>
-                  { /* Existing code for pagination*/}
-                  <div className="pagination">
-                    <button
-                      className="pagination-btn"
+                  {/* Pagination */}
+                  <div className="attendence-pagination">
+                    {/* <button
+                      className="attendence-pagination-btn"
                       disabled={currentPage === 1}
                       onClick={handlePrevPage}
                     >
                       Previous
-                    </button>
-                    <span className="pagination-info">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <span className="pagination-info">
+                    </button> */}
+                    <span className="attendence-pagination-info">
                       Total Records: {totalRecords}
                     </span>
-                    <button
-                      className="pagination-btn"
+                    <div className="attendence-pagination-pages">
+                      {/* Render previous page button if currentPage > 1 */}
+                      {currentPage > 1 && (
+                        <button
+                          className="attendence-pagination-number"
+                          onClick={() => handlePageClick(1)}
+                        >
+                          First
+                        </button>
+                      )}
+
+                      {getPageNumbers().map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          className={`attendence-pagination-number ${pageNumber === currentPage ? "active" : ""}`}
+                          onClick={() => handlePageClick(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      ))}
+
+                      {/* Render next page button if currentPage < totalPages */}
+                      {currentPage < totalPages && (
+                        <button
+                          className="attendence-pagination-number"
+                          onClick={() => handlePageClick(totalPages)}
+                        >
+                          Last
+                        </button>
+                      )}
+                    </div>
+
+                    {/* <button
+                      className="attendence-pagination-btn"
                       disabled={currentPage === totalPages}
                       onClick={handleNextPage}
                     >
                       Next
-                    </button>
+                    </button> */}
                   </div>
-                  {/* <div className="pagination-emp">
-                    <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                      Previous
-                    </button>
-                    {renderPageNumbers()}
-                    <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                      Next
-                    </button>
-                  </div>
-                  <div>User Count: {totalRecords}</div> */}
                 </>
               )}
               {activeTab === "allReports" && (
