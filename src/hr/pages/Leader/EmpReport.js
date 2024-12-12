@@ -22,6 +22,7 @@ export default function EmpReport() {
         <table>
           <thead className='emp-report-table-head'>
             <tr>
+              <th>Sr. no.</th>
               <th>Emp Name</th>
               <th>Connected Call</th>
               <th>Not Connected</th>
@@ -32,6 +33,7 @@ export default function EmpReport() {
           </thead>
           <tbody className='emp-report-table-body'>
             <tr>
+              <th>1</th>
               <th>Rajkumar Rao</th>
               <th>20</th>
               <th>30</th>
