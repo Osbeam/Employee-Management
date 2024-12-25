@@ -6,10 +6,18 @@
 
 .empDrop label{font-size: 16px; font-weight: 400; padding: 10px 10px 10px 0px;}
 
-.empDrop select{border: 1px solid black; border-radius: 2px; padding: 4px 40px 4px 40px;}
+.empDrop select{border: 1px solid black; border-radius: 2px; padding: 4px 40px 4px 40px; outline: none;}
 
 .emp-report-table{margin-top: 20px; overflow-x: auto;}
 
 .emp-report-table-head tr{background-color: #f2f2f2;}
 
 .emp-report-table-body th{font-weight: 300;}
+
+/* .PieChartHead{text-align: center; margin-top: 20px;}
+
+.recharts-wrapper{position: relative; cursor: default; width: 300px; height: 300px; left: 50px; top: 35px;}
+
+.recharts-default-legend{text-align: left !important;}
+
+.recharts-legend-wrapper{top: 290px;} */

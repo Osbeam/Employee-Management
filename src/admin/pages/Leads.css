@@ -61,3 +61,9 @@
     color: #595353;
     background-color: rgb(88, 255, 76);
 }
+
+.leads-pagination{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 43px;
+}

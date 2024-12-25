@@ -534,7 +534,7 @@ export default function Leads() {
           </Row>
         </Form>
       </Modal>
-      <div className="pagination">
+      <div className="leads-pagination">
         <button
           className="Data-op-pagination-btn"
           onClick={() => handlePageChange(currentPage - 1)}

@@ -69,3 +69,9 @@
   .ant-input{
     width: 210px !important;
   }
+
+  .DataOp-pagination{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 43px;
+}

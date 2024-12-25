@@ -521,7 +521,7 @@ export default function Data_operator() {
           </Row>
         </Form>
       </Modal>
-      <div className="pagination">
+      <div className="DataOp-pagination">
         <button
           className="Data-op-pagination-btn"
           onClick={() => handlePageChange(currentPage - 1)}

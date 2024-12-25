@@ -98,7 +98,6 @@ export default function New_employee() {
   };
   const [formData, setFormData] = useState(initialFormData);
 
-
 //Get manager and leaders name
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -586,7 +585,7 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
-              <label style={{ marginRight: "13px" }}> Last Company DOB :</label>
+              <label style={{ marginRight: "13px" }}> Last Company DOJ :</label>
               <input
                 type="date"
                 style={{ width: "27%" }}
@@ -937,7 +936,6 @@ export default function New_employee() {
           </div>
         </div>
       </TabPane>
-
       <TabPane tab="Assets" key="3">
         <div className="form-container">
           <div className="inner-container">
@@ -1068,7 +1066,7 @@ export default function New_employee() {
             <label style={{ marginRight: "105px" }}>Aadhar Number :</label>
             <input
               name="AadharCard"
-              value={formData.AadharCard}
+              value={formData.AadharCardNumber}
               onChange={handleInputChange}
               placeholder="Enter Aadhar Number"
               style={{ width: "34%" }}

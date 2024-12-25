@@ -176,7 +176,7 @@ export default function Pending_Leads() {
                     </tbody>
                 </table>
             </div>
-            <div className="pagination">
+            <div className="pendingleads-pagination">
                 <button
                     className="Data-op-pagination-btn"
                     onClick={() => handlePageChange(currentPage - 1)}

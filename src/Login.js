@@ -12,36 +12,39 @@ export default function Login() {
 
   async function handleLogin(event) {
     event.preventDefault();
-
+  
     // Validate input fields
     if (!EmailId || !password) {
       setError("Please enter both Email and password");
       message.error("Please enter both Email and password");
       return;
     }
-
+  
     try {
       const response = await axios.post(
         "http://77.37.45.224:8000/api/user/EmployeeInfoLogin",
         { EmailId, Password: password }
       );
-
+  
       console.log("API response:", response.data);
-
+  
       if (response.data.success && response.data.loggedUser) {
         const { loggedUser, token } = response.data;
-
+  
         console.log("Logged User:", loggedUser);
-
+  
+        // Save user details and token to localStorage
+        localStorage.setItem("user", JSON.stringify(loggedUser));
+        localStorage.setItem("jwtoken", token);
+        localStorage.setItem('userId', response.data.userId);
+        localStorage.setItem('jwtoken', response.data.token);
+  
+        // Redirect based on role and pass userId as a route parameter
         if (loggedUser.Role && loggedUser.Role.includes("Admin")) {
-          localStorage.setItem("user", JSON.stringify(loggedUser));
-          localStorage.setItem("jwtoken", token); // Store the token
-          navigate("/admin");
+          navigate(`/admin/${loggedUser._id}`);
           message.success("Login successful!");
         } else if (loggedUser.Role && loggedUser.Role.includes("HR")) {
-          localStorage.setItem("user", JSON.stringify(loggedUser));
-          localStorage.setItem("jwtoken", token); // Store the token
-          navigate("/hrpanel");
+          navigate(`/hrpanel/${loggedUser._id}`);
           message.success("Login successful!");
         } else {
           setError("Unauthorized role");
@@ -57,6 +60,7 @@ export default function Login() {
       message.error("Invalid Userdetails.");
     }
   }
+  
 
   return (
     <div className="main">

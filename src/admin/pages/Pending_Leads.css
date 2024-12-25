@@ -6,3 +6,9 @@
 .pending-leads-table{
     overflow: overlay;
 }
+
+.pendingleads-pagination{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 43px;
+}

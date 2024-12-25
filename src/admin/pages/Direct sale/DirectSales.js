@@ -245,7 +245,7 @@ const DirectSales = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="pagination">
+            <div className="DS-pagination">
                 <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                     Previous
                 </button>

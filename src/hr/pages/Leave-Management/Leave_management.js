@@ -104,9 +104,9 @@ export default function LeaveManagement() {
     };
 
     // Filter leave history for selected user
-    const filteredHistory = selectedUser ?
-        leaveHistoryData.find(history => history.userId._id === selectedUser.userId)?.LeaveHistory || []
-        : [];
+    const filteredHistory = selectedUser && selectedUser.userId ?
+        leaveHistoryData.find(history => history.userId?._id === selectedUser.userId._id)?.LeaveHistory || [] : [];
+
 
     const handleUserChange = (e) => {
         const userId = e.target.value;
@@ -130,7 +130,7 @@ export default function LeaveManagement() {
                     </div>
                     <div className='lm-container'>
                         <div className='LM-inner-container'>
-                        <section class="LM-leave-section">
+                            <section class="LM-leave-section">
                                 <div class="LM-section-container">
                                     <div class="LM-circle-container">
                                         <div className="LM-circle LM-sick-leave">

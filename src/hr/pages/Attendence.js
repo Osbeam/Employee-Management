@@ -141,6 +141,42 @@ export default function Attendance() {
     }
   };
 
+  //Approve users with authtoken
+  const handleApproveByHr = async (_id) => {
+    try {
+      // Check if any of the users are missing required fields
+      const userToApprove = users.find((user) => user._id === _id);
+      if (
+        !userToApprove.inTime ||
+        !userToApprove.inTimeImage
+      ) {
+        // If any required field is missing, show an error message
+        message.error("Require login time");
+        return; // Exit the function early
+      }
+
+      const authToken = localStorage.getItem('jwtoken');
+
+      // If all required fields are filled, send the approval request
+      const response = await axios.put(
+        `http://77.37.45.224:8000/api/user/editLogUser/${_id}`,
+        {
+          isHrApproved: true, // Update the isHrApproved field to true
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log("Error approving log:", error);
+      // Show error message if needed
+      message.error("Failed to approve attendance");
+    }
+  };
+
+
   const formatDateTimeForInput = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -289,31 +325,35 @@ export default function Attendance() {
     fetchEmployeeDetails();
   }, []);
 
-  const handlePrevPageAllUsers = () => {
-    if (currentReportPage > 1) {
-      fetchAllUsers(currentReportPage - 1);
-    }
-  };
+  // const handlePrevPageAllUsers = () => {
+  //   if (currentReportPage > 1) {
+  //     fetchAllUsers(currentReportPage - 1);
+  //   }
+  // };
 
-  const handleNextPageAllUsers = () => {
-    if (currentReportPage < totalReportPages) {
-      fetchAllUsers(currentReportPage + 1);
-    }
-  };
+  // const handleNextPageAllUsers = () => {
+  //   if (currentReportPage < totalReportPages) {
+  //     fetchAllUsers(currentReportPage + 1);
+  //   }
+  // };
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      fetchUsers(currentPage - 1);
-    }
-  };
+  // const handlePrevPage = () => {
+  //   if (currentPage > 1) {
+  //     fetchUsers(currentPage - 1);
+  //   }
+  // };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      fetchUsers(currentPage + 1);
-    }
-  };
+  // const handleNextPage = () => {
+  //   if (currentPage < totalPages) {
+  //     fetchUsers(currentPage + 1);
+  //   }
+  // };
 
   const handlePageClick = (pageNumber) => {
+    fetchUsers(pageNumber);
+  };
+
+  const handlePageClickReport = (pageNumber) => {
     fetchUsers(pageNumber);
   };
   // Determine page range
@@ -321,6 +361,14 @@ export default function Attendance() {
     const range = 3; // Number of pages to show before and after the current page
     const start = Math.max(1, currentPage - range);
     const end = Math.min(totalPages, currentPage + range);
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  };
+
+  const getPageNumbersReports = () => {
+    const range = 3; // Number of pages to show before and after the current page
+    const start = Math.max(1, currentReportPage - range);
+    const end = Math.min(totalReportPages, currentReportPage + range);
 
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   };
@@ -420,35 +468,60 @@ export default function Attendance() {
                               )}
                             </td>
                             <td className="statusbtn">
-                              {user.editMode ? (
-                                <>
-                                  <button className="savebtn" onClick={() => handleSave(user._id)}>
-                                    <FontAwesomeIcon icon={faCheck} />
-                                  </button>
-                                  <button
-                                    className="cancelbtn"
-                                    onClick={() => handleCancelEdit(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faTimes} />
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  <button className="editbtn" onClick={() => handleEdit(user._id)}>
-                                    <FontAwesomeIcon icon={faEdit} />
-                                  </button>
-                                  <button
-                                    className="deletebtn"
-                                    onClick={() => showDeleteConfirmation(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                  </button>
-                                  <button className="approvebtn" onClick={() => handleApprove(user._id)}>
-                                    <FontAwesomeIcon icon={faCheck} />
-                                  </button>
-                                </>
-                              )}
-                            </td>
+  {user.editMode ? (
+    <>
+      <button
+        className="savebtn"
+        title="Save"
+        onClick={() => handleSave(user._id)}
+      >
+        <FontAwesomeIcon icon={faCheck} />
+      </button>
+      <button
+        className="cancelbtn"
+        title="Cancel"
+        onClick={() => handleCancelEdit(user._id)}
+      >
+        <FontAwesomeIcon icon={faTimes} />
+      </button>
+    </>
+  ) : (
+    <>
+     
+      
+      <button
+        className="approvebtn"
+        title="Save to report"
+        onClick={() => handleApprove(user._id)}
+      >
+        <FontAwesomeIcon icon={faCheck} />
+      </button>
+      <button
+        style={{ backgroundColor: 'darkgoldenrod' }}
+        className="approvebtn"
+        title="Approve by HR"
+        onClick={() => handleApproveByHr(user._id)}
+      >
+        <FontAwesomeIcon icon={faCheck} />
+      </button>
+      <button
+        className="editbtn"
+        title="Edit"
+        onClick={() => handleEdit(user._id)}
+      >
+        <FontAwesomeIcon icon={faEdit} />
+      </button>
+      <button
+        className="deletebtn"
+        title="Delete"
+        onClick={() => showDeleteConfirmation(user._id)}
+      >
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
+    </>
+  )}
+</td>
+
                           </tr>
                         ))}
                     </tbody>
@@ -551,26 +624,57 @@ export default function Attendance() {
                       )}
                     </tbody>
                   </table>
-                  <div className="pagination">
-                    <button
-                      className="pagination-btn"
-                      onClick={handlePrevPageAllUsers}
-                      disabled={currentReportPage === 1}
+                  {/* Pagination */}
+                  <div className="attendence-pagination">
+                    {/* <button
+                      className="attendence-pagination-btn"
+                      disabled={currentPage === 1}
+                      onClick={handlePrevPage}
                     >
                       Previous
-                    </button>
-                    <span>
-                      Page {currentReportPage} of {totalReportPages}
+                    </button> */}
+                    <span className="attendence-pagination-info">
+                      Total Records: {totalReportRecords}
                     </span>
-                    <span>Total Records: {totalReportRecords}</span>
+                    <div className="attendence-pagination-pages">
+                      {/* Render previous page button if currentPage > 1 */}
+                      {currentPage > 1 && (
+                        <button
+                          className="attendence-pagination-number"
+                          onClick={() => handlePageClickReport(1)}
+                        >
+                          First
+                        </button>
+                      )}
 
-                    <button
-                      className="pagination-btn"
-                      onClick={handleNextPageAllUsers}
-                      disabled={currentReportPage === totalReportPages}
+                      {getPageNumbersReports().map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          className={`attendence-pagination-number ${pageNumber === currentReportPage ? "active" : ""}`}
+                          onClick={() => handlePageClickReport(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      ))}
+
+                      {/* Render next page button if currentPage < totalPages */}
+                      {currentReportPage < totalReportPages && (
+                        <button
+                          className="attendence-pagination-number"
+                          onClick={() => handlePageClickReport(totalReportPages)}
+                        >
+                          Last
+                        </button>
+                      )}
+                    </div>
+
+                    {/* <button
+                      className="attendence-pagination-btn"
+                      disabled={currentPage === totalPages}
+                      onClick={handleNextPage}
                     >
                       Next
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               )}
