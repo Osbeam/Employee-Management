@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import '../Leader/EmpReport.css'
+import '../Leader/EmpReport.css';
+
 export default function EmpReport() {
   const [data, setData] = useState([]); // Store API data
   const [selectedLeaderId, setSelectedLeaderId] = useState(''); // Selected leader's ID
@@ -32,8 +33,8 @@ export default function EmpReport() {
   // Update employees when a leader is selected
   const handleLeaderSelection = (leaderId) => {
     setSelectedLeaderId(leaderId);
-    const leaderData = data.find((leader) => leader.leader.id === leaderId);
-    setEmployees(leaderData ? leaderData.employees : []);
+    const leaderData = data.find((leader) => leader._id === leaderId);
+    setEmployees(leaderData ? leaderData.managedEmployees : []);
   };
 
   return (
@@ -41,7 +42,7 @@ export default function EmpReport() {
       <div>
         <h1>Employee Report</h1>
       </div>
-      <hr style={{marginTop:'10px'}} />
+      <hr style={{ marginTop: '10px' }} />
       {/* Leader Selection Dropdown */}
       <div className='empDrop'>
         <label>Select Leader:</label>
@@ -51,13 +52,13 @@ export default function EmpReport() {
         >
           <option value="">-- Select Leader --</option>
           {data.map((leader) => (
-            <option key={leader.leader.id} value={leader.leader.id}>
-              {leader.leader.name}
+            <option key={leader._id} value={leader._id}>
+              {leader.FirstName} {leader.LastName}
             </option>
           ))}
         </select>
       </div>
-  
+
       {/* Employees Table */}
       <div className='emp-report-table'>
         <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -76,22 +77,28 @@ export default function EmpReport() {
           </thead>
           <tbody className='emp-report-table-body'>
             {employees.length > 0 ? (
-              employees.map((employee, index) => (
-                <tr key={employee.employee.id}>
-                  <td>{index + 1}</td>
-                  <td>{employee.employee.name}</td>
-                  <td>{employee.statusCounts.CallNotReceived}</td>
-                  <td>{employee.statusCounts.NotInterested}</td>
-                  <td>{employee.statusCounts.Interested}</td>
-                  <td>{employee.statusCounts.SwitchOff}</td>
-                  <td>{employee.statusCounts.Connected}</td>
-                  <td>{employee.statusCounts.totalCall}</td>
-                  <td>-</td>
-                </tr>
-              ))
+              employees.map((employee, index) => {
+                // Fallback to '-' if the employee data is missing or undefined
+                const employeeData = employee ? employee : { name: '-', statusCounts: {} };
+                const statusCounts = employeeData.statusCounts || {};
+
+                return (
+                  <tr key={employeeData.id || index}>
+                    <td>{index + 1}</td>
+                    <td>{employeeData.name || '-'}</td>
+                    <td>{statusCounts.CallNotReceived || '-'}</td>
+                    <td>{statusCounts.NotInterested || '-'}</td>
+                    <td>{statusCounts.Interested || '-'}</td>
+                    <td>{statusCounts.SwitchOff || '-'}</td>
+                    <td>{statusCounts.Connected || '-'}</td>
+                    <td>{statusCounts.totalCall || '-'}</td>
+                    <td>-</td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center' }}>
+                <td colSpan="9" style={{ textAlign: 'center' }}>
                   No employees available for the selected leader.
                 </td>
               </tr>
@@ -102,6 +109,7 @@ export default function EmpReport() {
     </div>
   );
 }
+
 
 
 
