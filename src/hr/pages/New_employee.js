@@ -241,7 +241,7 @@ export default function New_employee() {
     try {
       const requiredFields = [
         { field: formData.FirstName, fieldName: "FirstName" },
-        { field: formData.MiddleName, fieldName: "MiddleName" },
+        // { field: formData.MiddleName, fieldName: "MiddleName" },
         { field: formData.LastName, fieldName: "LastName" },
         { field: formData.BloodGroup, fieldName: "BloodGroup" }, 
         { field: formData.MobileNumber, fieldName: "MobileNumber" }, 
@@ -316,10 +316,6 @@ export default function New_employee() {
   const handleTabChange = (key) => {
     setActiveTabKey(key);
   };
-
-
-
-
   
   return (
     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
@@ -699,6 +695,21 @@ export default function New_employee() {
           <div className="inner-container">
             <h2>Job Profile</h2>
 
+            <label style={{ marginRight: "16px" }}>Company name :<span className="mandatory">*</span></label>
+            <select
+              style={{ width: "20%", marginLeft: '-5px' }}
+              name="CompanyName"
+              value={formData.CompanyName}
+              onChange={handleInputChange}
+            >
+              <option value="">Select</option>
+              <option value="Osbeam IT Pvt Ltd">Osbeam IT Pvt Ltd</option>
+              <option value="Shaw Associates">Shaw Associates</option>
+              <option value="ShawNiks Solutions Pvt Ltd">ShawNiks Solutions Pvt Ltd</option>
+              <option value="Damaru Properties">Damaru Properties</option>
+            </select>
+            <br/>
+
             <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:<span className="mandatory">*</span></label>
             <select
               style={{ width: '20%' }}
@@ -729,21 +740,7 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "40px" }}>Designation:<span className="mandatory">*</span></label>
-            <select
-              style={{ width: '20%' }}
-              onChange={handleDesignationChange}
-              value={formData.Designation}
-            >
-              <option value="">Select Designation</option>
-              {designations && designations.map((designation) => (
-                <option key={designation._id} value={designation._id}>
-                  {designation.name}
-                </option>
-              ))}
-            </select>
-
-            <label style={{ marginRight: "90px" }}>Position :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "61px" }}>Position :<span className="mandatory">*</span></label>
             <select
               style={{ width: "20%" }}
               name="Position"
@@ -756,10 +753,22 @@ export default function New_employee() {
               <option value="TeamLeader">Team Leader</option>
               <option value="None">None</option>
             </select>
-
+            <label style={{ marginRight: "69px" }}>Designation:<span className="mandatory">*</span></label>
+            <select
+              style={{ width: '20%' }}
+              onChange={handleDesignationChange}
+              value={formData.Designation}
+            >
+              <option value="">Select Designation</option>
+              {designations && designations.map((designation) => (
+                <option key={designation._id} value={designation._id}>
+                  {designation.name}
+                </option>
+              ))}
+            </select>
             <br />
 
-            <label style={{ marginRight: "32px" }}>Managed By :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "35px" }}>Reporting to :<span className="mandatory">*</span></label>
             <select
               style={{ width: "20%" }}
               name="ManagedBy"
@@ -789,21 +798,10 @@ export default function New_employee() {
 
             <br />
 
-            <label style={{ marginRight: "16px" }}>Company name :<span className="mandatory">*</span></label>
-            <select
-              style={{ width: "20%", marginLeft: '-5px' }}
-              name="CompanyName"
-              value={formData.CompanyName}
-              onChange={handleInputChange}
-            >
-              <option value="">Select</option>
-              <option value="Osbeam IT Pvt Ltd">Osbeam IT Pvt Ltd</option>
-              <option value="Shaw Associates">Shaw Associates</option>
-              <option value="ShawNiks Solutions Pvt Ltd">ShawNiks Solutions Pvt Ltd</option>
-              <option value="Damaru Properties">Damaru Properties</option>
-            </select>
+          
 
-            <label style={{ marginRight: '113px' }}>Role :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: '82px' }}>Role :<span className="mandatory">*</span></label>
+            
             <select
               name='Role'
               style={{ width: "20.00%" }}
@@ -816,9 +814,9 @@ export default function New_employee() {
               <option value="HR">HR</option>
             </select>
 
-            <br />
+       
 
-            <label style={{ marginRight: "42px" }}>Password :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "73px" }}>Password :<span className="mandatory">*</span></label>
             <input
               type="text"
               placeholder="Enter password"
@@ -1188,7 +1186,7 @@ export default function New_employee() {
       </TabPane>
       {/* <TabPane tab="Generate letter" key="5">
         <div className="form-container">
-          <div className="inner-container">
+          <div className="inner-container">  
             <label style={{ marginRight: "19px" }}>Appointment Letter :</label>
             <button onClick={handleGenerateClick}>Generate</button>
             {showOfferLetter && employee && <Offer_letter employee={employee} />}

@@ -97,6 +97,7 @@ export default function Edit_Employee_List() {
           FixedAllowance: user.FixedAllowance,
           SpecialAllowance: user.SpecialAllowance,
           VeriableAllowance: user.VeriableAllowance,
+          HRA: user.HRA,
           OfficialMobileNumber: user.OfficialMobileNumber,
           MobileIMEINumber: user.MobileIMEINumber,
           BankName: user.BankName,
@@ -396,53 +397,9 @@ export default function Edit_Employee_List() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item label={<span style={{ marginRight: '42px' }}>Basic Salary</span>}>
-                <Input
-                  placeholder="Enter basic salary"
-                  autoComplete="off"
-                  name="BasicSalary"
-                  value={user.BasicSalary || ''}
-                  onChange={(e) => handleInputs('BasicSalary', e.target.value)}
-                />
-              </Form.Item>
-            </Col>
+          
           </Row>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item label={<span style={{ marginRight: '43px' }}>Fixed Allowance</span>}>
-                <Input
-                  placeholder="Enter fixed allowance"
-                  autoComplete="off"
-                  name="FixedAllowance"
-                  value={user.FixedAllowance || ''}
-                  onChange={(e) => handleInputs('FixedAllowance', e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label={<span style={{ marginRight: '21px' }}>Special Allowance</span>}>
-                <Input
-                  placeholder="Enter special allowance"
-                  autoComplete="off"
-                  name="SpecialAllowance"
-                  value={user.SpecialAllowance || ''}
-                  onChange={(e) => handleInputs('SpecialAllowance', e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label={<span style={{ marginRight: '4px' }}>Variable Allowance</span>}>
-                <Input
-                  placeholder="Enter variable allowance"
-                  autoComplete="off"
-                  name="VeriableAllowance"
-                  value={user.VeriableAllowance || ''}
-                  onChange={(e) => handleInputs('VeriableAllowance', e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item label={<span style={{ marginRight: '33px' }}>Official Mobile No.</span>}>
@@ -548,6 +505,67 @@ export default function Edit_Employee_List() {
               </Form.Item>
             </Col>
           </Row>
+          <Row gutter={16}>
+          <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '67px' }}>Basic Salary</span>}>
+                <Input
+                  placeholder="Enter basic salary"
+                  autoComplete="off"
+                  name="BasicSalary"
+                  value={user.BasicSalary || ''}
+                  onChange={(e) => handleInputs('BasicSalary', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '32px' }}>Fixed Allowance</span>}>
+                <Input
+                  placeholder="Enter fixed allowance"
+                  autoComplete="off"
+                  name="FixedAllowance"
+                  value={user.FixedAllowance || ''}
+                  onChange={(e) => handleInputs('FixedAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '10px' }}>Special Allowance</span>}>
+                <Input
+                  placeholder="Enter special allowance"
+                  autoComplete="off"
+                  name="SpecialAllowance"
+                  value={user.SpecialAllowance || ''}
+                  onChange={(e) => handleInputs('SpecialAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+
+          </Row>
+          <Row gutter={16}>
+          <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '28px' }}>Variable Allowance</span>}>
+                <Input
+                  placeholder="Enter variable allowance"
+                  autoComplete="off"
+                  name="VeriableAllowance"
+                  value={user.VeriableAllowance || ''}
+                  onChange={(e) => handleInputs('VeriableAllowance', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={<span style={{ marginRight: '103px' }}>HRA</span>}>
+                <Input
+                  placeholder="Enter HRA"
+                  autoComplete="off"
+                  name="HRA"
+                  value={user.HRA || ''}
+                  onChange={(e) => handleInputs('HRA', e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item label={<span style={{ marginRight: '87px' }}>Pan Card</span>}>
