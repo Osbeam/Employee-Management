@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const DirectSales = () => {
     const [employees, setEmployees] = useState([]);
@@ -11,6 +11,7 @@ const DirectSales = () => {
     const [pageSize] = useState(10);
     const navigate = useNavigate();
 
+    const {userId} = useParams()
     useEffect(() => {
         const fetchData = async (page) => {
             try {
@@ -160,15 +161,15 @@ const DirectSales = () => {
             queryParams = serializeIncome(professionalIncome, 'professional');
         }
     
+        // if (path) {
+        //     const fullUrl = `/admin/${userId}/directsales/${path}/${employee.userId}?${queryParams}`;
+        //     navigate(fullUrl);
+        // }
         if (path) {
-            const fullUrl = `/admin/directsales/${path}/${employee.userId}?${queryParams}`;
+            const fullUrl = `/admin/${userId}/directsales/${path}/${employee.userId}`;
             navigate(fullUrl);
         }
     };
-    
-    
-    
-
     const getIncomeType = (salaryIncome, businessIncome, professionalIncome) => {
         const incomeTypes = [];
         if (salaryIncome) incomeTypes.push('Salary');

@@ -91,6 +91,8 @@ const ProfessionalIncome = () => {
                 const result = await response.json();
                 // Show success toast
                 toast.success('Data submitted successfully!');
+                setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
+
                 console.log('Data submitted successfully:', result);
             } else {
                 // Show error toast
@@ -260,11 +262,11 @@ const ProfessionalIncome = () => {
                 </div>
             </div>
             <div className="breadcrumb">
-                <a onClick={() => navigate('/admin/directsales')}>Direct Sales</a> &gt; <span>Professsional Income</span>
+                <a onClick={() => navigate(`/admin/${userId}/directsales`)}>Direct Sales</a> &gt; <span>Professsional Income</span>
             </div>
             <div className="dl-container">
                 <Tabs ref={tabsRef} activeKey={activeKey} onChange={setActiveKey}>
-                    <TabPane tab="Professional Income Form 1" key="1">
+                    <TabPane style={{marginTop:'50px'}}  tab="Professional Income Form 1" key="1">
                         <Form layout="vertical" onFinish={handleSubmit}>
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
@@ -662,7 +664,7 @@ const ProfessionalIncome = () => {
                             </div>
                         </Form>
                     </TabPane>
-                    <TabPane tab="Professional Income Form 2" key="2">
+                    <TabPane style={{marginTop:'50px'}}  tab="Professional Income Form 2" key="2">
                         <Form layout="vertical">
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>

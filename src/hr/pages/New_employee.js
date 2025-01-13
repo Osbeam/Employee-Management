@@ -2,9 +2,9 @@ import { Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Country, State, City } from 'country-state-city';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Country, State, City } from "country-state-city";
 
 export default function New_employee() {
   const [sameAsAbove, setSameAsAbove] = useState(false);
@@ -17,6 +17,8 @@ export default function New_employee() {
   const [permanentStates, setPermanentStates] = useState([]);
   const [permanentCities, setPermanentCities] = useState([]);
   const [activeTabKey, setActiveTabKey] = useState("1");
+  const [branchLocation, setBranchLocation] = useState([]);
+  const [loading, setLoading] = useState(false); // To handle loading states
 
   const initialFormData = {
     FirstName: "",
@@ -24,12 +26,12 @@ export default function New_employee() {
     LastName: "",
     EmployeeID: "",
     Designation: "",
-    PanNumber:"",
-    AadharCard:"",
-    UANNumber:"",
+    PanNumber: "",
+    AadharCard: "",
+    UANNumber: "",
     DateOfJoining: "",
-    CalenderDays:"",
-    WorkingDays:"",
+    CalenderDays: "",
+    WorkingDays: "",
     BankName: "",
     AccountNumber: "",
     MobileNumber: "",
@@ -64,6 +66,7 @@ export default function New_employee() {
     Position: "",
     ManagedBy: "",
     CompanyName: "",
+    BranchLocation: "",
 
     BasicSalary: "",
     HRA: "",
@@ -73,9 +76,9 @@ export default function New_employee() {
     PF: "",
     PT: "",
     SpecialAllowance: "",
-    NetSalary:"",
-    NetSalaryInWords:"",
-    SalaryMonth:"",
+    NetSalary: "",
+    NetSalaryInWords: "",
+    SalaryMonth: "",
 
     // Deductions: [],
     NoteBook: "",
@@ -98,11 +101,13 @@ export default function New_employee() {
   };
   const [formData, setFormData] = useState(initialFormData);
 
-//Get manager and leaders name
+  //Get manager and leaders name
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("http://77.37.45.224:8000/api/department/getDepartments");
+        const response = await axios.get(
+          "http://77.37.45.224:8000/api/department/getDepartments"
+        );
         setDepartments(response.data.data);
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -110,14 +115,14 @@ export default function New_employee() {
     };
 
     const fetchManagers = async () => {
-
       try {
-        const authToken = localStorage.getItem('jwtoken')
-        const response = await axios.get(`http://77.37.45.224:8000/api/user/getTeamLeaders`,
+        const authToken = localStorage.getItem("jwtoken");
+        const response = await axios.get(
+          `http://77.37.45.224:8000/api/user/getTeamLeaders`,
           {
             headers: {
-              Authorization: `Bearer ${authToken}`
-            }
+              Authorization: `Bearer ${authToken}`,
+            },
           }
         );
         // Ensure the response data is an array and contains the necessary fields
@@ -133,7 +138,7 @@ export default function New_employee() {
       }
     };
 
-    const statesData = State.getStatesOfCountry('IN');
+    const statesData = State.getStatesOfCountry("IN");
     setCurrentStates(statesData);
     setPermanentStates(statesData);
 
@@ -145,7 +150,7 @@ export default function New_employee() {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -161,7 +166,7 @@ export default function New_employee() {
         PermanentState: prevData.CurrentState,
         PermanentPincode: prevData.CurrentPincode,
       }));
-      setPermanentCities(City.getCitiesOfState('IN', formData.CurrentState));
+      setPermanentCities(City.getCitiesOfState("IN", formData.CurrentState));
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -181,10 +186,12 @@ export default function New_employee() {
       ...prevData,
       Department: departmentId,
       SubDepartment: "",
-      Designation: ""
+      Designation: "",
     }));
 
-    const selectedDepartment = departments.find(dep => dep._id === departmentId);
+    const selectedDepartment = departments.find(
+      (dep) => dep._id === departmentId
+    );
     if (selectedDepartment) {
       setSubDepartments(selectedDepartment.SubDepartment || []);
       setDesignations([]);
@@ -196,11 +203,13 @@ export default function New_employee() {
     setFormData((prevData) => ({
       ...prevData,
       SubDepartment: subDepartmentId,
-      Designation: ""
+      Designation: "",
     }));
 
     try {
-      const response = await axios.get(`http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`);
+      const response = await axios.get(
+        `http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`
+      );
       setDesignations(response.data.data.designation || []);
     } catch (error) {
       console.error("Error fetching designations:", error);
@@ -211,7 +220,7 @@ export default function New_employee() {
     const designationId = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
-      Designation: designationId
+      Designation: designationId,
     }));
   };
 
@@ -220,9 +229,9 @@ export default function New_employee() {
     setFormData((prevData) => ({
       ...prevData,
       CurrentState: stateCode,
-      CurrentCity: ""
+      CurrentCity: "",
     }));
-    setCurrentCities(City.getCitiesOfState('IN', stateCode));
+    setCurrentCities(City.getCitiesOfState("IN", stateCode));
   };
 
   const handlePermanentStateChange = (e) => {
@@ -230,10 +239,36 @@ export default function New_employee() {
     setFormData((prevData) => ({
       ...prevData,
       PermanentState: stateCode,
-      PermanentCity: ""
+      PermanentCity: "",
     }));
-    setPermanentCities(City.getCitiesOfState('IN', stateCode));
+    setPermanentCities(City.getCitiesOfState("IN", stateCode));
   };
+
+  // Fetch Branch Locations on Component Mount
+  useEffect(() => {
+    const fetchBranchLocations = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "http://77.37.45.224:8000/api/branch/getBranch"
+        );
+
+        // Ensure that the 'data' key exists and map over it to set the branch locations
+        if (response.data.success && response.data.data) {
+          setBranchLocation(response.data.data);
+        } else {
+          toast.error("Failed to fetch branch locations.");
+        }
+      } catch (error) {
+        console.error("Error fetching branch locations:", error);
+        toast.error("Error fetching branch locations");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBranchLocations();
+  }, []); // Empty dependency array ensures this runs once when the component mounts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -243,32 +278,31 @@ export default function New_employee() {
         { field: formData.FirstName, fieldName: "FirstName" },
         // { field: formData.MiddleName, fieldName: "MiddleName" },
         { field: formData.LastName, fieldName: "LastName" },
-        { field: formData.BloodGroup, fieldName: "BloodGroup" }, 
-        { field: formData.MobileNumber, fieldName: "MobileNumber" }, 
-        { field: formData.EmailId, fieldName: "EmailId" }, 
-        { field: formData.NoteBook, fieldName: "NoteBook" }, 
-        { field: formData.Stationery, fieldName: "Stationery" }, 
-        { field: formData.JoiningKit, fieldName: "JoiningKit" }, 
-        { field: formData.Designation, fieldName: "Designation" }, 
-        { field: formData.Department, fieldName: "Department" }, 
-        { field: formData.SubDepartment, fieldName: "SubDepartment" }, 
-        { field: formData.Position, fieldName: "Position" }, 
-        { field: formData.ManagedBy, fieldName: "ManagedBy" }, 
-        { field: formData.CompanyName, fieldName: "CompanyName" }, 
-        { field: formData.Password, fieldName: "Password" }, 
-        { field: formData.Role, fieldName: "Role" }, 
+        { field: formData.BloodGroup, fieldName: "BloodGroup" },
+        { field: formData.MobileNumber, fieldName: "MobileNumber" },
+        { field: formData.EmailId, fieldName: "EmailId" },
+        { field: formData.NoteBook, fieldName: "NoteBook" },
+        { field: formData.Stationery, fieldName: "Stationery" },
+        { field: formData.JoiningKit, fieldName: "JoiningKit" },
+        { field: formData.Designation, fieldName: "Designation" },
+        { field: formData.Department, fieldName: "Department" },
+        { field: formData.SubDepartment, fieldName: "SubDepartment" },
+        { field: formData.Position, fieldName: "Position" },
+        { field: formData.ManagedBy, fieldName: "ManagedBy" },
+        { field: formData.CompanyName, fieldName: "CompanyName" },
+        { field: formData.Password, fieldName: "Password" },
+        { field: formData.Role, fieldName: "Role" },
       ];
-  
+
       const missingFields = requiredFields
-        .filter(item => !item.field) // Check if the field is empty
-        .map(item => item.fieldName); // Get the name of the missing fields
-  
+        .filter((item) => !item.field) // Check if the field is empty
+        .map((item) => item.fieldName); // Get the name of the missing fields
+
       if (missingFields.length > 0) {
         // Show the names of the missing fields
         toast.error(`Please fill the  ${missingFields.join(", ")} fields`);
         return; // Stop form submission if there are missing fields
       }
-
 
       // const deductionsArray = [];
       // if (formData.PF) deductionsArray.push("PF");
@@ -295,7 +329,10 @@ export default function New_employee() {
         // Deductions: deductionsArray,
       };
 
-      const response = await axios.post("http://77.37.45.224:8000/api/user/employeeInfo",updatedFormData);
+      const response = await axios.post(
+        "http://77.37.45.224:8000/api/user/employeeInfo",
+        updatedFormData
+      );
 
       if (response.status === 200) {
         toast.success("Employee registered successfully!");
@@ -316,7 +353,7 @@ export default function New_employee() {
   const handleTabChange = (key) => {
     setActiveTabKey(key);
   };
-  
+
   return (
     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
       <TabPane className="new_emp_tabs" tab="Basic Information" key="1">
@@ -325,9 +362,11 @@ export default function New_employee() {
             <h2>Employee Registration Form</h2>
             <p>Basic Information</p>
             <div className="inner-container">
-              <label style={{ marginRight: "61px" }}>Full Name :<span className="mandatory">*</span></label>
+              <label style={{ marginRight: "61px" }}>
+                Full Name :<span className="mandatory">*</span>
+              </label>
               <select
-                style={{ marginRight: '5px', width: '8%' }}
+                style={{ marginRight: "5px", width: "8%" }}
                 name="MrMissMrs"
                 value={formData.MrMissMrs}
                 onChange={handleInputChange}
@@ -338,8 +377,7 @@ export default function New_employee() {
                 <option>Mrs</option>
               </select>
               <input
-                style={{ width: '17%' }}
-
+                style={{ width: "17%" }}
                 type="text"
                 name="FirstName"
                 value={formData.FirstName}
@@ -347,7 +385,7 @@ export default function New_employee() {
                 placeholder="First Name"
               />
               <input
-                style={{ width: '17%' }}
+                style={{ width: "17%" }}
                 type="text"
                 name="MiddleName"
                 value={formData.MiddleName}
@@ -355,7 +393,7 @@ export default function New_employee() {
                 placeholder="Middle Name"
               />
               <input
-                style={{ width: '17%' }}
+                style={{ width: "17%" }}
                 type="text"
                 name="LastName"
                 value={formData.LastName}
@@ -363,7 +401,9 @@ export default function New_employee() {
                 placeholder="Last Name"
               />
               <br />
-              <label style={{ marginRight: "54px" }}>Mobile no. :<span className="mandatory">*</span></label>
+              <label style={{ marginRight: "54px" }}>
+                Mobile no. :<span className="mandatory">*</span>
+              </label>
               <input
                 type="number"
                 style={{ width: "26%" }}
@@ -372,7 +412,9 @@ export default function New_employee() {
                 value={formData.MobileNumber}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "15px", marginLeft: "28px" }}>Email id :<span className="mandatory">*</span></label>
+              <label style={{ marginRight: "15px", marginLeft: "28px" }}>
+                Email id :<span className="mandatory">*</span>
+              </label>
               <input
                 type="Email"
                 style={{ width: "26%" }}
@@ -382,7 +424,9 @@ export default function New_employee() {
                 onChange={handleInputChange}
               />
               <br />
-              <label style={{ marginRight: "46px" }}>Blood Group :<span className="mandatory">*</span></label>
+              <label style={{ marginRight: "46px" }}>
+                Blood Group :<span className="mandatory">*</span>
+              </label>
               <select
                 name="BloodGroup"
                 value={formData.BloodGroup}
@@ -419,7 +463,7 @@ export default function New_employee() {
               />
               <br />
               <select
-                style={{ marginLeft: '137px', width: '25%' }}
+                style={{ marginLeft: "137px", width: "25%" }}
                 name="CurrentState"
                 value={formData.CurrentState}
                 onChange={handleCurrentStateChange}
@@ -433,7 +477,7 @@ export default function New_employee() {
               </select>
 
               <select
-                style={{ width: '23%', marginLeft: '-50px' }}
+                style={{ width: "23%", marginLeft: "-50px" }}
                 name="CurrentCity"
                 value={formData.CurrentCity}
                 onChange={handleInputChange}
@@ -447,7 +491,7 @@ export default function New_employee() {
               </select>
 
               <input
-                style={{ width: '13.4%', marginLeft: '-45px' }}
+                style={{ width: "13.4%", marginLeft: "-45px" }}
                 placeholder="Pincode"
                 type="number"
                 name="CurrentPincode"
@@ -481,7 +525,7 @@ export default function New_employee() {
               />
               <br />
               <select
-                style={{ marginLeft: '137px', width: '25%' }}
+                style={{ marginLeft: "137px", width: "25%" }}
                 name="PermanentState"
                 value={formData.PermanentState}
                 onChange={handlePermanentStateChange}
@@ -494,7 +538,7 @@ export default function New_employee() {
                 ))}
               </select>
               <select
-                style={{ width: '23%', marginLeft: '-50px' }}
+                style={{ width: "23%", marginLeft: "-50px" }}
                 name="PermanentCity"
                 value={formData.PermanentCity}
                 onChange={handleInputChange}
@@ -507,7 +551,7 @@ export default function New_employee() {
                 ))}
               </select>
               <input
-                style={{ width: '13.4%', marginLeft: '-45px' }}
+                style={{ width: "13.4%", marginLeft: "-45px" }}
                 placeholder="Pincode"
                 type="number"
                 name="PermanentPincode"
@@ -520,8 +564,10 @@ export default function New_employee() {
 
             <div className="inner-container">
               <h2>Qualification and Experience</h2>
-              <label style={{ marginRight: "16px" }}>Highest Qualification :</label>
-              
+              <label style={{ marginRight: "16px" }}>
+                Highest Qualification :
+              </label>
+
               <select
                 style={{ width: "27%" }}
                 name="HighestQualification"
@@ -537,7 +583,9 @@ export default function New_employee() {
                 <option value="Engineering">Engineering</option>
                 <option value="PhD">PhD</option>
               </select>
-              <label style={{ marginRight: "113px", marginLeft: "-30px" }}>Year :</label>
+              <label style={{ marginRight: "113px", marginLeft: "-30px" }}>
+                Year :
+              </label>
               <select
                 style={{ width: "26%" }}
                 name="Year"
@@ -616,7 +664,9 @@ export default function New_employee() {
                 value={formData.Reference1}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "25px", marginLeft: "20px" }}>Relation :</label>
+              <label style={{ marginRight: "25px", marginLeft: "20px" }}>
+                Relation :
+              </label>
               <input
                 style={{ width: "26%" }}
                 placeholder="Relation"
@@ -634,7 +684,9 @@ export default function New_employee() {
                 value={formData.ContanctNumber1}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "25px", marginLeft: "20px" }}>Address :</label>
+              <label style={{ marginRight: "25px", marginLeft: "20px" }}>
+                Address :
+              </label>
               <input
                 style={{ width: "26%" }}
                 placeholder="Address"
@@ -653,7 +705,9 @@ export default function New_employee() {
                 value={formData.ReferenceName2}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "25px", marginLeft: "20px" }}>Relation :</label>
+              <label style={{ marginRight: "25px", marginLeft: "20px" }}>
+                Relation :
+              </label>
               <input
                 style={{ width: "26%" }}
                 placeholder="Relation"
@@ -671,7 +725,9 @@ export default function New_employee() {
                 value={formData.ContanctNumber2}
                 onChange={handleInputChange}
               />
-              <label style={{ marginRight: "25px", marginLeft: "20px" }}>Address :</label>
+              <label style={{ marginRight: "25px", marginLeft: "20px" }}>
+                Address :
+              </label>
               <input
                 style={{ width: "26%" }}
                 placeholder="Address"
@@ -681,11 +737,12 @@ export default function New_employee() {
               />
               <br />
             </div>
-
           </div>
           <div>
             <div className="first-tab-next-btn">
-              <button type="button" onClick={() => handleTabChange("2")}>Next</button>
+              <button type="button" onClick={() => handleTabChange("2")}>
+                Next
+              </button>
             </div>
           </div>
         </form>
@@ -695,9 +752,11 @@ export default function New_employee() {
           <div className="inner-container">
             <h2>Job Profile</h2>
 
-            <label style={{ marginRight: "16px" }}>Company name :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "16px" }}>
+              Company name :<span className="mandatory">*</span>
+            </label>
             <select
-              style={{ width: "20%", marginLeft: '-5px' }}
+              style={{ width: "20%", marginLeft: "-5px" }}
               name="CompanyName"
               value={formData.CompanyName}
               onChange={handleInputChange}
@@ -705,42 +764,74 @@ export default function New_employee() {
               <option value="">Select</option>
               <option value="Osbeam IT Pvt Ltd">Osbeam IT Pvt Ltd</option>
               <option value="Shaw Associates">Shaw Associates</option>
-              <option value="ShawNiks Solutions Pvt Ltd">ShawNiks Solutions Pvt Ltd</option>
+              <option value="ShawNiks Solutions Pvt Ltd">
+                ShawNiks Solutions Pvt Ltd
+              </option>
               <option value="Damaru Properties">Damaru Properties</option>
             </select>
-            <br/>
-
-            <label style={{ marginRight: "42px", marginLeft: "0px" }}>Department:<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "100px" }}>
+              Branch: <span className="mandatory">*</span>
+            </label>
             <select
-              style={{ width: '20%' }}
-              onChange={handleDepartmentChange}
-              value={formData.Department}
+              style={{ width: "20%", marginLeft: "-5px" }}
+              name="BranchLocation"
+              value={formData.BranchLocation} // this should be set to the selected branch's _id
+              onChange={handleInputChange} // this will update formData.BranchLocation when an option is selected
+              disabled={loading}
             >
-              <option value="">Select Department</option>
-              {departments && departments.map((department) => (
-                <option key={department._id} value={department._id}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
-
-            <label style={{ marginRight: "40px" }}>Sub Department:<span className="mandatory">*</span></label>
-            <select
-              style={{ width: '20%' }}
-              onChange={handleSubDepartmentChange}
-              value={formData.SubDepartment}
-            >
-              <option value="">Select Sub-Department</option>
-              {subDepartments && subDepartments.map((subDepartment) => (
-                <option key={subDepartment._id} value={subDepartment._id}>
-                  {subDepartment.name}
-                </option>
-              ))}
+              <option value="">Select Branch</option>
+              {branchLocation && branchLocation.length > 0 ? (
+                branchLocation.map((branch) => (
+                  <option key={branch._id} value={branch._id}>
+                    {branch.BranchLocation} ({branch.BranchCity})
+                  </option>
+                ))
+              ) : (
+                <option disabled>No branches available</option>
+              )}
             </select>
 
             <br />
 
-            <label style={{ marginRight: "61px" }}>Position :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "42px", marginLeft: "0px" }}>
+              Department:<span className="mandatory">*</span>
+            </label>
+            <select
+              style={{ width: "20%" }}
+              onChange={handleDepartmentChange}
+              value={formData.Department}
+            >
+              <option value="">Select Department</option>
+              {departments &&
+                departments.map((department) => (
+                  <option key={department._id} value={department._id}>
+                    {department.name}
+                  </option>
+                ))}
+            </select>
+
+            <label style={{ marginRight: "40px" }}>
+              Sub Department:<span className="mandatory">*</span>
+            </label>
+            <select
+              style={{ width: "20%" }}
+              onChange={handleSubDepartmentChange}
+              value={formData.SubDepartment}
+            >
+              <option value="">Select Sub-Department</option>
+              {subDepartments &&
+                subDepartments.map((subDepartment) => (
+                  <option key={subDepartment._id} value={subDepartment._id}>
+                    {subDepartment.name}
+                  </option>
+                ))}
+            </select>
+
+            <br />
+
+            <label style={{ marginRight: "61px" }}>
+              Position :<span className="mandatory">*</span>
+            </label>
             <select
               style={{ width: "20%" }}
               name="Position"
@@ -753,38 +844,41 @@ export default function New_employee() {
               <option value="TeamLeader">Team Leader</option>
               <option value="None">None</option>
             </select>
-            <label style={{ marginRight: "69px" }}>Designation:<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "69px" }}>
+              Designation:<span className="mandatory">*</span>
+            </label>
             <select
-              style={{ width: '20%' }}
+              style={{ width: "20%" }}
               onChange={handleDesignationChange}
               value={formData.Designation}
             >
               <option value="">Select Designation</option>
-              {designations && designations.map((designation) => (
-                <option key={designation._id} value={designation._id}>
-                  {designation.name}
-                </option>
-              ))}
+              {designations &&
+                designations.map((designation) => (
+                  <option key={designation._id} value={designation._id}>
+                    {designation.name}
+                  </option>
+                ))}
             </select>
             <br />
 
-            <label style={{ marginRight: "35px" }}>Reporting to :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "35px" }}>
+              Reporting to :<span className="mandatory">*</span>
+            </label>
             <select
               style={{ width: "20%" }}
               name="ManagedBy"
-              value={formData.ManagedBy || ''}
+              value={formData.ManagedBy || ""}
               onChange={handleInputChange}
             >
               <option value="">Select</option>
-              <option value='null'>None</option>
+              <option value="null">None</option>
               {managers.map((manager) => (
                 <option key={manager._id} value={manager._id}>
                   {manager.FirstName} {manager.LastName}
                 </option>
               ))}
             </select>
-
-
 
             <label style={{ marginRight: "62px" }}>Joining Date :</label>
             <input
@@ -798,12 +892,12 @@ export default function New_employee() {
 
             <br />
 
-          
+            <label style={{ marginRight: "82px" }}>
+              Role :<span className="mandatory">*</span>
+            </label>
 
-            <label style={{ marginRight: '82px' }}>Role :<span className="mandatory">*</span></label>
-            
             <select
-              name='Role'
+              name="Role"
               style={{ width: "20.00%" }}
               value={formData.Role}
               onChange={handleInputChange}
@@ -814,13 +908,13 @@ export default function New_employee() {
               <option value="HR">HR</option>
             </select>
 
-       
-
-            <label style={{ marginRight: "73px" }}>Password :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "73px" }}>
+              Password :<span className="mandatory">*</span>
+            </label>
             <input
               type="text"
               placeholder="Enter password"
-              name='Password'
+              name="Password"
               style={{ width: "20%" }}
               value={formData.Password}
               onChange={handleInputChange}
@@ -925,11 +1019,14 @@ export default function New_employee() {
             </div>
           </div>
 
-
           <div>
             <div className="submit-container">
-              <button type="button" onClick={() => handleTabChange("1")}>Back</button>
-              <button type="button" onClick={() => handleTabChange("3")}>Next</button>
+              <button type="button" onClick={() => handleTabChange("1")}>
+                Back
+              </button>
+              <button type="button" onClick={() => handleTabChange("3")}>
+                Next
+              </button>
             </div>
           </div>
         </div>
@@ -938,7 +1035,9 @@ export default function New_employee() {
         <div className="form-container">
           <div className="inner-container">
             <h2>Joining Kit</h2>
-            <label style={{ marginRight: "78px" }}>Notebook :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "78px" }}>
+              Notebook :<span className="mandatory">*</span>
+            </label>
             <label htmlFor="noteBookYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -961,7 +1060,9 @@ export default function New_employee() {
               onChange={handleInputChange}
             />
             <br />
-            <label style={{ marginRight: "75px" }}>Stationery :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "75px" }}>
+              Stationery :<span className="mandatory">*</span>
+            </label>
             <label htmlFor="stationeryYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -984,7 +1085,9 @@ export default function New_employee() {
               onChange={handleInputChange}
             />
             <br />
-            <label style={{ marginRight: "74px" }}>Joining Kit :<span className="mandatory">*</span></label>
+            <label style={{ marginRight: "74px" }}>
+              Joining Kit :<span className="mandatory">*</span>
+            </label>
             <label htmlFor="joiningKitYes" style={{ fontSize: "18px" }}>
               Yes
             </label>
@@ -1035,8 +1138,12 @@ export default function New_employee() {
         </div>
         <div>
           <div className="submit-container">
-            <button type="button" onClick={() => handleTabChange("2")}>Back</button>
-            <button type="button" onClick={() => handleTabChange("4")}>Next</button>
+            <button type="button" onClick={() => handleTabChange("2")}>
+              Back
+            </button>
+            <button type="button" onClick={() => handleTabChange("4")}>
+              Next
+            </button>
           </div>
         </div>
       </TabPane>
@@ -1052,7 +1159,7 @@ export default function New_employee() {
               placeholder="Enter Pan Number"
               style={{ width: "34%" }}
             />
-            <br/>
+            <br />
             <label style={{ marginRight: "147px" }}>Pan Card :</label>
             <input
               type="file"
@@ -1069,7 +1176,7 @@ export default function New_employee() {
               placeholder="Enter Aadhar Number"
               style={{ width: "34%" }}
             />
-            <br/>
+            <br />
             <label style={{ marginRight: "126px" }}>Aadhar Card :</label>
             <input
               type="file"
@@ -1132,9 +1239,7 @@ export default function New_employee() {
             />
 
             <br />
-            <label style={{ marginRight: "67px" }}>
-              Account Holder Name :
-            </label>
+            <label style={{ marginRight: "67px" }}>Account Holder Name :</label>
             <input
               type="text"
               name="AccountHolderName"
@@ -1164,7 +1269,7 @@ export default function New_employee() {
               placeholder="IFSC Code"
             />
             <br />
-              <label style={{ marginRight: "121px" }}>UAN Number :</label>
+            <label style={{ marginRight: "121px" }}>UAN Number :</label>
             <input
               name="UANNumber"
               value={formData.UANNumber}
@@ -1175,9 +1280,10 @@ export default function New_employee() {
           </div>
         </div>
         <div>
-
           <div className="submit-container">
-            <button type="button" onClick={() => handleTabChange("3")}>Back</button>
+            <button type="button" onClick={() => handleTabChange("3")}>
+              Back
+            </button>
 
             <button onClick={handleSubmit}>Submit</button>
           </div>
@@ -1219,19 +1325,6 @@ export default function New_employee() {
     </Tabs>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { Tabs } from "antd";
 // import TabPane from "antd/es/tabs/TabPane";
@@ -1333,7 +1426,6 @@ export default function New_employee() {
 //   };
 //   const [formData, setFormData] = useState(initialFormData);
 //   const [isExperienced, setIsExperienced] = useState(false);
-
 
 //   const handleToggle = () => {
 //     setIsExperienced((prev) => !prev);
@@ -1484,32 +1576,31 @@ export default function New_employee() {
 //         { field: formData.FirstName, fieldName: "FirstName" },
 //         { field: formData.MiddleName, fieldName: "MiddleName" },
 //         { field: formData.LastName, fieldName: "LastName" },
-//         { field: formData.BloodGroup, fieldName: "BloodGroup" }, 
-//         { field: formData.MobileNumber, fieldName: "MobileNumber" }, 
-//         { field: formData.EmailId, fieldName: "EmailId" }, 
-//         { field: formData.NoteBook, fieldName: "NoteBook" }, 
-//         { field: formData.Stationery, fieldName: "Stationery" }, 
-//         { field: formData.JoiningKit, fieldName: "JoiningKit" }, 
-//         { field: formData.Designation, fieldName: "Designation" }, 
-//         { field: formData.Department, fieldName: "Department" }, 
-//         { field: formData.SubDepartment, fieldName: "SubDepartment" }, 
-//         { field: formData.Position, fieldName: "Position" }, 
-//         { field: formData.ManagedBy, fieldName: "ManagedBy" }, 
-//         { field: formData.CompanyName, fieldName: "CompanyName" }, 
-//         { field: formData.Password, fieldName: "Password" }, 
-//         { field: formData.Role, fieldName: "Role" }, 
+//         { field: formData.BloodGroup, fieldName: "BloodGroup" },
+//         { field: formData.MobileNumber, fieldName: "MobileNumber" },
+//         { field: formData.EmailId, fieldName: "EmailId" },
+//         { field: formData.NoteBook, fieldName: "NoteBook" },
+//         { field: formData.Stationery, fieldName: "Stationery" },
+//         { field: formData.JoiningKit, fieldName: "JoiningKit" },
+//         { field: formData.Designation, fieldName: "Designation" },
+//         { field: formData.Department, fieldName: "Department" },
+//         { field: formData.SubDepartment, fieldName: "SubDepartment" },
+//         { field: formData.Position, fieldName: "Position" },
+//         { field: formData.ManagedBy, fieldName: "ManagedBy" },
+//         { field: formData.CompanyName, fieldName: "CompanyName" },
+//         { field: formData.Password, fieldName: "Password" },
+//         { field: formData.Role, fieldName: "Role" },
 //       ];
-  
+
 //       const missingFields = requiredFields
 //         .filter(item => !item.field) // Check if the field is empty
 //         .map(item => item.fieldName); // Get the name of the missing fields
-  
+
 //       if (missingFields.length > 0) {
 //         // Show the names of the missing fields
 //         toast.error(`Please fill the  ${missingFields.join(", ")} fields`);
 //         return; // Stop form submission if there are missing fields
 //       }
-
 
 //       // const deductionsArray = [];
 //       // if (formData.PF) deductionsArray.push("PF");
@@ -1558,10 +1649,6 @@ export default function New_employee() {
 //     setActiveTabKey(key);
 //   };
 
-
-
-
-  
 //   return (
 //     <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
 //       <TabPane className="new_emp_tabs" tab="Basic Information" key="1">
@@ -1838,7 +1925,6 @@ export default function New_employee() {
 
 //           <br/>
 
-
 //             <label style={{ marginRight: "60px" }}>Joining Date:</label>
 //             <input
 //               type="date"
@@ -1866,7 +1952,7 @@ export default function New_employee() {
 //             {/* <div className="inner-container">
 //               <h2>Qualification and Experience</h2>
 //               <label style={{ marginRight: "16px" }}>Highest Qualification :</label>
-              
+
 //               <select
 //                 style={{ width: "27%" }}
 //                 name="HighestQualification"
@@ -2116,8 +2202,6 @@ export default function New_employee() {
 //               ))}
 //             </select>
 
-
-
 //             <label style={{ marginRight: "62px" }}>Joining Date :</label>
 //             <input
 //               type="date"
@@ -2267,7 +2351,6 @@ export default function New_employee() {
 //               </div>
 //             </div>
 //           </div>
-
 
 //           <div>
 //             <div className="submit-container">

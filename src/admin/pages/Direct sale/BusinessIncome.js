@@ -233,7 +233,7 @@ const BusinessIncome = () => {
             const result = await response.json(); // Parse response JSON
             if (response.ok) {
                 toast.success("Business income updated successfully");
-                setTimeout(() => navigate('/admin/directsales'), 1000);
+                setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
             } else {
                 toast.error("Unable to update business income");
                 console.error("API Error:", result);
@@ -302,11 +302,11 @@ const BusinessIncome = () => {
                 </div>
             </div>
             <div className="breadcrumb">
-                <a onClick={() => navigate('/admin/directsales')}>Direct Sales</a> &gt; <span>Business Income</span>
+                <a onClick={() => navigate(`/admin/${userId}/directsales`)}>Direct Sales</a> &gt; <span>Business Income</span>
             </div>
             <div className="dl-container">
-                <Tabs ref={tabsRef} activeKey={activeKey} onChange={setActiveKey}>
-                    <TabPane tab="Business Income Form 1" key="1">
+                <Tabs  ref={tabsRef} activeKey={activeKey} onChange={setActiveKey}>
+                    <TabPane style={{marginTop:'50px'}}   tab="Business Income Form 1" key="1">
                         <Form layout="vertical">
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
@@ -719,7 +719,7 @@ const BusinessIncome = () => {
                             </div>
                         </Form>
                     </TabPane>
-                    <TabPane tab="Business Income Form 2" key="2">
+                    <TabPane style={{marginTop:'50px'}}  tab="Business Income Form 2" key="2">
                         <Form layout="vertical">
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>

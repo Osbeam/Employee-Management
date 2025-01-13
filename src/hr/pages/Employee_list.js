@@ -6,20 +6,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export default function Employee_List() {
   const [employees, setEmployees] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [userCount, setUserCount] = useState(0);
-  const [searchParams, setSearchParams] = useState({
-    search: "", // Combined search bar input
-  });
-
+  const [searchParams, setSearchParams] = useState({ search: "" });
+  
   const navigate = useNavigate();
   const { userId } = useParams(); 
 
   useEffect(() => {
     fetchEmployees(currentPage);
+    fetchBranches();  // Fetch the branches data when the component mounts
   }, [currentPage, searchParams.search]);
 
+  // Fetch Employee List
   const fetchEmployees = async () => {
     try {
       const authToken = localStorage.getItem("jwtoken");
@@ -40,12 +41,26 @@ export default function Employee_List() {
       if (response.data.success) {
         setEmployees(response.data.data);
         setTotalPages(response.data.totalPage); // Set totalPages for pagination
-        setUserCount(response.data.userCount)
+        setUserCount(response.data.userCount);
       } else {
         console.error("Failed to fetch employee data:", response.data.message);
       }
     } catch (error) {
       console.error("Error fetching employee data:", error);
+    }
+  };
+
+  // Fetch Branch List
+  const fetchBranches = async () => {
+    try {
+      const response = await axios.get('http://77.37.45.224:8000/api/branch/getBranch');
+      if (response.data.success) {
+        setBranches(response.data.data);
+      } else {
+        console.error("Failed to fetch branch data:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching branch data:", error);
     }
   };
 
@@ -56,7 +71,6 @@ export default function Employee_List() {
 
   const handleEdit = (employee) => {
     if (userId) {
-      // Navigate to the edit page, using the userId from URL and employee._id
       navigate(`/hrpanel/${userId}/employee-list/edit-employee-list/${employee._id}`);
     } else {
       console.error('UserId not found in URL parameters');
@@ -71,29 +85,22 @@ export default function Employee_List() {
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const visiblePages = 5; // Number of pages to display in the pagination bar
+    const visiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
     let endPage = Math.min(totalPages, startPage + visiblePages - 1);
   
-    // Adjust if startPage or endPage goes out of bounds
     if (endPage - startPage + 1 < visiblePages) {
       startPage = Math.max(1, endPage - visiblePages + 1);
     }
   
-    // Add "First" button if not on the first page
     if (currentPage > 1) {
       pageNumbers.push(
-        <button
-          key="first"
-          className="pagination-number"
-          onClick={() => handlePageChange(1)}
-        >
+        <button key="first" className="pagination-number" onClick={() => handlePageChange(1)}>
           First
         </button>
       );
     }
   
-    // Render page numbers dynamically
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <button
@@ -106,14 +113,9 @@ export default function Employee_List() {
       );
     }
   
-    // Add "Last" button if not on the last page
     if (currentPage < totalPages) {
       pageNumbers.push(
-        <button
-          key="last"
-          className="pagination-number"
-          onClick={() => handlePageChange(totalPages)}
-        >
+        <button key="last" className="pagination-number" onClick={() => handlePageChange(totalPages)}>
           Last
         </button>
       );
@@ -134,6 +136,12 @@ export default function Employee_List() {
     );
   });
 
+  // Helper function to get BranchLocation and BranchCity
+  const getBranchDetails = (branchId) => {
+    const branch = branches.find((b) => b._id === branchId);
+    return branch ? `${branch.BranchLocation} (${branch.BranchCity})` : '-';
+  };
+
   return (
     <>
       <div><h2 style={{ marginBottom: '25px', fontSize: '25px' }}>Employee List</h2></div>
@@ -152,18 +160,17 @@ export default function Employee_List() {
               <th style={{ minWidth: '75px' }}>Sr. No.</th>
               <th>Fullname</th>
               <th>Employee Id</th>
+              <th>Branch</th>
               <th>Role</th>
               <th>Mobile no.</th>
               <th>Email id</th>
               <th>Address</th>
               <th>Reference name</th>
+              <th>Department</th>
               <th>Designation</th>
-              {/* <th>Report to</th>
-              <th>Reporting Manager</th> */}
               <th>Joining Date</th>
               <th>Salary p/m</th>
               <th>Off. Mobile no.</th>
-              {/* <th>Off. Email id</th> */}
               <th>Bank name</th>
               <th>Account no</th>
               <th>IFSC code</th>
@@ -179,11 +186,13 @@ export default function Employee_List() {
               <td>{index + 1 + (currentPage - 1) * 10}</td>
               <td>{employee.FirstName || ''} {employee.MiddleName || ''} {employee.LastName || ''}</td>
               <td>{employee.EmployeeID || '-'}</td>
+              <td>{getBranchDetails(employee.BranchLocation)}</td> {/* Display branch details */}
               <td>{employee.Role && employee.Role.length > 0 ? employee.Role.join(', ') : '-'}</td>
               <td>{employee.MobileNumber || '-'}</td>
               <td>{employee.EmailId || '-'}</td>
               <td>{employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '-' : '-'}</td>
               <td>{employee.Reference1 || '-'}</td>
+              <td>{employee.Department ? employee.Department.name : '-'}</td>
               <td>{employee.Designation ? employee.Designation.name : '-'}</td>
               <td>{employee.DateOfJoining || '-'}</td>
               <td>{employee.BasicSalary || '-'}</td>
@@ -212,18 +221,11 @@ export default function Employee_List() {
         </table>
       </div>
       <div className='emp-list-pagination'>
-      <span>User Count: {userCount}</span>
-      <div className="pagination-emp">
-        {/* <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
-        </button> */}
-        {renderPageNumbers()}
-        {/* <button className='Emp-list-pagination-btn' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-          Next
-        </button> */}
+        <span>User Count: {userCount}</span>
+        <div className="pagination-emp">
+          {renderPageNumbers()}
+        </div>
       </div>
-      </div>
-
     </>
   );
 }

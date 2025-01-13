@@ -11,6 +11,7 @@ const SalaryIncome = () => {
     const [activeKey, setActiveKey] = useState("1");
     const tabsRef = useRef(null);
     const { dataId } = useParams();
+    const {userId} = useParams();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -191,7 +192,7 @@ const SalaryIncome = () => {
 
             if (response.ok) {
                 toast.success("Employee updated successfully");
-                setTimeout(() => navigate('/admin/directsales'), 1000);
+                setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
             } else {
                 toast.error("Unable to update employee");
             }
@@ -242,11 +243,11 @@ const SalaryIncome = () => {
                 </div>
             </div>
             <div className="breadcrumb">
-                <a href="#" onClick={() => navigate('/admin/directsales')}>Direct Sales</a> &gt; <span>Salary Income</span>
+                <a href="#" onClick={() => navigate(`/admin/${userId}/directsales`)}>Direct Sales</a> &gt; <span>Salary Income</span>
             </div>
             <div className="dl-container">
-                <Tabs ref={tabsRef} activeKey={activeKey} onChange={setActiveKey}>
-                    <TabPane tab="Salary Income Form 1" key="1">
+                <Tabs  ref={tabsRef} activeKey={activeKey} onChange={setActiveKey}>
+                    <TabPane style={{marginTop:'50px'}}  tab="Salary Income Form 1" key="1">
                         <Form layout="vertical">
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>
@@ -437,7 +438,7 @@ const SalaryIncome = () => {
                             </div>
                         </Form>
                     </TabPane>
-                    <TabPane tab="Salary Income Form 2" key="2">
+                    <TabPane style={{marginTop:'50px'}}  tab="Salary Income Form 2" key="2">
                         <Form layout="vertical">
                             <Row gutter={[8, 8]}>
                                 <Col span={12}>

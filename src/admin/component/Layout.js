@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -16,18 +16,69 @@ import {
   DollarOutlined
 } from '@ant-design/icons';
 import logo from '../Images/ShawniksLogo.png';
-import { Layout, Menu, Button, theme } from 'antd';
-import { useNavigate, Outlet } from "react-router-dom";
+import { Layout, Menu, Button,Avatar, theme } from 'antd';
 import { message } from "antd";
+import { useNavigate, Outlet, useParams } from "react-router-dom";
+import axios from "axios";
+import userimg from "../../hr/Images/user-profile.jpg";
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+    const [userName, setUserName] = useState("");
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate();
+
+  const { userId } = useParams(); // Extract userId from route parameters
+
+  // Get the authentication token from localStorage
+  const authToken = localStorage.getItem("jwtoken");
+
+  useEffect(() => {
+    if (!authToken) {
+      console.error("No token found");
+      setUserName("Guest");
+      return;
+    }
+
+    if (!userId) {
+      console.error("No user ID provided in the route parameters");
+      setUserName("Guest");
+      return;
+    }
+
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(
+          "http://77.37.45.224:8000/api/user/getAllEmployee",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Pass the token in the Authorization header
+            },
+          }
+        );
+        console.log("Employee Data Response:", response.data);
+
+        const employees = response.data?.data?.employees || [];
+        const user = employees.find((emp) => emp._id === userId);
+
+        if (user) {
+          setUserName(`${user.FirstName} ${user.LastName}`);
+        } else {
+          console.warn("User not found in employee list");
+          setUserName("Guest");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        setUserName("Guest");
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId, authToken]); // Run when userId or authToken changes
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -35,6 +86,13 @@ const MainLayout = () => {
     message.success("Logged out successfully!");
     navigate("/");
   };
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem("user");
+  //   localStorage.removeItem("jwtoken");
+  //   message.success("Logged out successfully!");
+  //   navigate("/");
+  // };
 
   return (
     <Layout>
@@ -87,6 +145,11 @@ const MainLayout = () => {
           <Menu.Item key="directsales" icon={<DollarOutlined />} label="Direct Sales">
             Direct Sales
           </Menu.Item>
+
+          <Menu.Item key="branch" icon={<DollarOutlined />} label="Branch">
+            Branch
+          </Menu.Item>
+
           <Menu.Item key="logout" icon={<LogoutOutlined />} label="Logout">
             Logout
           </Menu.Item>
@@ -99,22 +162,35 @@ const MainLayout = () => {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
-              fontSize: '16px',
+              fontSize: "16px",
               width: 64,
               height: 64,
-              border: 'none',
-              boxShadow: 'none',
-              outline: 'none',
+              border: "none",
+              boxShadow: "none",
+              outline: "none",
             }}
           />
+          {/* User Profile Section */}
+          <div
+            style={{
+              position: "absolute",
+              right: 20,
+              top: 0,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Avatar src={userimg} size={40} />
+            <span style={{ marginLeft: 10, color: "#000" }}>{userName}</span>
+          </div>
         </Header>
         <Content
           style={{
-            margin: '24px 16px',
+            margin: "24px 16px",
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
-            borderRadius: '10px',
+            borderRadius: "10px",
           }}
         >
           <Outlet />
