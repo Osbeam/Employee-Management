@@ -66,15 +66,15 @@ function App() {
           <Route path="/admin/:userId/branch/addbranch" element={<AddBranch />} />
           <Route path="/admin/:userId/branch/editbranch/:id" element={<EditBranch />} />
           <Route
-            path="/admin/:userId/directsales/salaryincome/:id"
+            path="/admin/:userId/directsales/salaryincome/:dataId"
             element={<SalaryIncome />}
           />
           <Route
-            path="/admin/:userId/directsales/businessincome/:id"
+            path="/admin/:userId/directsales/businessincome/:dataId"
             element={<BusinessIncome />}
           />
           <Route
-            path="/admin/:userId/directsales/professionalincome/:id"
+            path="/admin/:userId/directsales/professionalincome/:dataId"
             element={<ProfessionalIncome />}
           />
         </Route>

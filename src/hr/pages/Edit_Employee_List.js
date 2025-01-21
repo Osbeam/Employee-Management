@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Breadcrumb, Typography, Row, Col } from 'antd';
 import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import { Form, Input, Button, Breadcrumb,Select, Typography, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
-
-// const { TextArea } = Input;
 const { Title } = Typography;
+const { Option } = Select;
 
 export default function Edit_Employee_List() {
   const { id } = useParams();
@@ -13,128 +13,95 @@ export default function Edit_Employee_List() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState({});
+  const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Fetch Employee Data
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
-        const response = await fetch(`http://77.37.45.224.:8000/api/user/getAllEmployee`, {
+        const response = await fetch(`http://77.37.45.224:8000/api/user/getAllEmployee`, {
           method: 'GET',
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('jwtoken')}`,
+          },
         });
 
         if (response.ok) {
           const data = await response.json();
-          // Inspect data structure
-          console.log("API response:", data);
-
-          // Assuming data.data is an object with a nested array
-          const employeeData = data.data.employees || []; // Adjust this based on actual response
-          const employee = employeeData.find(emp => emp._id === id);
+          const employee = data.data.employees.find((emp) => emp._id === id);
 
           if (employee) {
             setUser(employee);
           } else {
-            toast.error("Employee not found");
+            toast.error('Employee not found');
           }
         } else {
-          toast.error("Error fetching employee data");
+          toast.error('Error fetching employee data');
         }
       } catch (error) {
-        toast.error("Error fetching employee data");
-        console.error("Error:", error);
-      } finally {
-        setIsLoading(false);
+        toast.error('Error fetching employee data');
+        console.error('Error:', error);
       }
     };
-
 
     fetchEmployeeData();
   }, [id]);
 
+  // Fetch Branch List
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await axios.get('http://77.37.45.224:8000/api/branch/getBranch');
+        if (response.data.success) {
+          setBranches(response.data.data);
+        } else {
+          console.error('Failed to fetch branch data:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching branch data:', error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+
+  // Handle input changes
   const handleInputs = (name, value) => {
-    setUser(prevUser => ({
+    setUser((prevUser) => ({
       ...prevUser,
-      [name]: value
+      [name]: value,
     }));
   };
 
+  // Update Employee Data
   const handleEdit = async () => {
     try {
       setIsLoading(true);
       const response = await fetch(`http://77.37.45.224:8000/api/user/updateEmployeeData`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("jwtoken")}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwtoken')}`,
         },
         body: JSON.stringify({
-          _id: id,
-          FirstName: user.FirstName,
-          MiddleName: user.MiddleName,
-          LastName: user.LastName,
-          MobileNumber: user.MobileNumber,
-          Password: user.Password,
-          EmailId: user.EmailId,
-          EmployeeID: user.EmployeeID,
-          BloodGroup: user.BloodGroup,
-          HighestQualification: user.HighestQualification,
-          Year: user.Year,
-          TotalExperience: user.TotalExperience,
-          LastCompanyName: user.LastCompanyName,
-          JoiningDate: user.JoiningDate,
-          Reference1: user.Reference1,
-          Relation1: user.Relation1,
-          Address1: user.Address1,
-          ReferenceName2: user.ReferenceName2,
-          Relation2: user.Relation2,
-          Address2: user.Address2,
-          DateOfJoining: user.DateOfJoining,
-          CompanyName: user.CompanyName,
-          BasicSalary: user.BasicSalary,
-          FixedAllowance: user.FixedAllowance,
-          SpecialAllowance: user.SpecialAllowance,
-          VeriableAllowance: user.VeriableAllowance,
-          HRA: user.HRA,
-          OfficialMobileNumber: user.OfficialMobileNumber,
-          MobileIMEINumber: user.MobileIMEINumber,
-          BankName: user.BankName,
-          AccountHolderName: user.AccountHolderName,
-          AccountNumber: user.AccountNumber,
-          IFSCCode: user.IFSCCode,
-          Role: user.Role,
-          PanCard: user.PanCard,
-          PanNumber: user.PanNumber,
-          AadharCard: user.AadharCard,
-          AadharNumber: user.AadharNumber,
-          Photo: user.Photo,
-          AddressProof: user.AddressProof,
-          HighestQuaCertificate: user.HighestQuaCertificate,
-          LastComRellievingLetter: user.LastComRellievingLetter,
-          BankDetails: user.BankDetails,
+          ...user,
         }),
       });
 
       if (response.ok) {
-        toast.success("Employee updated successfully");
+        toast.success('Employee updated successfully');
         setTimeout(() => navigate(`/hrpanel/${userId}/employee-list`), 1000);
       } else {
-        toast.error("Unable to update employee");
+        toast.error('Unable to update employee');
       }
     } catch (error) {
-      toast.error("Unable to update employee");
-      console.error("Error updating employee:", error);
+      toast.error('Unable to update employee');
+      console.error('Error updating employee:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
-
-  if (isLoading && !user) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -397,7 +364,22 @@ export default function Edit_Employee_List() {
                 />
               </Form.Item>
             </Col>
-          
+            <Col span={8}>
+            <Form.Item label={<span style={{ marginRight: '20px' }}>Branch Location</span>}>
+              <Select
+              style={{width:'212px'}}
+                placeholder="Select Branch Location"
+                value={user.BranchLocation || ''}
+                onChange={(value) => handleInputs('BranchLocation', value)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch._id} value={branch._id}>
+                    {branch.BranchLocation} ({branch.BranchCity})
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
           </Row>
 
           <Row gutter={16}>

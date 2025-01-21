@@ -12,7 +12,7 @@ const ProfessionalIncome = () => {
     const [activeKey, setActiveKey] = useState("1");
     const tabsRef = useRef(null);
     const navigate = useNavigate();
-    const { userId } = useParams();
+    const { userId, dataId } = useParams();
 
     const [data, setData] = useState({
         IncomeDetails: [],
@@ -171,8 +171,6 @@ const ProfessionalIncome = () => {
             ]
         }));
     };
-    
-
     const addTurnOverDetailRow = () => {
         setData(prevData => ({
             ...prevData,
@@ -189,7 +187,6 @@ const ProfessionalIncome = () => {
             ]
         }));
     };
-
     const addBankDetailRow = () => {
         setData(prevData => ({
             ...prevData,
@@ -206,7 +203,6 @@ const ProfessionalIncome = () => {
             ]
         }));
     };
-
     const addNewYearWiseITR = () => {
         setData(prevData => ({
             ...prevData,

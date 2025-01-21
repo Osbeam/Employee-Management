@@ -2,7 +2,12 @@ import axios from "axios";
 import { Modal, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faEdit, faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faEdit,
+  faTrash,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Attendance() {
   const [activeTab, setActiveTab] = useState("dailyAttendance");
@@ -25,11 +30,11 @@ export default function Attendance() {
 
   // Get all log in user with authtoken
   const fetchUsers = async (page = 1) => {
-    const authToken = localStorage.getItem('jwtoken');
-    console.log('Auth Token:', authToken);
+    const authToken = localStorage.getItem("jwtoken");
+    console.log("Auth Token:", authToken);
 
     if (!authToken) {
-      console.error('No auth token found in local storage');
+      console.error("No auth token found in local storage");
       return;
     }
 
@@ -43,28 +48,31 @@ export default function Attendance() {
         }
       );
 
-      console.log('API Response:', response.data); // Log the full response
+      console.log("API Response:", response.data); // Log the full response
 
       if (response.data.success) {
         const usersWithEditMode = response.data.data.map((user) => ({
           ...user,
           editMode: false,
-          originalInTimeImage: user.inTimeImage
+          originalInTimeImage: user.inTimeImage,
         }));
         setUsers(usersWithEditMode);
         setCurrentPage(response.data.currentPage);
         setTotalPages(response.data.totalPage);
         setTotalRecords(response.data.userCount);
       } else {
-        console.error('Failed to fetch users:', response.data.message);
+        console.error("Failed to fetch users:", response.data.message);
       }
     } catch (error) {
-      console.error('Error fetching users:', error.response?.data || error.message);
+      console.error(
+        "Error fetching users:",
+        error.response?.data || error.message
+      );
       if (error.response) {
-        console.error('Response Error Data:', error.response.data);
+        console.error("Response Error Data:", error.response.data);
       }
       if (error.request) {
-        console.error('Request Error:', error.request);
+        console.error("Request Error:", error.request);
       }
     }
   };
@@ -80,13 +88,13 @@ export default function Attendance() {
     const endDate = today.toISOString().split("T")[0];
 
     try {
-      const authToken = localStorage.getItem('jwtoken')
+      const authToken = localStorage.getItem("jwtoken");
       const response = await axios.get(
         `http://77.37.45.224:8000/api/user/getApprovedLogUsers?approved=true&startDate=${startDate}&endDate=${endDate}&currentPage=${page}&pageSize=${pageSize}`,
         {
           headers: {
-            Authorization: `Bearer ${authToken}`
-          }
+            Authorization: `Bearer ${authToken}`,
+          },
         }
       );
       setAllUsers(response.data.data);
@@ -119,17 +127,20 @@ export default function Attendance() {
         );
         return; // Exit the function early
       }
-      const authToken = localStorage.getItem('jwtoken')
+      const authToken = localStorage.getItem("jwtoken");
       // If all required fields are filled, send the approval request
-      await axios.put(`http://77.37.45.224:8000/api/user/editLogUser/${_id}`, {
-        isPresent: true,
-        approved: true,
-      },
+      await axios.put(
+        `http://77.37.45.224:8000/api/user/editLogUser/${_id}`,
+        {
+          isPresent: true,
+          approved: true,
+        },
         {
           headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        });
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== _id));
       fetchAllUsers();
       // Show success message
@@ -146,17 +157,14 @@ export default function Attendance() {
     try {
       // Check if any of the users are missing required fields
       const userToApprove = users.find((user) => user._id === _id);
-      if (
-        !userToApprove.inTime ||
-        !userToApprove.inTimeImage
-      ) {
+      if (!userToApprove.inTime || !userToApprove.inTimeImage) {
         // If any required field is missing, show an error message
         message.error("Require login time");
         return; // Exit the function early
       }
-
-      const authToken = localStorage.getItem('jwtoken');
-
+  
+      const authToken = localStorage.getItem("jwtoken");
+  
       // If all required fields are filled, send the approval request
       const response = await axios.put(
         `http://77.37.45.224:8000/api/user/editLogUser/${_id}`,
@@ -169,40 +177,42 @@ export default function Attendance() {
           },
         }
       );
+  
+      // Show success message upon successful approval
+      message.success("Attendance approved by Hr successfully");
     } catch (error) {
       console.log("Error approving log:", error);
       // Show error message if needed
       message.error("Failed to approve attendance");
     }
   };
-
+  
 
   const formatDateTimeForInput = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   const formatDateTimeForDisplay = (dateString) => {
-
     if (!dateString) {
       return "-";
     }
 
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
     });
   };
 
@@ -224,14 +234,14 @@ export default function Attendance() {
       formData.append("outTime", new Date(userToSave.outTime).toISOString());
 
       // Note: No image logic here
-      const authToken = localStorage.getItem('jwtoken')
+      const authToken = localStorage.getItem("jwtoken");
       const response = await axios.put(
         `http://77.37.45.224:8000/api/user/editInTime/${_id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`
+            Authorization: `Bearer ${authToken}`,
           },
         }
       );
@@ -239,12 +249,12 @@ export default function Attendance() {
       const updatedUsers = users.map((user) =>
         user._id === _id
           ? {
-            ...user,
-            editMode: false,
-            totalHours: response.data.log.totalHours,
-            // Ensure inTimeImage remains unchanged
-            inTimeImage: user.inTimeImage,
-          }
+              ...user,
+              editMode: false,
+              totalHours: response.data.log.totalHours,
+              // Ensure inTimeImage remains unchanged
+              inTimeImage: user.inTimeImage,
+            }
           : user
       );
       setUsers(updatedUsers);
@@ -268,27 +278,30 @@ export default function Attendance() {
 
   //Delete user data with authtoken
   const handleDelete = async (_id) => {
-    const authToken = localStorage.getItem('jwtoken'); // Retrieve the token from local storage
+    const authToken = localStorage.getItem("jwtoken"); // Retrieve the token from local storage
 
     if (!authToken) {
-      console.error('No auth token found in local storage');
+      console.error("No auth token found in local storage");
       return;
     }
 
-    console.log('Auth Token:', authToken); // Debugging: Log the token to make sure it's retrieved
+    console.log("Auth Token:", authToken); // Debugging: Log the token to make sure it's retrieved
 
     try {
-      const response = await axios.delete(`http://77.37.45.224:8000/api/user/deleteLog/${_id}`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`, // Include the token in the headers
-        },
-      });
+      const response = await axios.delete(
+        `http://77.37.45.224:8000/api/user/deleteLog/${_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Include the token in the headers
+          },
+        }
+      );
 
-      console.log('Response:', response.data); // Log the response for debugging
+      console.log("Response:", response.data); // Log the response for debugging
 
       fetchUsers(currentPage);
     } catch (error) {
-      console.log('Error deleting log:', error.response?.data || error.message); // More detailed error message
+      console.log("Error deleting log:", error.response?.data || error.message); // More detailed error message
     }
   };
 
@@ -310,7 +323,9 @@ export default function Attendance() {
 
   const fetchEmployeeDetails = async () => {
     try {
-      const response = await axios.get("http://77.37.45.224:8000/api/department/getDesignation");
+      const response = await axios.get(
+        "http://77.37.45.224:8000/api/department/getDesignation"
+      );
       const designationData = response.data.data.reduce((acc, designation) => {
         acc[designation._id] = designation.name;
         return acc;
@@ -420,7 +435,9 @@ export default function Attendance() {
                         users.map((user, index) => (
                           <tr key={user._id}>
                             <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                            <td>{user.userId ? user.userId.EmployeeID : "-"}</td>
+                            <td>
+                              {user.userId ? user.userId.EmployeeID : "-"}
+                            </td>
                             <td>{user.userId ? user.userId.FirstName : "-"}</td>
 
                             <td>
@@ -430,7 +447,9 @@ export default function Attendance() {
                                   value={formatDateTimeForInput(user.inTime)}
                                   onChange={(e) => {
                                     const updatedUsers = users.map((u) =>
-                                      u._id === user._id ? { ...u, inTime: e.target.value } : u
+                                      u._id === user._id
+                                        ? { ...u, inTime: e.target.value }
+                                        : u
                                     );
                                     setUsers(updatedUsers);
                                   }}
@@ -446,7 +465,9 @@ export default function Attendance() {
                                   value={formatDateTimeForInput(user.outTime)}
                                   onChange={(e) => {
                                     const updatedUsers = users.map((u) =>
-                                      u._id === user._id ? { ...u, outTime: e.target.value } : u
+                                      u._id === user._id
+                                        ? { ...u, outTime: e.target.value }
+                                        : u
                                     );
                                     setUsers(updatedUsers);
                                   }}
@@ -457,75 +478,79 @@ export default function Attendance() {
                             </td>
                             <td>{user.totalHours ? user.totalHours : "-"}</td>
                             <td>
-                              {user.inTimeImage && typeof user.inTimeImage === "string" ? (
+                              {user.inTimeImage &&
+                              typeof user.inTimeImage === "string" ? (
                                 <img
-                                  src={`http://77.37.45.224:8000/${user.inTimeImage}?${Date.now()}`}
+                                  src={`http://77.37.45.224:8000/${
+                                    user.inTimeImage
+                                  }?${Date.now()}`}
                                   alt="User img"
-                                  style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                  }}
                                 />
                               ) : (
                                 "-"
                               )}
                             </td>
                             <td className="statusbtn">
-  {user.editMode ? (
-    <>
-      <button
-        className="savebtn"
-        title="Save"
-        onClick={() => handleSave(user._id)}
-      >
-        <FontAwesomeIcon icon={faCheck} />
-      </button>
-      <button
-        className="cancelbtn"
-        title="Cancel"
-        onClick={() => handleCancelEdit(user._id)}
-      >
-        <FontAwesomeIcon icon={faTimes} />
-      </button>
-    </>
-  ) : (
-    <>
-     
-      
-      <button
-        className="approvebtn"
-        title="Save to report"
-        onClick={() => handleApprove(user._id)}
-      >
-        <FontAwesomeIcon icon={faCheck} />
-      </button>
-      <button
-        style={{ backgroundColor: 'darkgoldenrod' }}
-        className="approvebtn"
-        title="Approve by HR"
-        onClick={() => handleApproveByHr(user._id)}
-      >
-        <FontAwesomeIcon icon={faCheck} />
-      </button>
-      <button
-        className="editbtn"
-        title="Edit"
-        onClick={() => handleEdit(user._id)}
-      >
-        <FontAwesomeIcon icon={faEdit} />
-      </button>
-      <button
-        className="deletebtn"
-        title="Delete"
-        onClick={() => showDeleteConfirmation(user._id)}
-      >
-        <FontAwesomeIcon icon={faTrash} />
-      </button>
-    </>
-  )}
-</td>
-
+                              {user.editMode ? (
+                                <>
+                                  <button
+                                    className="savebtn"
+                                    title="Save"
+                                    onClick={() => handleSave(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                  <button
+                                    className="cancelbtn"
+                                    title="Cancel"
+                                    onClick={() => handleCancelEdit(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTimes} />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    className="approvebtn"
+                                    title="Save to report"
+                                    onClick={() => handleApprove(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                  <button
+                                    style={{ backgroundColor: "darkgoldenrod" }}
+                                    className="approvebtn"
+                                    title="Approve by HR"
+                                    onClick={() => handleApproveByHr(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                  <button
+                                    className="editbtn"
+                                    title="Edit"
+                                    onClick={() => handleEdit(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faEdit} />
+                                  </button>
+                                  <button
+                                    className="deletebtn"
+                                    title="Delete"
+                                    onClick={() =>
+                                      showDeleteConfirmation(user._id)
+                                    }
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </button>
+                                </>
+                              )}
+                            </td>
                           </tr>
                         ))}
                     </tbody>
-
                   </table>
                   {/* Pagination */}
                   <div className="attendence-pagination">
@@ -553,7 +578,9 @@ export default function Attendance() {
                       {getPageNumbers().map((pageNumber) => (
                         <button
                           key={pageNumber}
-                          className={`attendence-pagination-number ${pageNumber === currentPage ? "active" : ""}`}
+                          className={`attendence-pagination-number ${
+                            pageNumber === currentPage ? "active" : ""
+                          }`}
                           onClick={() => handlePageClick(pageNumber)}
                         >
                           {pageNumber}
@@ -604,7 +631,10 @@ export default function Attendance() {
                               </td>
                               <td>{user.EmployeeID}</td>
                               <td>{user.FirstName}</td>
-                              <td>{designations[user.Designation] || user.Designation}</td>
+                              <td>
+                                {designations[user.Designation] ||
+                                  user.Designation}
+                              </td>
                               <td>{user.count}</td>
                               {/* <td className="statusbtn">
                                 <button className="approvebtn">
@@ -650,7 +680,9 @@ export default function Attendance() {
                       {getPageNumbersReports().map((pageNumber) => (
                         <button
                           key={pageNumber}
-                          className={`attendence-pagination-number ${pageNumber === currentReportPage ? "active" : ""}`}
+                          className={`attendence-pagination-number ${
+                            pageNumber === currentReportPage ? "active" : ""
+                          }`}
                           onClick={() => handlePageClickReport(pageNumber)}
                         >
                           {pageNumber}
@@ -661,7 +693,9 @@ export default function Attendance() {
                       {currentReportPage < totalReportPages && (
                         <button
                           className="attendence-pagination-number"
-                          onClick={() => handlePageClickReport(totalReportPages)}
+                          onClick={() =>
+                            handlePageClickReport(totalReportPages)
+                          }
                         >
                           Last
                         </button>
