@@ -514,14 +514,7 @@ export default function Attendance() {
                                 </>
                               ) : (
                                 <>
-                                  <button
-                                    className="approvebtn"
-                                    title="Save to report"
-                                    onClick={() => handleApprove(user._id)}
-                                  >
-                                    <FontAwesomeIcon icon={faCheck} />
-                                  </button>
-                                  <button
+                                 <button
                                     style={{ backgroundColor: "darkgoldenrod" }}
                                     className="approvebtn"
                                     title="Approve by HR"
@@ -529,6 +522,14 @@ export default function Attendance() {
                                   >
                                     <FontAwesomeIcon icon={faCheck} />
                                   </button>
+                                  <button
+                                    className="approvebtn"
+                                    title="Save to report"
+                                    onClick={() => handleApprove(user._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} />
+                                  </button>
+                                 
                                   <button
                                     className="editbtn"
                                     title="Edit"

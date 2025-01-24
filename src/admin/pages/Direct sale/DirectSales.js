@@ -14,6 +14,7 @@ const DirectSales = () => {
   const navigate = useNavigate();
 
   const { userId } = useParams();
+  
   useEffect(() => {
     const fetchData = async (page) => {
       try {
@@ -254,7 +255,7 @@ const DirectSales = () => {
               <th>City</th>
               <th>Income Type</th>
               <th>Other Income Type</th>
-              <th>View Docs</th>
+              {/* <th>View Docs</th> */}
               <th>Action</th>
             </tr>
           </thead>
@@ -331,7 +332,7 @@ const DirectSales = () => {
                         professionalIncome?.OtherSourceOfIncome ||
                         "-"}
                     </td>
-                    <td>
+                    {/* <td>
                       {salaryIncome?.UploadPhoto?.length > 0 ||
                       salaryIncome?.UploadAadhar?.length > 0 ? (
                         <select
@@ -370,7 +371,7 @@ const DirectSales = () => {
                       ) : (
                         "-"
                       )}
-                    </td>
+                    </td> */}
 
                     <td className="statusbtn">
                       <button

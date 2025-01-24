@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Col, Row, Form, Input, Tabs, Button, Select } from "antd";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const { TabPane } = Tabs;
 
@@ -314,6 +314,25 @@ const BusinessIncome = () => {
       BankDetails: [...(prevUser.BankDetails || []), {}], // Add an empty object to the array
     }));
   };
+  const addNewYearWiseITR = () => {
+    setUser((prevData) => ({
+      ...prevData,
+      YearWiseITR: [
+        ...prevData.YearWiseITR,
+        { FillingDate: "", Profit: "", TurnOver: "" }, // Default values for new row
+      ],
+    }));
+  };
+
+  const handleYearWiseITRChange = (index, field, value) => {
+    const updatedYearWiseITR = [...user.YearWiseITR];
+    updatedYearWiseITR[index][field] = value;
+    setUser((prevData) => ({
+      ...prevData,
+      YearWiseITR: updatedYearWiseITR,
+    }));
+  };
+
   const handleNext = () => {
     const nextKey = activeKey === "1" ? "2" : "1";
     setActiveKey(nextKey);
@@ -495,103 +514,69 @@ const BusinessIncome = () => {
               </Row>
               <hr style={{ marginBottom: "50px" }} />
 
-              <Row gutter={[8, 8]}>
-                <Col span={12}>
-                  <Form.Item label="ITR Status" className="FormItem">
-                    <Select
-                      placeholder="Please select"
-                      value={user.ITRStatus || []}
-                      onChange={handleSelectChange}
-                      autoComplete="off"
-                      name="ITRStatus"
-                    >
-                      <Option value="Yes">Yes</Option>
-                      <Option value="No">No</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
-                  <Form.Item
-                    label="AY Wise (2023-24) Filing Date"
-                    className="FormItem"
-                  >
-                    <Input
-                      placeholder="Please enter"
-                      autoComplete="off"
-                      type="Date"
-                      name="YearWiseITR.FillingDate"
-                      value={
-                        user.YearWiseITR && user.YearWiseITR[0]
-                          ? user.YearWiseITR[0].FillingDate
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleInputs(
-                          "YearWiseITR.FillingDate",
-                          e.target.value,
-                          0,
-                          "YearWiseITR"
-                        )
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={[8, 8]}>
-                <Col span={12}>
-                  <Form.Item
-                    label="AY Wise (2023-24) Profit"
-                    className="FormItem"
-                  >
-                    <Input
-                      placeholder="Please enter"
-                      autoComplete="off"
-                      name="YearWiseITR.Profit"
-                      value={
-                        user.YearWiseITR && user.YearWiseITR[0]
-                          ? user.YearWiseITR[0].Profit
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleInputs(
-                          "YearWiseITR.Profit",
-                          e.target.value,
-                          0,
-                          "YearWiseITR"
-                        )
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
-                  <Form.Item
-                    label="AY Wise (2023-24) Turn Over"
-                    className="FormItem"
-                  >
-                    <Input
-                      placeholder="Please enter"
-                      autoComplete="off"
-                      name="YearWiseITR.TurnOver"
-                      value={
-                        user.YearWiseITR && user.YearWiseITR[0]
-                          ? user.YearWiseITR[0].TurnOver
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleInputs(
-                          "YearWiseITR.TurnOver",
-                          e.target.value,
-                          0,
-                          "YearWiseITR"
-                        )
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
+              <Form.Item label="Year Wise ITR" className="FormItem">
+                {user?.YearWiseITR?.map((item, index) => (
+                  <Row style={{ width: "650px" }} key={index} gutter={[8, 8]}>
+                    <Col span={8}>
+                      <Form.Item label="Filling Date">
+                        <Input
+                          placeholder="Filling Date"
+                          type="date"
+                          value={item.FillingDate}
+                          onChange={(e) =>
+                            handleYearWiseITRChange(
+                              index,
+                              "FillingDate",
+                              e.target.value
+                            )
+                          }
+                          disabled={user?.ITRStatus === "No"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item label="Profit">
+                        <Input
+                          placeholder="Profit"
+                          value={item.Profit}
+                          onChange={(e) =>
+                            handleYearWiseITRChange(
+                              index,
+                              "Profit",
+                              e.target.value
+                            )
+                          }
+                          disabled={user?.ITRStatus === "No"}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item label="Turn Over">
+                        <Input
+                          placeholder="Turn Over"
+                          value={item.TurnOver}
+                          onChange={(e) =>
+                            handleYearWiseITRChange(
+                              index,
+                              "TurnOver",
+                              e.target.value
+                            )
+                          }
+                          disabled={user?.ITRStatus === "No"}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                ))}
+                {/* Button to add a new row */}
+                <Button
+                  type="dashed"
+                  onClick={addNewYearWiseITR}
+                  style={{ marginTop: 2 }}
+                >
+                  Add New Record
+                </Button>
+              </Form.Item>
 
               <hr style={{ marginBottom: "50px" }} />
 
@@ -620,6 +605,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("GstNumber", e.target.value)
                       }
+                      disabled={user?.GstRegistration === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -636,6 +622,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("DateOfGstRegistration", e.target.value)
                       }
+                      disabled={user?.GstRegistration === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -673,6 +660,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("IndustryNumber", e.target.value)
                       }
+                      disabled={user?.IndustryRegistration === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -692,6 +680,7 @@ const BusinessIncome = () => {
                           e.target.value
                         )
                       }
+                      disabled={user?.IndustryRegistration === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -723,6 +712,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("AccountNumber", e.target.value)
                       }
+                      disabled={user?.CurrentAccount === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -739,6 +729,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("DateOfOpening", e.target.value)
                       }
+                      disabled={user?.CurrentAccount === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -821,6 +812,7 @@ const BusinessIncome = () => {
                       onChange={(e) =>
                         handleInputs("ExportTurnoverLastYear", e.target.value)
                       }
+                      disabled={user?.Exporter === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -872,6 +864,7 @@ const BusinessIncome = () => {
                       onChange={handleSelectChangeOtherIncome} // No tab change here
                       autoComplete="off"
                       name="OtherSourceOfIncome"
+                      disabled={user?.AnotherSourceOfIncome === "No"}
                     >
                       <Option value="Salary Income">Salary Income</Option>
                       <Option value="Professional Income">
@@ -1045,26 +1038,30 @@ const BusinessIncome = () => {
               <Row gutter={[8, 8]}>
                 <Col span={12}>
                   <Form.Item label="Sex" className="FormItem">
-                    <Input
-                      placeholder="Please enter"
-                      autoComplete="off"
-                      name="Sex"
+                    <Select
+                      placeholder="Please select"
                       value={user.Sex || ""}
-                      onChange={(e) => handleInputs("Sex", e.target.value)}
-                    />
+                      name="Sex"
+                      onChange={(value) => handleInputs("Sex", value)}
+                    >
+                      <Select.Option value="Male">Male</Select.Option>
+                      <Select.Option value="Female">Female</Select.Option>
+                      <Select.Option value="Other">Other</Select.Option>
+                    </Select>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Marital Status" className="FormItem">
-                    <Input
-                      placeholder="Please enter"
-                      autoComplete="off"
-                      name="MaritalStatus"
+                    <Select
+                      placeholder="Please select"
                       value={user.MaritalStatus || ""}
-                      onChange={(e) =>
-                        handleInputs("MaritalStatus", e.target.value)
-                      }
-                    />
+                      name="MaritalStatus"
+                      onChange={(value) => handleInputs("MaritalStatus", value)}
+                    >
+                      <Select.Option value="Married">Married</Select.Option>
+                      <Select.Option value="Unmarried">Unmarried</Select.Option>
+                      <Select.Option value="Other">Other</Select.Option>
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
