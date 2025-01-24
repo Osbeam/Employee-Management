@@ -73,88 +73,36 @@ const SalaryIncome = () => {
     fetchSalaryIncomeData();
   }, [dataId]);
 
-  // const handleEdit = async () => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     const response = await fetch(
-  //       `http://77.37.45.224:8000/api/salaryIncome/EditSalaryData`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
-  //         },
-  //         body: JSON.stringify(data),
-  //       }
-  //     );
-
-  //     if (response.ok) {
-  //       toast.success("Employee updated successfully");
-  //       setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
-  //     } else {
-  //       toast.error("Unable to update employee");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Unable to update employee");
-  //     console.error("Error updating employee:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-
   const handleEdit = async () => {
     try {
       setIsLoading(true);
-  
-      // Prepare FormData
-      const formData = new FormData();
-      formData.append("_id", data._id); // Add the ID for updating the record
-  
-      // Add form data fields
-      Object.keys(data).forEach((key) => {
-        if (!["UploadPhoto", "UploadAadhar"].includes(key)) {
-          formData.append(key, data[key]);
-        }
-      });
-  
-      // Add file fields
-      if (data.UploadPhoto && data.UploadPhoto[0]?.file) {
-        formData.append("UploadPhoto", data.UploadPhoto[0].file);
-      }
-  
-      if (data.UploadAadhar && data.UploadAadhar[0]?.file) {
-        formData.append("UploadAadhar", data.UploadAadhar[0].file);
-      }
-  
+
       const response = await fetch(
         `http://77.37.45.224:8000/api/salaryIncome/EditSalaryData`,
         {
           method: "PUT",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
           },
-          body: formData, // Send FormData directly
+          body: JSON.stringify(data),
         }
       );
-  
+
       if (response.ok) {
-        toast.success("Salary data updated successfully!");
+        toast.success("Employee updated successfully");
         setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
       } else {
-        const errorText = await response.text();
-        console.error("Error Details:", errorText);
-        toast.error("Failed to update salary data.");
+        toast.error("Unable to update employee");
       }
     } catch (error) {
-      console.error("Error updating salary data:", error);
-      toast.error("An error occurred. Please try again.");
+      toast.error("Unable to update employee");
+      console.error("Error updating employee:", error);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const handleInputs = (fieldName, value) => {
     setData((prevData) => ({
       ...prevData,
@@ -1521,34 +1469,57 @@ const SalaryIncome = () => {
             <Form layout="vertical">
               <Row gutter={[8, 8]}>
                 <Col span={12}>
-                <Form.Item label="Photo">
-  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-    {/* Preview existing photo */}
-    {data.UploadPhoto && data.UploadPhoto[0] ? (
-      <img
-        src={`http://77.37.45.224:8000/${data.UploadPhoto[0]}`} // Replace with actual backend file path
-        alt="Uploaded Photo"
-        style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px" }}
-      />
-    ) : (
-      <p>No Photo Available</p>
-    )}
+                  <Form.Item label="Photo" className="FormItem">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                      }}
+                    >
+                      {/* Image Preview */}
+                      {data.UploadPhoto && data.UploadPhoto.length > 0 ? (
+                        <img
+                          src={`http://77.37.45.224:8000/${data.UploadPhoto[0]}`} // Ensure correct file path here
+                          alt="Uploaded Preview"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      ) : (
+                        <p>No Image Available</p>
+                      )}
 
-    {/* File input for UploadPhoto */}
-    <Input
-      type="file"
-      onChange={(e) => {
-        const file = e.target.files[0];
-        if (file) {
-          setData((prevData) => ({
-            ...prevData,
-            UploadPhoto: [{ file }],
-          }));
-        }
-      }}
-    />
-  </div>
-</Form.Item>
+                      {/* File input */}
+                      <Input
+                        type="file"
+                        name="UploadPhoto"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            handleFileUpload(file); // Upload the file and update the state
+                          }
+                        }}
+                      />
+                      {/* Display the file name */}
+                      {data.UploadPhoto && data.UploadPhoto[0] && (
+                        <div
+                          style={{
+                            width: "260px",
+                            color: "#555",
+                            marginTop: "0px",
+                          }}
+                        >
+                          {data.UploadPhoto[0].split("/").pop()}{" "}
+                          {/* Show the file name */}
+                        </div>
+                      )}
+                    </div>
+                  </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Aadhar Card" className="FormItem">
