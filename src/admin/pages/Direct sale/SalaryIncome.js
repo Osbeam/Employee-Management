@@ -10,14 +10,12 @@ const { Option } = Select;
 const SalaryIncome = () => {
   const [activeKey, setActiveKey] = useState("1");
   const tabsRef = useRef(null);
-  const { dataId } = useParams();
+  const { dataId, currentPage } = useParams();
   const { userId } = useParams();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState({
-    GrossSalaryPerMonth: "",
-    NetSalaryPerMonth: "",
     SalaryDetails: [],
     BankDetails: [],
     Analysis: [],
@@ -25,18 +23,11 @@ const SalaryIncome = () => {
   });
 
   useEffect(() => {
-    console.log("Current Data State:", data);
-  }, [data]);
-
-  // Debugging log
-  console.log("data State:", data);
-
-  useEffect(() => {
     const fetchSalaryIncomeData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true); // Set loading state to true
         const response = await fetch(
-          `http://77.37.45.224:8000/api/salaryIncome/GetAllSalaryIncome?currentPage=1`,
+          `http://77.37.45.224:8000/api/salaryIncome/GetAllSalaryIncome?currentPage=${currentPage}`,
           {
             method: "GET",
             headers: {
@@ -59,19 +50,28 @@ const SalaryIncome = () => {
             setData(selectedRecord); // Populate the form with the selected record
           } else {
             console.error("Record not found with _id:", dataId);
+            toast.error("Record not found.");
           }
         } else {
-          console.error("Error fetching salary income data");
+          const errorText = await response.text();
+          console.error("Error fetching salary income data:", errorText);
+          toast.error("Failed to fetch data from the server.");
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching data:", error);
+        toast.error("An error occurred while fetching the data.");
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Set loading state to false
       }
     };
 
-    fetchSalaryIncomeData();
-  }, [dataId]);
+    if (currentPage && dataId) {
+      fetchSalaryIncomeData();
+    } else {
+      console.error("Invalid parameters: currentPage or dataId is missing");
+    }
+  }, [dataId, currentPage]);
+
 
   const handleEdit = async () => {
     try {
@@ -110,36 +110,36 @@ const SalaryIncome = () => {
     }));
   };
 
-  const handleFileUpload = async (file) => {
-    // Create a FormData object
-    const formData = new FormData();
-    formData.append("file", file);
+  // const handleFileUpload = async (file) => {
+  //   // Create a FormData object
+  //   const formData = new FormData();
+  //   formData.append("file", file);
 
-    try {
-      const response = await fetch(
-        `http://77.37.45.224:8000/api/uploads`, // Your upload API endpoint
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
-          },
-          body: formData,
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `http://77.37.45.224:8000/api/uploads`, // Your upload API endpoint
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
+  //         },
+  //         body: formData,
+  //       }
+  //     );
 
-      if (response.ok) {
-        const result = await response.json();
-        const uploadedFileUrl = result.data.filePath; // Get the uploaded file path from the response
-        handleInputs("UploadPhoto", [uploadedFileUrl]); // Update the state with the file path
-        toast.success("Image uploaded successfully!");
-      } else {
-        toast.error("Failed to upload image");
-      }
-    } catch (error) {
-      toast.error("Error uploading image");
-      console.error("Error uploading image:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       const uploadedFileUrl = result.data.filePath; // Get the uploaded file path from the response
+  //       handleInputs("UploadPhoto", [uploadedFileUrl]); // Update the state with the file path
+  //       toast.success("Image uploaded successfully!");
+  //     } else {
+  //       toast.error("Failed to upload image");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Error uploading image");
+  //     console.error("Error uploading image:", error);
+  //   }
+  // };
 
 
   const handleInputsSalary = (fieldName, value, index) => {
@@ -180,11 +180,11 @@ const SalaryIncome = () => {
     setActiveKey(nextKey);
     tabsRef.current?.scrollIntoView();
   };
-  const handleNextDoc = () => {
-    const nextKey = activeKey === "2" ? "3" : "2";
-    setActiveKey(nextKey);
-    tabsRef.current?.scrollIntoView();
-  };
+  // const handleNextDoc = () => {
+  //   const nextKey = activeKey === "2" ? "3" : "2";
+  //   setActiveKey(nextKey);
+  //   tabsRef.current?.scrollIntoView();
+  // };
 
   const addNewRow = () => {
     setData((prevdata) => ({
@@ -295,8 +295,6 @@ const SalaryIncome = () => {
   const handleSelectChangeMaritalStatus = (value) => {
     handleInputs("MaritalStatus", value);
   };
-
-
 
   return (
     <>
@@ -1458,13 +1456,16 @@ const SalaryIncome = () => {
               </div> */}
 
               <div className="dl-btn">
-                <button type="button" onClick={handleNextDoc}>
+                {/* <button type="button" onClick={handleNextDoc}>
                   Next
+                </button> */}
+                <button type="button" onClick={handleEdit}>
+                  Submit
                 </button>
               </div>
             </Form>
           </TabPane>
-
+          {/* 
           <TabPane style={{ marginTop: "50px" }} tab="Document" key="3">
             <Form layout="vertical">
               <Row gutter={[8, 8]}>
@@ -1477,7 +1478,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.UploadPhoto && data.UploadPhoto.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.UploadPhoto[0]}`} // Ensure correct file path here
@@ -1494,7 +1495,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="UploadPhoto"
@@ -1505,7 +1506,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.UploadPhoto && data.UploadPhoto[0] && (
                         <div
                           style={{
@@ -1515,7 +1516,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.UploadPhoto[0].split("/").pop()}{" "}
-                          {/* Show the file name */}
+                      
                         </div>
                       )}
                     </div>
@@ -1530,7 +1531,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.UploadAadhar && data.UploadAadhar.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.UploadAadhar[0]}`}
@@ -1547,7 +1548,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="UploadAadhar"
@@ -1561,7 +1562,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.UploadAadhar && data.UploadAadhar[0] && (
                         <div
                           style={{
@@ -1571,7 +1572,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.UploadAadhar[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -1589,7 +1590,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.AppointmentLetter &&
                       data.AppointmentLetter.length > 0 ? (
                         <img
@@ -1607,7 +1608,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="AppointmentLetter"
@@ -1618,7 +1619,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.AppointmentLetter && data.AppointmentLetter[0] && (
                         <div
                           style={{
@@ -1628,7 +1629,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.AppointmentLetter[0].split("/").pop()}{" "}
-                          {/* Show the file name */}
+                      
                         </div>
                       )}
                     </div>
@@ -1643,7 +1644,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.AppraisalLetter &&
                       data.AppraisalLetter.length > 0 ? (
                         <img
@@ -1661,7 +1662,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="AppraisalLetter"
@@ -1675,7 +1676,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.AppraisalLetter && data.AppraisalLetter[0] && (
                         <div
                           style={{
@@ -1685,7 +1686,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.AppraisalLetter[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -1707,7 +1708,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.PreviousCompanyRelievingLetter &&
                       data.PreviousCompanyRelievingLetter.length > 0 ? (
                         <img
@@ -1725,7 +1726,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="PreviousCompanyRelievingLetter"
@@ -1736,7 +1737,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.PreviousCompanyRelievingLetter &&
                         data.PreviousCompanyRelievingLetter[0] && (
                           <div
@@ -1749,7 +1750,7 @@ const SalaryIncome = () => {
                             {data.PreviousCompanyRelievingLetter[0]
                               .split("/")
                               .pop()}{" "}
-                            {/* Show the file name */}
+                        
                           </div>
                         )}
                     </div>
@@ -1764,7 +1765,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.CompanyIdCard && data.CompanyIdCard.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.CompanyIdCard[0]}`}
@@ -1781,7 +1782,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="CompanyIdCard"
@@ -1795,7 +1796,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.CompanyIdCard && data.CompanyIdCard[0] && (
                         <div
                           style={{
@@ -1805,7 +1806,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.CompanyIdCard[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -1824,7 +1825,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.CurrentAddressProof &&
                       data.CurrentAddressProof.length > 0 ? (
                         <img
@@ -1842,7 +1843,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="CurrentAddressProof"
@@ -1853,7 +1854,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.CurrentAddressProof &&
                         data.CurrentAddressProof[0] && (
                           <div
@@ -1864,7 +1865,7 @@ const SalaryIncome = () => {
                             }}
                           >
                             {data.CurrentAddressProof[0].split("/").pop()}{" "}
-                            {/* Show the file name */}
+                        
                           </div>
                         )}
                     </div>
@@ -1882,7 +1883,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.PermanentAddressProof &&
                       data.PermanentAddressProof.length > 0 ? (
                         <img
@@ -1900,7 +1901,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="PermanentAddressProof"
@@ -1914,7 +1915,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.PermanentAddressProof &&
                         data.PermanentAddressProof[0] && (
                           <div
@@ -1925,7 +1926,7 @@ const SalaryIncome = () => {
                             }}
                           >
                             {data.PermanentAddressProof[0].split("/").pop()}{" "}
-                            {/* Show file name only */}
+                         
                           </div>
                         )}
                     </div>
@@ -1944,7 +1945,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.RelationshipProof &&
                       data.RelationshipProof.length > 0 ? (
                         <img
@@ -1962,7 +1963,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="RelationshipProof"
@@ -1973,7 +1974,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.RelationshipProof && data.RelationshipProof[0] && (
                         <div
                           style={{
@@ -1983,7 +1984,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.RelationshipProof[0].split("/").pop()}{" "}
-                          {/* Show the file name */}
+                      
                         </div>
                       )}
                     </div>
@@ -1998,7 +1999,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.UploadPan && data.UploadPan.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.UploadPan[0]}`}
@@ -2015,7 +2016,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="UploadPan"
@@ -2027,7 +2028,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.UploadPan && data.UploadPan[0] && (
                         <div
                           style={{
@@ -2037,7 +2038,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.UploadPan[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -2060,7 +2061,7 @@ const SalaryIncome = () => {
                         gap: "10px", // Add space between the images
                       }}
                     >
-                      {/* Image Previews */}
+                 
                       {data.UploadBankStatement3_6_12 &&
                       data.UploadBankStatement3_6_12.length > 0 ? (
                         data.UploadBankStatement3_6_12.slice(0, 3).map(
@@ -2085,7 +2086,7 @@ const SalaryIncome = () => {
                       )}
                     </div>
 
-                    {/* File input */}
+                 
                     <Input
                       type="file"
                       name="UploadBankStatement3_6_12"
@@ -2097,7 +2098,6 @@ const SalaryIncome = () => {
                       }}
                     />
 
-                    {/* Display the file names */}
                     {data.UploadBankStatement3_6_12 &&
                       data.UploadBankStatement3_6_12.length > 0 && (
                         <div
@@ -2109,7 +2109,7 @@ const SalaryIncome = () => {
                         >
                           {data.UploadBankStatement3_6_12.map((file, index) => (
                             <div key={index}>
-                              {file.split("/").pop()} {/* Show the file name */}
+                              {file.split("/").pop()} 
                             </div>
                           ))}
                         </div>
@@ -2125,7 +2125,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.SalarySlip1 && data.SalarySlip1.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.SalarySlip1[0]}`}
@@ -2142,7 +2142,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="SalarySlip1"
@@ -2156,7 +2156,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.SalarySlip1 && data.SalarySlip1[0] && (
                         <div
                           style={{
@@ -2166,7 +2166,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.SalarySlip1[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -2185,7 +2185,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.SalarySlip2 && data.SalarySlip2.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.SalarySlip2[0]}`} // Ensure correct file path here
@@ -2202,7 +2202,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="SalarySlip2"
@@ -2213,7 +2213,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display the file name */}
+                     
                       {data.SalarySlip2 && data.SalarySlip2[0] && (
                         <div
                           style={{
@@ -2223,7 +2223,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.SalarySlip2[0].split("/").pop()}{" "}
-                          {/* Show the file name */}
+                      
                         </div>
                       )}
                     </div>
@@ -2238,7 +2238,7 @@ const SalaryIncome = () => {
                         gap: "10px",
                       }}
                     >
-                      {/* Image Preview */}
+                 
                       {data.SalarySlip3 && data.SalarySlip3.length > 0 ? (
                         <img
                           src={`http://77.37.45.224:8000/${data.SalarySlip3[0]}`}
@@ -2255,7 +2255,7 @@ const SalaryIncome = () => {
                         <p>No Image Available</p>
                       )}
 
-                      {/* File input */}
+                   
                       <Input
                         type="file"
                         name="SalarySlip3"
@@ -2269,7 +2269,7 @@ const SalaryIncome = () => {
                           }
                         }}
                       />
-                      {/* Display existing file name */}
+                   
                       {data.SalarySlip3 && data.SalarySlip3[0] && (
                         <div
                           style={{
@@ -2279,7 +2279,7 @@ const SalaryIncome = () => {
                           }}
                         >
                           {data.SalarySlip3[0].split("/").pop()}{" "}
-                          {/* Show file name only */}
+                       
                         </div>
                       )}
                     </div>
@@ -2293,7 +2293,7 @@ const SalaryIncome = () => {
                 </button>
               </div>
             </Form>
-          </TabPane>
+          </TabPane> */}
         </Tabs>
       </div>
       <ToastContainer />

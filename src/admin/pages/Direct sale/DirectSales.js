@@ -14,7 +14,7 @@ const DirectSales = () => {
   const navigate = useNavigate();
 
   const { userId } = useParams();
-  
+
   useEffect(() => {
     const fetchData = async (page) => {
       try {
@@ -45,7 +45,7 @@ const DirectSales = () => {
     setCurrentPage(page);
   };
 
-  const handleEdit = (employee) => {
+  const handleEdit = (employee, currentPage) => {
     const { salaryIncome, businessIncome, professionalIncome } = employee;
 
     // Serialize the salaryIncome, businessIncome, or professionalIncome data into query parameters
@@ -222,10 +222,11 @@ const DirectSales = () => {
       path = "professionalincome";
       queryParams = serializeIncome(professionalIncome, "professional");
     }
-    if (path) {
-      const fullUrl = `/admin/${userId}/directsales/${path}/${employee.userId}`;
+    if (path && currentPage !== undefined) {
+      const fullUrl = `/admin/${userId}/directsales/${path}/${employee.userId}/${currentPage}`;
       navigate(fullUrl);
     }
+
   };
   const getIncomeType = (salaryIncome, businessIncome, professionalIncome) => {
     const incomeTypes = [];
@@ -254,7 +255,6 @@ const DirectSales = () => {
               <th>Property Location</th>
               <th>City</th>
               <th>Income Type</th>
-              <th>Other Income Type</th>
               {/* <th>View Docs</th> */}
               <th>Action</th>
             </tr>
@@ -307,11 +307,11 @@ const DirectSales = () => {
                         ? salaryIncome.City.join(", ")
                         : salaryIncome?.City) ||
                         (businessIncome?.City &&
-                        Array.isArray(businessIncome.City)
+                          Array.isArray(businessIncome.City)
                           ? businessIncome.City.join(", ")
                           : businessIncome?.City) ||
                         (professionalIncome?.City &&
-                        Array.isArray(professionalIncome.City)
+                          Array.isArray(professionalIncome.City)
                           ? professionalIncome.City.join(", ")
                           : professionalIncome?.City) ||
                         "-"}
@@ -376,12 +376,13 @@ const DirectSales = () => {
                     <td className="statusbtn">
                       <button
                         className="DS-editbtn"
-                        onClick={() => handleEdit(user)}
+                        onClick={() => handleEdit(user, currentPage)}
                       >
                         <span>
                           <p>View Details</p>
                         </span>
                       </button>
+
                     </td>
                   </tr>
                 );
