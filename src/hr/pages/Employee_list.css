@@ -14,7 +14,7 @@
   .el-table-tr th, td {
     padding: 8px;
     text-align: center;
-    min-width: 18.5rem;
+    min-width: 10.5rem;
   }
   .Emp-list-pagination-btn {
     padding: 10px 20px 10px 20px;

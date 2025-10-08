@@ -255,7 +255,8 @@ const DirectSales = () => {
               <th>Property Location</th>
               <th>City</th>
               <th>Income Type</th>
-              {/* <th>View Docs</th> */}
+              <th>Other Income</th>
+              <th>View Docs</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -332,7 +333,7 @@ const DirectSales = () => {
                         professionalIncome?.OtherSourceOfIncome ||
                         "-"}
                     </td>
-                    {/* <td>
+                    <td>
                       {salaryIncome?.UploadPhoto?.length > 0 ||
                       salaryIncome?.UploadAadhar?.length > 0 ? (
                         <select
@@ -371,7 +372,7 @@ const DirectSales = () => {
                       ) : (
                         "-"
                       )}
-                    </td> */}
+                    </td>
 
                     <td className="statusbtn">
                       <button

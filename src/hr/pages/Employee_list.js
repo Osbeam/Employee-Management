@@ -157,50 +157,39 @@ export default function Employee_List() {
         <table className="el-table">
           <thead>
             <tr className="el-table-tr">
-              <th style={{ minWidth: '75px' }}>Sr. No.</th>
-              <th>Fullname</th>
+              {/* <th style={{ minWidth: '75px' }}>Sr. No.</th> */}
               <th>Employee Id</th>
+              <th>Fullname</th>
               <th>Branch</th>
-              <th>Role</th>
+              <th>Designation</th>
+              <th>Position</th>
+              <th>Managed By</th>
+              <th>Status</th>
+
+              {/* <th>Role</th>
               <th>Mobile no.</th>
               <th>Email id</th>
               <th>Address</th>
               <th>Reference name</th>
               <th>Department</th>
-              <th>Designation</th>
               <th>Joining Date</th>
               <th>Salary p/m</th>
               <th>Off. Mobile no.</th>
               <th>Bank name</th>
               <th>Account no</th>
               <th>IFSC code</th>
-              <th>Password</th>
-              <th>Position</th>
-              <th>Managed By</th>
-              <th>Status</th>
+              <th>Password</th> */}
+           
             </tr>
           </thead>
           <tbody>
           {filteredEmployees.map((employee, index) => (
             <tr key={employee._id}>
-              <td>{index + 1 + (currentPage - 1) * 10}</td>
-              <td>{employee.FirstName || ''} {employee.MiddleName || ''} {employee.LastName || ''}</td>
+              {/* <td>{index + 1 + (currentPage - 1) * 10}</td> */}
               <td>{employee.EmployeeID || '-'}</td>
+              <td>{employee.FirstName || ''} {employee.MiddleName || ''} {employee.LastName || ''}</td>
               <td>{getBranchDetails(employee.BranchLocation)}</td> {/* Display branch details */}
-              <td>{employee.Role && employee.Role.length > 0 ? employee.Role.join(', ') : '-'}</td>
-              <td>{employee.MobileNumber || '-'}</td>
-              <td>{employee.EmailId || '-'}</td>
-              <td>{employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '-' : '-'}</td>
-              <td>{employee.Reference1 || '-'}</td>
-              <td>{employee.Department ? employee.Department.name : '-'}</td>
               <td>{employee.Designation ? employee.Designation.name : '-'}</td>
-              <td>{employee.DateOfJoining || '-'}</td>
-              <td>{employee.BasicSalary || '-'}</td>
-              <td>{employee.OfficialMobileNumber || '-'}</td>
-              <td>{employee.BankName || '-'}</td>
-              <td>{employee.AccountNumber || '-'}</td>
-              <td>{employee.IFSCCode || '-'}</td>
-              <td>{employee.Password || '-'}</td>
               <td>{Array.isArray(employee.Position) && employee.Position.length > 0 ? employee.Position.join(', ') : '-'}</td>
               <td>
                 {employee.ManagedBy
@@ -214,6 +203,21 @@ export default function Employee_List() {
                 >
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
+
+              {/* <td>{employee.Role && employee.Role.length > 0 ? employee.Role.join(', ') : '-'}</td>
+              <td>{employee.MobileNumber || '-'}</td>
+              <td>{employee.EmailId || '-'}</td>
+              <td>{employee.CurrentAddress ? employee.CurrentAddress.Caddress1 || '-' : '-'}</td>
+              <td>{employee.Reference1 || '-'}</td>
+              <td>{employee.Department ? employee.Department.name : '-'}</td>
+              <td>{employee.DateOfJoining || '-'}</td>
+              <td>{employee.BasicSalary || '-'}</td>
+              <td>{employee.OfficialMobileNumber || '-'}</td>
+              <td>{employee.BankName || '-'}</td>
+              <td>{employee.AccountNumber || '-'}</td>
+              <td>{employee.IFSCCode || '-'}</td>
+              <td>{employee.Password || '-'}</td> */}
+           
               </td>
             </tr>
           ))}

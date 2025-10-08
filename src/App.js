@@ -36,6 +36,7 @@ import Branch from "./admin/pages/Branch/Branch";
 import AddBranch from "./admin/pages/Branch/AddBranch";
 import EditBranch from "./admin/pages/Branch/EditBranch";
 import PermissionbyHr from "./hr/pages/PermissionbyHr";
+import CpDetails from "./admin/pages/Channel Partner/CpDetails"
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
           <Route path="channelpartner" element={<ChannelPartner />} />
           <Route path="snscp" element={<SnsCp />} />
           <Route path="cpapp" element={<CpApp />} />
+          <Route path="cpdetails" element={<CpDetails />} />
           <Route path="employee" element={<Employee />} />
           <Route path="leads" element={<Leads />} />
           <Route path="pendingleads" element={<Pending_Leads />} />
