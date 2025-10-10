@@ -697,7 +697,7 @@ const ProfessionalIncome = () => {
                       onChange={(e) =>
                         handleInputs("AccountNumber", e.target.value)
                       }
-                      disabled={data?.CurrentAccount === "No"} 
+                      disabled={data?.CurrentAccount === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -712,7 +712,7 @@ const ProfessionalIncome = () => {
                       onChange={(e) =>
                         handleInputs("DateOfOpening", e.target.value)
                       }
-                      disabled={data?.CurrentAccount === "No"} 
+                      disabled={data?.CurrentAccount === "No"}
                     />
                   </Form.Item>
                 </Col>
@@ -788,20 +788,20 @@ const ProfessionalIncome = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                <Form.Item label="Specify Other Source of Income" className="FormItem">
-    <Select
-        value={data?.OtherSourceOfIncome || ''}
-        name="OtherSourceOfIncome"
-        onChange={(value) => handleInputs('OtherSourceOfIncome', value)}
-        placeholder="Select Source of Income"
-        disabled={data?.AnotherSourceOfIncome === "No"} // Disable dropdown when "No" is selected
-    >
-        <Select.Option value="Select option" >Select option</Select.Option>
-        <Select.Option value="Salary Income">Salary Income</Select.Option>
-        <Select.Option value="Business Income">Business Income</Select.Option>
-        <Select.Option value="Others">Others</Select.Option>
-    </Select>
-</Form.Item>
+                  <Form.Item label="Specify Other Source of Income" className="FormItem">
+                    <Select
+                      value={data?.OtherSourceOfIncome || ''}
+                      name="OtherSourceOfIncome"
+                      onChange={(value) => handleInputs('OtherSourceOfIncome', value)}
+                      placeholder="Select Source of Income"
+                      disabled={data?.AnotherSourceOfIncome === "No"} // Disable dropdown when "No" is selected
+                    >
+                      <Select.Option value="Select option" >Select option</Select.Option>
+                      <Select.Option value="Salary Income">Salary Income</Select.Option>
+                      <Select.Option value="Business Income">Business Income</Select.Option>
+                      <Select.Option value="Others">Others</Select.Option>
+                    </Select>
+                  </Form.Item>
                 </Col>
               </Row>
               <div className="dl-btn">
@@ -1592,3 +1592,4 @@ const ProfessionalIncome = () => {
 };
 
 export default ProfessionalIncome;
+

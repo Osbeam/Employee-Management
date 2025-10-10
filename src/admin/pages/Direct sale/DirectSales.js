@@ -238,77 +238,123 @@ const DirectSales = () => {
 
   return (
     <>
-      <div>
-        <h2 style={{ marginBottom: "25px", fontSize: "25px" }}>
+      {/* Heading */}
+      <div style={{ marginBottom: "15px", textAlign: "left" }}>
+        <h2 style={{ fontSize: "26px", fontWeight: "600", color: "#2c3e50" }}>
           Direct Sale Data
         </h2>
       </div>
-      <div className="table-container">
-        <table className="el-table">
-          <thead>
-            <tr className="el-table-tr">
-              <th style={{ minWidth: "75px" }}>Sr. No.</th>
-              <th>Name</th>
-              <th>Mobile No.</th>
-              <th>Loan Amount</th>
-              <th>Loan Type</th>
-              <th>Property Location</th>
-              <th>City</th>
-              <th>Income Type</th>
-              <th>Other Income</th>
-              <th>View Docs</th>
-              <th>Action</th>
+
+      {/* Scrollable Table Container */}
+      <div
+        style={{
+          maxHeight: "400px", // limit height for vertical scrolling
+          overflowY: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            fontFamily: "Arial, sans-serif",
+          }}
+        >
+          {/* Table Head */}
+          <thead style={{ position: "sticky", top: 0, backgroundColor: "#34495e", color: "#fff", zIndex: 2 }}>
+            <tr>
+              {[
+                "Sr. No.",
+                "Name",
+                "Mobile No.",
+                "Loan Amount",
+                "Loan Type",
+                "Property Location",
+                "City",
+                "Income Type",
+                "Other Income",
+                "View Docs",
+                "Action",
+              ].map((header) => (
+                <th
+                  key={header}
+                  style={{
+                    padding: "10px",
+                    minWidth: "90px",
+                    textAlign: "left",
+                    borderBottom: "2px solid #2c3e50",
+                  }}
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
+
+          {/* Table Body */}
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9">Loading...</td>
+                <td colSpan="11" style={{ textAlign: "center", padding: "15px" }}>
+                  Loading...
+                </td>
               </tr>
             ) : employees.length > 0 ? (
               employees.map((user, index) => {
-                const { salaryIncome, businessIncome, professionalIncome } =
-                  user;
+                const { salaryIncome, businessIncome, professionalIncome } = user;
                 const loanType =
                   salaryIncome?.LoanType || businessIncome?.LoanType || "-";
 
                 return (
-                  <tr key={user.userId}>
-                    <td>{index + 1 + (currentPage - 1) * pageSize}</td>
-                    <td>
+                  <tr
+                    key={user.userId}
+                    style={{
+                      borderBottom: "1px solid #ddd",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#ecf0f1")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "transparent")
+                    }
+                  >
+                    <td style={{ padding: "8px" }}>
+                      {index + 1 + (currentPage - 1) * pageSize}
+                    </td>
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.Name ||
                         businessIncome?.Name ||
                         professionalIncome?.Name ||
                         "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.MobileNo1 ||
                         businessIncome?.MobileNo1 ||
                         professionalIncome?.MobileNo1 ||
                         "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.LoanAmount ||
                         businessIncome?.LoanAmount ||
                         professionalIncome?.LoanAmount ||
                         "-"}
                     </td>
-                    <td>
-                      {(Array.isArray(loanType)
-                        ? loanType.join(", ")
-                        : loanType) || "-"}
+                    <td style={{ padding: "8px" }}>
+                      {(Array.isArray(loanType) ? loanType.join(", ") : loanType) || "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.PropertyLocation ||
                         businessIncome?.PropertyLocation ||
                         "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {(salaryIncome?.City && Array.isArray(salaryIncome.City)
                         ? salaryIncome.City.join(", ")
                         : salaryIncome?.City) ||
-                        (businessIncome?.City &&
-                          Array.isArray(businessIncome.City)
+                        (businessIncome?.City && Array.isArray(businessIncome.City)
                           ? businessIncome.City.join(", ")
                           : businessIncome?.City) ||
                         (professionalIncome?.City &&
@@ -317,55 +363,49 @@ const DirectSales = () => {
                           : professionalIncome?.City) ||
                         "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {getIncomeType(
                         salaryIncome,
                         businessIncome,
                         professionalIncome
                       ) || "-"}
                     </td>
-                    <td>
-                      {/* {salaryIncome && businessIncome && professionalIncome
-                        ? professionalIncome.Name
-                        : "-"} */}
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.OtherSourceOfIncome ||
                         businessIncome?.OtherSourceOfIncome ||
                         professionalIncome?.OtherSourceOfIncome ||
                         "-"}
                     </td>
-                    <td>
+                    <td style={{ padding: "8px" }}>
                       {salaryIncome?.UploadPhoto?.length > 0 ||
-                      salaryIncome?.UploadAadhar?.length > 0 ? (
+                        salaryIncome?.UploadAadhar?.length > 0 ? (
                         <select
-                          style={{ padding: "5px", borderRadius: "4px" }}
+                          style={{
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                            border: "1px solid #ccc",
+                            cursor: "pointer",
+                          }}
                           onChange={(e) => {
                             const selectedUrl = e.target.value;
-                            if (selectedUrl) {
-                              window.open(selectedUrl, "_blank");
-                            }
+                            if (selectedUrl) window.open(selectedUrl, "_blank");
                           }}
                         >
                           <option value="">Select Document</option>
-                          {salaryIncome?.UploadPhoto?.map((file, index) => (
+                          {salaryIncome?.UploadPhoto?.map((file, i) => (
                             <option
-                              key={`photo-${index}`}
-                              value={`http://77.37.45.224:8000/${file.replace(
-                                "\\",
-                                "/"
-                              )}`}
+                              key={`photo-${i}`}
+                              value={`http://77.37.45.224:8000/${file.replace("\\", "/")}`}
                             >
-                              Upload Photo {index + 1}
+                              Upload Photo {i + 1}
                             </option>
                           ))}
-                          {salaryIncome?.UploadAadhar?.map((file, index) => (
+                          {salaryIncome?.UploadAadhar?.map((file, i) => (
                             <option
-                              key={`aadhar-${index}`}
-                              value={`http://77.37.45.224:8000/${file.replace(
-                                "\\",
-                                "/"
-                              )}`}
+                              key={`aadhar-${i}`}
+                              value={`http://77.37.45.224:8000/${file.replace("\\", "/")}`}
                             >
-                              Upload Aadhar {index + 1}
+                              Upload Aadhar {i + 1}
                             </option>
                           ))}
                         </select>
@@ -373,43 +413,77 @@ const DirectSales = () => {
                         "-"
                       )}
                     </td>
-
-                    <td className="statusbtn">
+                    <td style={{ padding: "8px" }}>
                       <button
-                        className="DS-editbtn"
+                        style={{
+                          backgroundColor: "#3498db",
+                          color: "#fff",
+                          padding: "6px 12px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontWeight: "500",
+                        }}
                         onClick={() => handleEdit(user, currentPage)}
                       >
-                        <span>
-                          <p>View Details</p>
-                        </span>
+                        View Details
                       </button>
-
                     </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="9">No data available</td>
+                <td
+                  colSpan="11"
+                  style={{ textAlign: "center", padding: "15px", color: "#888" }}
+                >
+                  No data available
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <div className="DS-pagination">
+
+      {/* Pagination and User Count */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "15px",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
         <button
-          className="Emp-list-pagination-btn"
+          style={{
+            padding: "6px 12px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            cursor: "pointer",
+            backgroundColor: currentPage === 1 ? "#ccc" : "#3498db",
+            color: "#fff",
+          }}
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
           Previous
         </button>
-        <span>
-          Page {currentPage} of {totalPages}
+
+        <span style={{ fontWeight: "500" }}>
+          Page {currentPage} of {totalPages} | User Count: {userCount}
         </span>
-        <div>User Count: {userCount}</div>
+
         <button
-          className="Emp-list-pagination-btn"
+          style={{
+            padding: "6px 12px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            cursor: "pointer",
+            backgroundColor: currentPage === totalPages ? "#ccc" : "#3498db",
+            color: "#fff",
+          }}
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
@@ -418,6 +492,7 @@ const DirectSales = () => {
       </div>
     </>
   );
+
 };
 
 export default DirectSales;
