@@ -82,20 +82,31 @@ const SalaryIncome = () => {
 
       const formData = new FormData();
 
-      // Loop through data fields and append them to formData
       Object.keys(data).forEach((key) => {
-        if (Array.isArray(data[key])) {
-          data[key].forEach((item) => {
-            // For files, append them with the field name
-            if (item instanceof File) {
-              formData.append(key, item);
-            } else {
-              // For strings (uploaded file paths), also append
-              formData.append(key, item);
-            }
-          });
-        } else if (data[key] !== undefined && data[key] !== null) {
-          formData.append(key, data[key]);
+        const value = data[key];
+
+        // Handle arrays
+        if (Array.isArray(value)) {
+          // Separate File objects
+          const files = value.filter((item) => item instanceof File);
+          files.forEach((file) => formData.append(key, file));
+
+          // Non-file data
+          const nonFiles = value.filter((item) => !(item instanceof File));
+          if (nonFiles.length > 0) {
+            formData.append(
+              key,
+              typeof nonFiles[0] === "string" ? nonFiles[0] : JSON.stringify(nonFiles)
+            );
+          }
+
+          // Handle single File
+        } else if (value instanceof File) {
+          formData.append(key, value);
+
+          // Handle primitive values
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
         }
       });
 
@@ -105,13 +116,14 @@ const SalaryIncome = () => {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
-            // Don't set Content-Type here; browser will set multipart/form-data
+            // Content-Type is omitted for multipart/form-data
           },
           body: formData,
         }
       );
 
       const result = await response.json();
+
       if (response.ok && result.success) {
         toast.success("Employee updated successfully");
         setTimeout(() => navigate(`/admin/${userId}/directsales`), 1000);
@@ -119,6 +131,7 @@ const SalaryIncome = () => {
         toast.error(result.message || "Unable to update employee");
         console.error("Update response:", result);
       }
+
     } catch (error) {
       toast.error("Unable to update employee");
       console.error("Error updating employee:", error);
@@ -126,6 +139,8 @@ const SalaryIncome = () => {
       setIsLoading(false);
     }
   };
+
+
 
 
   const handleInputs = (fieldName, value) => {
