@@ -2276,9 +2276,15 @@ const SalaryIncome = () => {
                 </Row>
 
                 <div className="dl-btn">
-                  <button type="button" onClick={handleEdit}>
-                    Submit
+                  <button
+                    type="button"
+                    onClick={handleEdit}
+                    disabled={isLoading}
+                    className="btn btn-primary"
+                  >
+                    {isLoading ? "Submitting..." : "Submit"}
                   </button>
+
                 </div>
                 {/* ✅ Navigation Buttons */}
                 <div
