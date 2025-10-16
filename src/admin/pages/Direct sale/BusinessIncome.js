@@ -129,6 +129,7 @@ const BusinessIncome = () => {
   //     });
   //   };
 
+
   // Handle inputs for IncomeDetails
   const handleIncomeDetailsInputs = (field, value, index) => {
     const updatedIncomeDetails = [...user.IncomeDetails];
@@ -157,6 +158,7 @@ const BusinessIncome = () => {
       return { ...prevUser, TurnOverDetails: updatedTurnOverDetails };
     });
   };
+
   // Handle input for BankDetails specifically
   const handleBankDetailsInputs = (field, value, index) => {
     const updatedBankDetails = [...user.BankDetails];
@@ -308,12 +310,14 @@ const BusinessIncome = () => {
       TurnOverDetails: [...(prevUser.TurnOverDetails || []), {}], // Add an empty object to the array
     }));
   };
+
   const addNewBankRow = () => {
     setUser((prevUser) => ({
       ...prevUser,
       BankDetails: [...(prevUser.BankDetails || []), {}], // Add an empty object to the array
     }));
   };
+
   const addNewYearWiseITR = () => {
     setUser((prevData) => ({
       ...prevData,
@@ -368,7 +372,6 @@ const BusinessIncome = () => {
     handleInputs("AnotherSourceOfIncome", value);
   };
   const handleSelectChangeOtherIncome = (value) => {
-    // Update the value in the user state without triggering tab change
     handleInputs("OtherSourceOfIncome", value);
   };
 

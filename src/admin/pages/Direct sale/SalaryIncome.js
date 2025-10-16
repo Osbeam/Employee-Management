@@ -344,7 +344,7 @@ const SalaryIncome = () => {
         <Tabs ref={tabsRef} activeKey={activeKey} onChange={setActiveKey} type="card">
           {/* ------------------ 1. Personal Details ------------------ */}
 
-          <TabPane style={{ marginTop: "50px" }} tab="Personal Details" key="1" >
+          {/* <TabPane style={{ marginTop: "50px" }} tab="Personal Details" key="1" > 
             <div
               style={{
                 overflowY: "auto",
@@ -362,6 +362,7 @@ const SalaryIncome = () => {
                         name="LeadId"
                         value={data.LeadId || ""}
                         onChange={(e) => handleInputs("LeadId", e.target.value)}
+                        disabled
                       />
                     </Form.Item>
                   </Col>
@@ -374,6 +375,7 @@ const SalaryIncome = () => {
                         name="LeadDate"
                         value={data.LeadDate || ""}
                         onChange={(e) => handleInputs("LeadDate", e.target.value)}
+                        disabled
                       />
                     </Form.Item>
                   </Col>
@@ -592,7 +594,7 @@ const SalaryIncome = () => {
                   </Col>
                 </Row>
                 {/* ✅ Navigation Buttons */}
-                <div
+          {/* <div
                   style={{
                     display: "flex",
                     justifyContent: "end",
@@ -605,7 +607,249 @@ const SalaryIncome = () => {
                 </div>
               </Form>
             </div>
+          </TabPane> */}
+
+
+          <TabPane style={{ marginTop: "50px" }} tab="Personal Details" key="1">
+            <div
+              style={{
+                overflowY: "auto",
+                maxHeight: "calc(100vh - 220px)",
+                paddingRight: "16px",
+              }}
+            >
+              <Form layout="horizontal" labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Lead Id">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="LeadId"
+                        value={data.LeadId || ""}
+                        onChange={(e) => handleInputs("LeadId", e.target.value)}
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Lead Date">
+                      <Input
+                        type="date"
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="LeadDate"
+                        value={data.LeadDate || ""}
+                        onChange={(e) => handleInputs("LeadDate", e.target.value)}
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Sourcing Channel">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="SourcingChanel"
+                        value={data.SourcingChanel || ""}
+                        onChange={(e) => handleInputs("SourcingChanel", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Source Name">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="SourceName"
+                        value={data.SourceName || ""}
+                        onChange={(e) => handleInputs("SourceName", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Lead Name">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="LeadName"
+                        value={data.LeadName || ""}
+                        onChange={(e) => handleInputs("LeadName", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Mobile No">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="MobileNo1"
+                        value={data.MobileNo1 || ""}
+                        onChange={(e) => handleInputs("MobileNo1", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Email Id">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="EmailId"
+                        value={data.EmailId || ""}
+                        onChange={(e) => handleInputs("EmailId", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Date of Birth">
+                      <Input
+                        type="date"
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="DateOfBirth"
+                        value={data.DateOfBirth || ""}
+                        onChange={(e) => handleInputs("DateOfBirth", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Age">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="Age"
+                        value={data.Age || ""}
+                        onChange={(e) => handleInputs("Age", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Gender">
+                      <Select
+                        placeholder="Select"
+                        value={data.Sex || ""}
+                        onChange={(value) => handleSelectChangeSex(value, "Sex")}
+                      >
+                        <Option value="Male">Male</Option>
+                        <Option value="Female">Female</Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Marital Status">
+                      <Select
+                        placeholder="Select"
+                        value={data.MaritalStatus || ""}
+                        onChange={(value) => handleSelectChangeMaritalStatus(value, "MaritalStatus")}
+                      >
+                        <Option value="Married">Married</Option>
+                        <Option value="Un-Married">Un-Married</Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Residence Type">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="ResidenceType"
+                        value={data.ResidenceType || ""}
+                        onChange={(e) => handleInputs("ResidenceType", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Residency City">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="ResidenceCity"
+                        value={data.ResidenceCity || ""}
+                        onChange={(e) => handleInputs("ResidenceCity", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Permanent Address">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="PermanentAddress"
+                        value={data.PermanentAddress || ""}
+                        onChange={(e) => handleInputs("PermanentAddress", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Permanent City">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="PCity"
+                        value={data.PCity || ""}
+                        onChange={(e) => handleInputs("PCity", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="State">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="PState"
+                        value={data.PState || ""}
+                        onChange={(e) => handleInputs("PState", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Form.Item label="Pincode">
+                      <Input
+                        placeholder="Please enter"
+                        autoComplete="off"
+                        name="PPinCode"
+                        value={data.PPinCode || ""}
+                        onChange={(e) => handleInputs("PPinCode", e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <div style={{ display: "flex", justifyContent: "end", marginTop: "1.5rem" }}>
+                  <Button type="primary" onClick={handleNext}>
+                    Next →
+                  </Button>
+                </div>
+              </Form>
+            </div>
           </TabPane>
+
 
           {/* ------------------ 2. Company Details ------------------ */}
 
@@ -823,7 +1067,7 @@ const SalaryIncome = () => {
               </Form>
             </div>
           </TabPane>
-          {/* ------------------ 1. Income Details ------------------ */}
+          {/* ------------------ 1. Salary Details ------------------ */}
 
           <TabPane style={{ marginTop: "50px" }} tab="Salary Details" key="3" >
             <div
@@ -930,9 +1174,16 @@ const SalaryIncome = () => {
                   scrollbarWidth: "thin", // for Firefox
                   scrollbarColor: "#ccc transparent", // for Firefox
                 }}>
-                  <table>
+                  <table
+                    style={{
+                      width: "100%",
+                      borderCollapse: "collapse",
+                      fontSize: "13px",
+                      tableLayout: "fixed",
+                    }}
+                  >
                     <thead>
-                      <tr>
+                      <tr style={{ background: "#f5f5f5", textAlign: "left" }}>
                         <th>Month</th>
                         <th>Gross Salary</th>
                         <th>Net Salary</th>
@@ -942,110 +1193,62 @@ const SalaryIncome = () => {
                         <th>Date of Payment</th>
                       </tr>
                     </thead>
+
                     <tbody>
                       {data.SalaryDetails && data.SalaryDetails.length > 0 ? (
                         data.SalaryDetails.map((detail, index) => (
                           <tr key={index}>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="Month"
-                                value={detail.Month || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary("Month", e.target.value, index)
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="GrossSalary"
-                                value={detail.GrossSalary || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary(
-                                    "GrossSalary",
-                                    e.target.value,
-                                    index
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="NetSalary"
-                                value={detail.NetSalary || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary(
-                                    "NetSalary",
-                                    e.target.value,
-                                    index
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="OtherIncome"
-                                value={detail.OtherIncome || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary(
-                                    "OtherIncome",
-                                    e.target.value,
-                                    index
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="TotalIncome"
-                                value={detail.TotalIncome || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary(
-                                    "TotalIncome",
-                                    e.target.value,
-                                    index
-                                  )
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                placeholder="Please enter"
-                                autoComplete="off"
-                                name="PaymentMode"
-                                value={detail.PaymentMode || ""}
-                                onChange={(e) =>
-                                  handleInputsSalary(
-                                    "PaymentMode",
-                                    e.target.value,
-                                    index
-                                  )
-                                }
-                              />
-                            </td>
+                            {[
+                              { key: "Month", type: "text" },
+                              { key: "GrossSalary", type: "number" },
+                              { key: "NetSalary", type: "number" },
+                              { key: "OtherIncome", type: "number" },
+                              { key: "TotalIncome", type: "number" },
+                              { key: "PaymentMode", type: "text" },
+                            ].map(({ key, type }) => (
+                              <td key={key}>
+                                <input
+                                  type={type}
+                                  placeholder="Enter"
+                                  autoComplete="off"
+                                  name={key}
+                                  value={detail[key] || ""}
+                                  onChange={(e) =>
+                                    handleInputsSalary(key, e.target.value, index)
+                                  }
+                                  style={{
+                                    width: "100%",
+                                    boxSizing: "border-box",
+                                    padding: "4px 6px",
+                                    fontSize: "12px",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "4px",
+                                    outline: "none",
+                                    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                                  }}
+                                  onFocus={(e) => {
+                                    e.target.style.borderColor = "#66afe9";
+                                    e.target.style.boxShadow = "0 0 3px rgba(102,175,233,0.6)";
+                                  }}
+                                  onBlur={(e) => {
+                                    e.target.style.borderColor = "#ccc";
+                                    e.target.style.boxShadow = "none";
+                                  }}
+                                />
+                              </td>
+                            ))}
                             <td>
                               <DatePicker
-                                style={{ width: "100%" }}
+                                style={{
+                                  width: "100%",
+                                  fontSize: "12px",
+                                  borderRadius: "4px",
+                                }}
                                 value={
-                                  detail.DateOfPayment
-                                    ? moment(detail.DateOfPayment)
-                                    : null
+                                  detail.DateOfPayment ? moment(detail.DateOfPayment) : null
                                 }
                                 onChange={(date, dateString) =>
-                                  handleInputsSalary(
-                                    "DateOfPayment",
-                                    dateString,
-                                    index
-                                  )
+                                  handleInputsSalary("DateOfPayment", dateString, index)
                                 }
                               />
                             </td>
@@ -1053,11 +1256,16 @@ const SalaryIncome = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="7">No salary details available.</td>
+                          <td colSpan="7" style={{ textAlign: "center" }}>
+                            No salary details available.
+                          </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
+
+
+
                 </div>
 
                 <Button
@@ -1175,17 +1383,47 @@ const SalaryIncome = () => {
             <div
               style={{
                 overflowY: "auto",
-                maxHeight: "calc(100vh - 220px)", // header + breadcrumb + tab headers height
+                maxHeight: "calc(100vh - 220px)",
                 paddingRight: "16px",
               }}
             >
+              {/* Input Styles */}
+              <style>{`
+      input {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 4px 6px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      input:focus {
+        border-color: #91d5ff;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        outline: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 6px 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f5f5f5;
+      }
+    `}</style>
 
-              <div style={{
-                overflowX: "auto",
-                scrollbarWidth: "thin", // for Firefox
-                scrollbarColor: "#ccc transparent", // for Firefox
-              }}>
-                <table style={{ marginTop: "35px" }}>
+              <div
+                style={{
+                  overflowX: "auto",
+                  scrollbarWidth: "thin", // for Firefox
+                  scrollbarColor: "#ccc transparent", // for Firefox
+                }}
+              >
+                <table>
                   <thead>
                     <tr>
                       <th>ABB</th>
@@ -1200,125 +1438,51 @@ const SalaryIncome = () => {
                     {data.BankDetails.length > 0 ? (
                       data.BankDetails.map((detail, index) => (
                         <tr key={index}>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="ABB"
-                              value={detail.ABB || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "ABB",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="DR1"
-                              value={detail.DR1 || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "DR1",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="DR2"
-                              value={detail.DR2 || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "DR2",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="DR3"
-                              value={detail.DR3 || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "DR3",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="DR4"
-                              value={detail.DR4 || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "DR4",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Input
-                              placeholder="Please enter"
-                              autoComplete="off"
-                              name="DR5"
-                              value={detail.DR5 || ""}
-                              onChange={(e) =>
-                                handleInputsBankDetails(
-                                  "DR5",
-                                  e.target.value,
-                                  index,
-                                  "BankDetails"
-                                )
-                              }
-                            />
-                          </td>
+                          {["ABB", "DR1", "DR2", "DR3", "DR4", "DR5"].map((field) => (
+                            <td key={field}>
+                              <input
+                                placeholder="Enter"
+                                autoComplete="off"
+                                name={field}
+                                value={detail[field] || ""}
+                                onChange={(e) =>
+                                  handleInputsBankDetails(
+                                    field,
+                                    e.target.value,
+                                    index,
+                                    "BankDetails"
+                                  )
+                                }
+                              />
+                            </td>
+                          ))}
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6">No data available.</td>
+                        <td colSpan="6" style={{ textAlign: "center" }}>
+                          No data available.
+                        </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
+
               <Button
                 onClick={addNewRowToSecondTable}
                 type="primary"
-                style={{ marginBottom: "20px", marginTop: "35px" }}
+                style={{ marginTop: "20px", marginBottom: "20px" }}
               >
                 Add Record
               </Button>
-              {/* ✅ Navigation Buttons */}
+
+              {/* Navigation Buttons */}
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "1.5rem", // same as mt-6
+                  marginTop: "16px",
                 }}
               >
                 <Button onClick={handlePrev}>← Back</Button>

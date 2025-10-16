@@ -260,10 +260,19 @@ const DirectSales = () => {
             width: "100%",
             borderCollapse: "collapse",
             fontFamily: "Arial, sans-serif",
+            fontSize: "14px", // slightly smaller text
           }}
         >
           {/* Table Head */}
-          <thead style={{ position: "sticky", top: 0, backgroundColor: "#34495e", color: "#fff", zIndex: 2 }}>
+          <thead
+            style={{
+              position: "sticky",
+              top: 0,
+              backgroundColor: "#34495e",
+              color: "#fff",
+              zIndex: 2,
+            }}
+          >
             <tr>
               {[
                 "Sr. No.",
@@ -275,16 +284,16 @@ const DirectSales = () => {
                 "City",
                 "Income Type",
                 "Other Income",
-                "View Docs",
                 "Action",
               ].map((header) => (
                 <th
                   key={header}
                   style={{
-                    padding: "10px",
-                    minWidth: "90px",
+                    padding: "6px 8px", // reduced from 10px
+                    minWidth: "80px",
                     textAlign: "left",
-                    borderBottom: "2px solid #2c3e50",
+                    borderBottom: "1px solid #2c3e50",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {header}
@@ -297,7 +306,7 @@ const DirectSales = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="11" style={{ textAlign: "center", padding: "15px" }}>
+                <td colSpan="11" style={{ textAlign: "center", padding: "10px" }}>
                   Loading...
                 </td>
               </tr>
@@ -307,50 +316,113 @@ const DirectSales = () => {
                 const loanType =
                   salaryIncome?.LoanType || businessIncome?.LoanType || "-";
 
+                // pick name
+                const name =
+                  salaryIncome?.Name ||
+                  businessIncome?.Name ||
+                  professionalIncome?.Name ||
+                  "-";
+
+                // truncate long names
+                const truncatedName =
+                  name.length > 17 ? name.slice(0, 17) + "…" : name;
+
                 return (
                   <tr
                     key={user.userId}
                     style={{
                       borderBottom: "1px solid #ddd",
-                      transition: "background-color 0.3s",
+                      transition: "background-color 0.2s",
+                      textAlign: "left",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#ecf0f1")
+                      (e.currentTarget.style.backgroundColor = "#f4f6f7")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
                     }
                   >
-                    <td style={{ padding: "8px" }}>
+                    <td style={{ padding: "5px 8px" }}>
                       {index + 1 + (currentPage - 1) * pageSize}
                     </td>
-                    <td style={{ padding: "8px" }}>
-                      {salaryIncome?.Name ||
-                        businessIncome?.Name ||
-                        professionalIncome?.Name ||
-                        "-"}
+
+                    {/* NAME with truncation + hover tooltip */}
+                    <td
+                      style={{
+                        padding: "5px 8px",
+                        maxWidth: "140px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        cursor: "pointer",
+                      }}
+                      title={name} // shows full text on hover
+                    >
+                      {truncatedName}
                     </td>
-                    <td style={{ padding: "8px" }}>
+
+                    <td style={{ padding: "5px 8px" }}>
                       {salaryIncome?.MobileNo1 ||
                         businessIncome?.MobileNo1 ||
                         professionalIncome?.MobileNo1 ||
                         "-"}
                     </td>
-                    <td style={{ padding: "8px" }}>
-                      {salaryIncome?.LoanAmount ||
-                        businessIncome?.LoanAmount ||
-                        professionalIncome?.LoanAmount ||
-                        "-"}
+
+                    <td style={{ padding: "5px 8px", textAlign: "left" }}>
+                      {(() => {
+                        const amount =
+                          salaryIncome?.LoanAmount ||
+                          businessIncome?.LoanAmount ||
+                          professionalIncome?.LoanAmount ||
+                          "-";
+
+                        // Convert to formatted number with commas (Indian format)
+                        if (!isNaN(amount) && amount !== "-") {
+                          return Number(amount).toLocaleString("en-IN");
+                        }
+
+                        return amount;
+                      })()}
                     </td>
-                    <td style={{ padding: "8px" }}>
-                      {(Array.isArray(loanType) ? loanType.join(", ") : loanType) || "-"}
+
+
+                    <td style={{ padding: "5px 8px" }}>
+                      {(() => {
+                        const type =
+                          salaryIncome?.LoanType ||
+                          businessIncome?.LoanType ||
+                          professionalIncome?.LoanType ||
+                          "-";
+
+                        const mapLoanType = (loan) => {
+                          if (!loan) return "-";
+
+                          const mapping = {
+                            "Home Loan": "HL",
+                            "Personal Loan": "PL",
+                            "Loan Against Property": "LAP",
+                            "Business Loan": "BL",
+                          };
+
+                          if (Array.isArray(loan)) {
+                            return loan.map((l) => mapping[l] || l).join(", ");
+                          }
+
+                          return mapping[loan] || loan;
+                        };
+
+                        return mapLoanType(type);
+                      })()}
                     </td>
-                    <td style={{ padding: "8px" }}>
+
+
+                    <td style={{ padding: "5px 8px" }}>
                       {salaryIncome?.PropertyLocation ||
                         businessIncome?.PropertyLocation ||
                         "-"}
                     </td>
-                    <td style={{ padding: "8px" }}>
+
+                    <td style={{ padding: "5px 8px" }}>
                       {(salaryIncome?.City && Array.isArray(salaryIncome.City)
                         ? salaryIncome.City.join(", ")
                         : salaryIncome?.City) ||
@@ -363,70 +435,33 @@ const DirectSales = () => {
                           : professionalIncome?.City) ||
                         "-"}
                     </td>
-                    <td style={{ padding: "8px" }}>
-                      {getIncomeType(
-                        salaryIncome,
-                        businessIncome,
-                        professionalIncome
-                      ) || "-"}
+
+                    <td style={{ padding: "5px 8px" }}>
+                      {getIncomeType(salaryIncome, businessIncome, professionalIncome) ||
+                        "-"}
                     </td>
-                    <td style={{ padding: "8px" }}>
+
+                    <td style={{ padding: "5px 8px" }}>
                       {salaryIncome?.OtherSourceOfIncome ||
                         businessIncome?.OtherSourceOfIncome ||
                         professionalIncome?.OtherSourceOfIncome ||
                         "-"}
                     </td>
-                    <td style={{ padding: "8px" }}>
-                      {salaryIncome?.UploadPhoto?.length > 0 ||
-                        salaryIncome?.UploadAadhar?.length > 0 ? (
-                        <select
-                          style={{
-                            padding: "6px 10px",
-                            borderRadius: "6px",
-                            border: "1px solid #ccc",
-                            cursor: "pointer",
-                          }}
-                          onChange={(e) => {
-                            const selectedUrl = e.target.value;
-                            if (selectedUrl) window.open(selectedUrl, "_blank");
-                          }}
-                        >
-                          <option value="">Select Document</option>
-                          {salaryIncome?.UploadPhoto?.map((file, i) => (
-                            <option
-                              key={`photo-${i}`}
-                              value={`http://77.37.45.224:8000/${file.replace("\\", "/")}`}
-                            >
-                              Upload Photo {i + 1}
-                            </option>
-                          ))}
-                          {salaryIncome?.UploadAadhar?.map((file, i) => (
-                            <option
-                              key={`aadhar-${i}`}
-                              value={`http://77.37.45.224:8000/${file.replace("\\", "/")}`}
-                            >
-                              Upload Aadhar {i + 1}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td style={{ padding: "8px" }}>
+
+                    <td style={{ padding: "5px 8px" }}>
                       <button
                         style={{
                           backgroundColor: "#3498db",
                           color: "#fff",
-                          padding: "6px 12px",
+                          padding: "4px 8px",
                           border: "none",
-                          borderRadius: "5px",
+                          borderRadius: "4px",
                           cursor: "pointer",
-                          fontWeight: "500",
+                          fontSize: "13px",
                         }}
                         onClick={() => handleEdit(user, currentPage)}
                       >
-                        View Details
+                        View
                       </button>
                     </td>
                   </tr>
@@ -436,14 +471,16 @@ const DirectSales = () => {
               <tr>
                 <td
                   colSpan="11"
-                  style={{ textAlign: "center", padding: "15px", color: "#888" }}
+                  style={{ textAlign: "center", padding: "10px", color: "#888" }}
                 >
                   No data available
                 </td>
               </tr>
             )}
           </tbody>
+
         </table>
+
       </div>
 
       {/* Pagination and User Count */}
