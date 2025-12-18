@@ -10,7 +10,9 @@ export default function New_employee() {
   const [sameAsAbove, setSameAsAbove] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
+  const [allDesignations, setAllDesignations] = useState([]);
   const [designations, setDesignations] = useState([]);
+
   const [managers, setManagers] = useState([]);
   const [currentStates, setCurrentStates] = useState([]);
   const [currentCities, setCurrentCities] = useState([]);
@@ -103,16 +105,21 @@ export default function New_employee() {
 
   //Get manager and leaders name
   useEffect(() => {
-    const fetchDepartments = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await axios.get(
-          "http://77.37.45.224:8000/api/department/getDepartments"
-        );
-        setDepartments(response.data.data);
-      } catch (error) {
-        console.error("Error fetching departments:", error);
+        const [deptRes, desigRes] = await Promise.all([
+          axios.get("http://77.37.45.224:8000/api/department/getDepartments"),
+          axios.get("http://77.37.45.224:8000/api/department/getDesignation"),
+        ]);
+
+        setDepartments(deptRes.data.data || []);
+        setAllDesignations(desigRes.data.data || []);
+      } catch (err) {
+        console.error("Failed to load data", err);
       }
     };
+
+
 
     const fetchManagers = async () => {
       try {
@@ -142,9 +149,81 @@ export default function New_employee() {
     setCurrentStates(statesData);
     setPermanentStates(statesData);
 
-    fetchDepartments();
+    fetchInitialData();
     fetchManagers();
   }, []);
+
+  const handleDepartmentChange = (e) => {
+    const departmentId = e.target.value;
+
+    setFormData((prev) => ({
+      ...prev,
+      Department: departmentId,
+      SubDepartment: "",
+      Designation: "",
+    }));
+
+    setDesignations([]);
+
+    const selectedDept = departments.find(
+      (dept) => dept._id === departmentId
+    );
+
+    setSubDepartments(selectedDept?.SubDepartment || []);
+  };
+
+  const handleSubDepartmentChange = (e) => {
+    const subDeptId = e.target.value;
+
+    setFormData((prev) => ({
+      ...prev,
+      SubDepartment: subDeptId,
+      Designation: "",
+    }));
+
+    let designationIds = [];
+
+    // 🔥 Find selected subdepartment inside departments
+    departments.forEach((dept) => {
+      const sub = dept.SubDepartment?.find(
+        (sd) => sd._id === subDeptId
+      );
+      if (sub) designationIds = sub.designation || [];
+    });
+
+    // 🔥 Match IDs with designation master
+    const matched = allDesignations.filter((d) =>
+      designationIds.includes(d._id)
+    );
+
+    setDesignations(matched);
+  };
+  // Fetch Branch Locations on Component Mount
+  useEffect(() => {
+    const fetchBranchLocations = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "http://77.37.45.224:8000/api/branch/getBranch"
+        );
+
+        // Ensure that the 'data' key exists and map over it to set the branch locations
+        if (response.data.success && response.data.data) {
+          setBranchLocation(response.data.data);
+        } else {
+          toast.error("Failed to fetch branch locations.");
+        }
+      } catch (error) {
+        console.error("Error fetching branch locations:", error);
+        toast.error("Error fetching branch locations");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBranchLocations();
+  }, []); // Empty dependency array ensures this runs once when the component mounts
+
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -180,41 +259,41 @@ export default function New_employee() {
     }
   };
 
-  const handleDepartmentChange = (e) => {
-    const departmentId = e.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      Department: departmentId,
-      SubDepartment: "",
-      Designation: "",
-    }));
+  // const handleDepartmentChange = (e) => {
+  //   const departmentId = e.target.value;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     Department: departmentId,
+  //     SubDepartment: "",
+  //     Designation: "",
+  //   }));
 
-    const selectedDepartment = departments.find(
-      (dep) => dep._id === departmentId
-    );
-    if (selectedDepartment) {
-      setSubDepartments(selectedDepartment.SubDepartment || []);
-      setDesignations([]);
-    }
-  };
+  //   const selectedDepartment = departments.find(
+  //     (dep) => dep._id === departmentId
+  //   );
+  //   if (selectedDepartment) {
+  //     setSubDepartments(selectedDepartment.SubDepartment || []);
+  //     setDesignations([]);
+  //   }
+  // };
 
-  const handleSubDepartmentChange = async (e) => {
-    const subDepartmentId = e.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      SubDepartment: subDepartmentId,
-      Designation: "",
-    }));
+  // const handleSubDepartmentChange = async (e) => {
+  //   const subDepartmentId = e.target.value;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     SubDepartment: subDepartmentId,
+  //     Designation: "",
+  //   }));
 
-    try {
-      const response = await axios.get(
-        `http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`
-      );
-      setDesignations(response.data.data.designation || []);
-    } catch (error) {
-      console.error("Error fetching designations:", error);
-    }
-  };
+  //   try {
+  //     const response = await axios.get(
+  //       `http://77.37.45.224:8000/api/department/getSubDepartments/${subDepartmentId}`
+  //     );
+  //     setDesignations(response.data.data.designation || []);
+  //   } catch (error) {
+  //     console.error("Error fetching designations:", error);
+  //   }
+  // };
 
   const handleDesignationChange = (e) => {
     const designationId = e.target.value;
@@ -243,32 +322,6 @@ export default function New_employee() {
     }));
     setPermanentCities(City.getCitiesOfState("IN", stateCode));
   };
-
-  // Fetch Branch Locations on Component Mount
-  useEffect(() => {
-    const fetchBranchLocations = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://77.37.45.224:8000/api/branch/getBranch"
-        );
-
-        // Ensure that the 'data' key exists and map over it to set the branch locations
-        if (response.data.success && response.data.data) {
-          setBranchLocation(response.data.data);
-        } else {
-          toast.error("Failed to fetch branch locations.");
-        }
-      } catch (error) {
-        console.error("Error fetching branch locations:", error);
-        toast.error("Error fetching branch locations");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBranchLocations();
-  }, []); // Empty dependency array ensures this runs once when the component mounts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -797,35 +850,34 @@ export default function New_employee() {
               Department:<span className="mandatory">*</span>
             </label>
             <select
-              style={{ width: "20%" }}
-              onChange={handleDepartmentChange}
-              value={formData.Department}
-            >
+              style={{ width: "20%", marginLeft: "-1px" }}
+              value={formData.Department} onChange={handleDepartmentChange}>
               <option value="">Select Department</option>
-              {departments &&
-                departments.map((department) => (
-                  <option key={department._id} value={department._id}>
-                    {department.name}
-                  </option>
-                ))}
+              {departments.map((d) => (
+                <option key={d._id} value={d._id}>
+                  {d.name}
+                </option>
+              ))}
             </select>
+
 
             <label style={{ marginRight: "40px" }}>
               Sub Department:<span className="mandatory">*</span>
             </label>
             <select
-              style={{ width: "20%" }}
-              onChange={handleSubDepartmentChange}
+              style={{ width: "20%", marginLeft: "2px" }}
               value={formData.SubDepartment}
+              onChange={handleSubDepartmentChange}
+              disabled={!subDepartments.length}
             >
-              <option value="">Select Sub-Department</option>
-              {subDepartments &&
-                subDepartments.map((subDepartment) => (
-                  <option key={subDepartment._id} value={subDepartment._id}>
-                    {subDepartment.name}
-                  </option>
-                ))}
+              <option value="">Select SubDepartment</option>
+              {subDepartments.map((sd) => (
+                <option key={sd._id} value={sd._id}>
+                  {sd.name}
+                </option>
+              ))}
             </select>
+
 
             <br />
 
@@ -848,18 +900,19 @@ export default function New_employee() {
               Designation:<span className="mandatory">*</span>
             </label>
             <select
-              style={{ width: "20%" }}
-              onChange={handleDesignationChange}
+              style={{ width: "20%", marginLeft: "0px" }}
               value={formData.Designation}
+              onChange={handleDesignationChange}
+              disabled={!designations.length}
             >
               <option value="">Select Designation</option>
-              {designations &&
-                designations.map((designation) => (
-                  <option key={designation._id} value={designation._id}>
-                    {designation.name}
-                  </option>
-                ))}
+              {designations.map((d) => (
+                <option key={d._id} value={d._id}>
+                  {d.name}
+                </option>
+              ))}
             </select>
+
             <br />
 
             <label style={{ marginRight: "35px" }}>
