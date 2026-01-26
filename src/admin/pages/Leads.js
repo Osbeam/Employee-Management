@@ -1,0 +1,559 @@
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Modal, Button, Form, Input, Row, Col } from 'antd';
+
+
+export default function Leads() {
+  const [leads, setLeads] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, settotalPage] = useState(1);
+  const [LeadFromCount, setLeadFromCount] = useState(0);
+  const [teamLeaders, setTeamLeaders] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [filteredFollowers, setFilteredFollowers] = useState([]);
+  const [selectedLeader, setSelectedLeader] = useState('');
+  const [selectedFollower, setSelectedFollower] = useState('');
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [showSelectionColumn, setShowSelectionColumn] = useState(false);
+
+  //formdata for manual adding data
+  const [formData, setFormData] = useState({
+    DatabaseName: '',
+    DatabaseOwner: '',
+    DatabaseType: '',
+    MobileNo1: '',
+    MobileNo2: '',
+    EmailId: '',
+    Address: '',
+    PinCode: '',
+    Qualification: '',
+    Gender: '',
+    DateOfBirth: '',
+    Age: '',
+    IncomeType: '',
+    Income: '',
+    Industry: '',
+    CibilScore: '',
+    ExistingLoanAmt: '',
+    ExistingROI: '',
+    ExistingEMI: '',
+    LeadFrom: ''
+  });
+  //Manual lead data upload with authtoken
+  const handleSubmit = async () => {
+    const authToken = localStorage.getItem('jwtoken')
+    try {
+      const response = await axios.post('http://77.37.45.224:8000/api/admin/manualLeadDataUpload', formData,{
+        headers:{
+          Authorization: `Bearer ${authToken}`
+        }
+      });
+      console.log('Data added successfully:', response.data);
+      toast.success('Data added successfully!');
+      setIsModalOpen(false);
+      setFormData({
+        DatabaseName: '',
+        DatabaseOwner: '',
+        DatabaseType: '',
+        MobileNo1: '',
+        MobileNo2: '',
+        EmailId: '',
+        Address: '',
+        PinCode: '',
+        Qualification: '',
+        Gender: '',
+        DateOfBirth: '',
+        Age: '',
+        IncomeType: '',
+        Income: '',
+        Industry: '',
+        CibilScore: '',
+        ExistingLoanAmt: '',
+        ExistingROI: '',
+        ExistingEMI: '',
+        LeadForm: ''
+      });
+      // Fetch the updated data after successful addition
+      fetchLeads();
+    } catch (error) {
+      console.error('Error adding data:', error);
+      toast.error('Error adding data!');
+    }
+  };
+  //Input handle for manual data upload
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  // fetch lead data with authtoken
+  const fetchLeads = async (page) => {
+    try {
+      const authToken = localStorage.getItem('jwtoken'); // Ensure the key name matches
+      console.log('Auth Token:', authToken); // Debug log for the token
+  
+      if (!authToken) {
+        console.error('No auth token found in local storage');
+        return;
+      }
+  
+      const response = await axios.get(
+        `http://77.37.45.224:8000/api/admin/LeadFromData?currentPage=${page}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.data.success) {
+        setLeads(response.data.data.LeadFromData); // Access the nested LeadFromData array
+        setCurrentPage(response.data.data.currentPage);
+        settotalPage(response.data.data.totalPage);
+        setLeadFromCount(response.data.data.LeadFromCount);
+      } else {
+        console.error('Failed to fetch leads data:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching leads data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeads(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPage) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      toast.error('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const response = await axios.post('http://77.37.45.224:8000/api/admin/LeadUpload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status === 200) {
+        toast.success('File uploaded successfully!');
+        // Clear the input field using the ref
+        fileInputRef.current.value = '';
+
+        // Clear the selected file state
+        setSelectedFile(null);
+
+
+        fetchLeads(); // Refetch the leads data to refresh the table if necessary
+      } else {
+        toast.error('Failed to upload file.');
+      }
+    } catch (error) {
+      toast.error('Error uploading file: ' + error.message);
+    }
+  };
+
+  // Modal popup handle
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  // Fetch team leaders on component mount with authtoken
+  useEffect(() => {
+    const fetchTeamLeaders = async () => {
+      const authToken = localStorage.getItem('jwtoken');
+      try {
+        const response = await axios.get(`http://77.37.45.224:8000/api/user/getTeamLeaders`,{
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        if (response.data.success) {
+          setTeamLeaders(response.data.data);
+        } else {
+          console.error('Failed to fetch team leaders data');
+        }
+      } catch (error) {
+        console.error('Error fetching team leaders data:', error);
+      }
+    };
+
+    fetchTeamLeaders();
+  }, []);
+  // Fetch followers based on selected leader with authtoken
+  const fetchFollowers = async (leaderId) => {
+    const authToken = localStorage.getItem('jwtoken');
+    try {
+      const response = await axios.get(`http://77.37.45.224:8000/api/user/getFollowers/${leaderId}`,{
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      if (response.data.success) {
+        setFollowers(response.data.data);
+      } else {
+        console.error('Failed to fetch followers data');
+      }
+    } catch (error) {
+      console.error('Error fetching followers data:', error);
+    }
+  };
+  // Fetch followers when selectedLeader changes
+  useEffect(() => {
+    if (selectedLeader) {
+      fetchFollowers(selectedLeader);
+    } else {
+      setFollowers([]);
+    }
+  }, [selectedLeader]);
+
+  // Show/hide selection column based on selectedFollower
+  useEffect(() => {
+    setShowSelectionColumn(!!selectedFollower);
+  }, [selectedFollower]);
+
+  const handleLeadCheckboxChange = (leadId) => {
+    setSelectedLeads(prevSelectedLeads =>
+      prevSelectedLeads.includes(leadId)
+        ? prevSelectedLeads.filter(id => id !== leadId)
+        : [...prevSelectedLeads, leadId]
+    );
+  };
+
+  const handleAssignLeads = async () => {
+    console.log('Selected Follower:', selectedFollower);
+    console.log('Selected Leads:', selectedLeads);
+
+    if (!selectedFollower || selectedLeads.length === 0) {
+      toast.error('Please select a follower and at least one lead.');
+      return;
+    }
+
+    const leadCallStatus = selectedLeads.map(() => 'Accept'); // Setting all to 'Accept'
+    const authToken = localStorage.getItem('jwtoken');
+
+    try {
+      const response = await axios.put('http://77.37.45.224:8000/api/admin/assignBulkLeads', {
+        employeeId: selectedFollower,
+        leadIds: selectedLeads,
+        leadCallStatus: leadCallStatus
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+      if (response.data.success) {
+        toast.success('Leads assigned successfully!');
+        // Reset selected states
+        setSelectedFollower('');
+        setSelectedLeads([]);
+
+        // Reload leads data
+        fetchLeads(currentPage);
+      } else {
+        toast.error('Failed to assign leads.');
+      }
+    } catch (error) {
+      toast.error('Error assigning leads: ' + error.message);
+    }
+  };
+
+  return (
+    <>
+      <div className="lead-main-container">
+        <div className="lead-head-section">
+          <a className="lead-down-temp" href="https://docs.google.com/spreadsheets/d/1l0l9i1JvzRWSIUK4gE7uLE7pDxz7JygU/export?format=xlsx" download>
+            Download Template
+          </a>
+          <div className="inner-head-section">
+            <div>
+              <label>Upload :</label>
+              <input
+                ref={fileInputRef}
+                className="lead-upload-input"
+                type="file"
+                name="file"
+                placeholder="browse"
+                onChange={handleFileChange}
+              />
+            </div>
+            <Button className="lead-add-btn" onClick={handleFileUpload}>Upload File</Button>
+            <Button className="lead-add-btn" onClick={openModal}>Add Data</Button>
+
+          </div>
+          <div className='inner-head-section-1'>
+            <div className='inner-section-1-1'>
+              <select
+                className='lead-assing-drop'
+                onChange={(e) => {
+                  console.log('Selected Leader ID:', e.target.value); // Debugging log
+                  setSelectedLeader(e.target.value);
+                }}
+                value={selectedLeader}
+              >
+                <option value=''>Select Team Leader</option>
+                {teamLeaders.map((leader) => (
+                  <option key={leader._id} value={leader._id}>
+                    {leader.FirstName} {leader.LastName}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className='lead-assing-drop'
+                onChange={(e) => {
+                  console.log('Selected Follower ID:', e.target.value); // Debugging log
+                  setSelectedFollower(e.target.value);
+                }}
+                value={selectedFollower}
+              >
+                <option value=''>Select Follower</option>
+                {followers.map((follower) => (
+                  <option key={follower._id} value={follower._id}>
+                    {follower.FirstName} {follower.LastName}
+                  </option>
+                ))}
+              </select>
+              <button className='lead-assign-btn' onClick={handleAssignLeads}>Assign</button>
+            </div>
+          </div>
+          <div className="lead-table-section">
+            <table className="lead-table">
+              <thead>
+                <tr>
+                  {showSelectionColumn && <th className="lead-th">Select</th>}
+                  <th className="lead-th">Sr. No.</th>
+                  <th className="lead-th">Database Name</th>
+                  <th className="lead-th">Database Owner</th>
+                  <th className="lead-th">Database Type</th>
+                  <th className="lead-th">Name</th>
+                  <th className="lead-th">Mobile No. 1</th>
+                  <th className="lead-th">Mobile No. 2</th>
+                  <th className="lead-th">Email Id</th>
+                  <th className="lead-th">Address</th>
+                  <th className="lead-th">Pin Code</th>
+                  <th className="lead-th">Qualification</th>
+                  <th className="lead-th">Gender</th>
+                  <th className="lead-th">Date of Birth</th>
+                  <th className="lead-th">Age</th>
+                  <th className="lead-th">Income Type</th>
+                  <th className="lead-th">Income</th>
+                  <th className="lead-th">Industry</th>
+                  <th className="lead-th">Cibil Score</th>
+                  <th className="lead-th">Existing Loan Amt</th>
+                  <th className="lead-th">Existing ROI</th>
+                  <th className="lead-th">Existing EMI</th>
+                  <th className="lead-th">Is Called</th>
+                  <th className="lead-th">Lead From</th>
+                  {/* <th className="lead-th">Assigned To</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((lead, index) => (
+                  <tr key={lead._id}>
+                    {showSelectionColumn && (
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedLeads.includes(lead._id)}
+                          onChange={() => handleLeadCheckboxChange(lead._id)}
+                        />
+                      </td>
+                    )}
+                    <td>{index + 1 + (currentPage - 1) * 10}</td>
+                    <td>{lead.DatabaseName}</td>
+                    <td>{lead.DatabaseOwner}</td>
+                    <td>{lead.DatabaseType}</td>
+                    <td>{lead.Name}</td>
+                    <td>91{lead.MobileNo1.substring(2).replace(/./g, '*')}</td>
+                    <td>91{lead.MobileNo2.substring(2).replace(/./g, '*')}</td>
+                    <td>{lead.EmailId}</td>
+                    <td>{lead.Address}</td>
+                    <td>{lead.PinCode}</td>
+                    <td>{lead.Qualification}</td>
+                    <td>{lead.Gender}</td>
+                    <td>{lead.DateOfBirth}</td>
+                    <td>{lead.Age}</td>
+                    <td>{lead.IncomeType}</td>
+                    <td>{lead.Income}</td>
+                    <td>{lead.Industry}</td>
+                    <td>{lead.CibilScore}</td>
+                    <td>{lead.ExistingLoanAmt}</td>
+                    <td>{lead.ExistingROI}</td>
+                    <td>{lead.ExistingEMI}</td>
+                    <td>{lead.IsCalled ? 'Yes' : 'No'}</td>
+                    <td>{lead.LeadFrom}</td>
+                    {/* <td>{lead.AssignedTo}</td> */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <ToastContainer />
+      <Modal title="Add Data" visible={isModalOpen} onOk={handleSubmit} onCancel={handleCancel} className="custom-modal">
+        <Form layout="vertical">
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Database Name">
+                <Input name="DatabaseName" value={formData.DatabaseName} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Database Owner">
+                <Input name="DatabaseOwner" value={formData.DatabaseOwner} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Database Type">
+                <Input name="DatabaseType" value={formData.DatabaseType} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Name">
+                <Input name="Name" value={formData.Name} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Mobile Number 1">
+                <Input name="MobileNo1" value={formData.MobileNo1} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Mobile Number 2">
+                <Input name="MobileNo2" value={formData.MobileNo2} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Email">
+                <Input name="EmailId" value={formData.EmailId} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Address">
+                <Input name="Address" value={formData.Address} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Pin Code">
+                <Input name="PinCode" value={formData.PinCode} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Qualification">
+                <Input name="Qualification" value={formData.Qualification} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Gender">
+                <Input name="Gender" value={formData.Gender} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Date of Birth">
+                <Input type='Date' name="DateOfBirth" value={formData.DateOfBirth} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Age">
+                <Input name="Age" value={formData.Age} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Income Type">
+                <Input name="IncomeType" value={formData.IncomeType} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Income">
+                <Input name="Income" value={formData.Income} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Industry">
+                <Input name="Industry" value={formData.Industry} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Cibil Score">
+                <Input name="CibilScore" value={formData.CibilScore} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Existing Loan Amount">
+                <Input name="ExistingLoanAmt" value={formData.ExistingLoanAmt} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Existing ROI">
+                <Input name="ExistingROI" value={formData.ExistingROI} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Existing EMI">
+                <Input name="ExistingEMI" value={formData.ExistingEMI} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="Lead Form">
+                <Input name="LeadFrom" value={formData.LeadFrom} onChange={handleInputChange} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+      <div className="leads-pagination">
+        <button
+          className="Data-op-pagination-btn"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPage}
+        </span>
+        <div>User Count: {LeadFromCount}</div>
+        <button
+          className="Data-op-pagination-btn"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPage}
+        >
+          Next
+        </button>
+      </div>
+    </>
+  );
+}

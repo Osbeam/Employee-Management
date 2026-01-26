@@ -1,0 +1,14 @@
+.pending-leads-head-container{
+    font-size: 25px;
+    padding: 25px 0px 25px 0px;
+
+}
+.pending-leads-table{
+    overflow: overlay;
+}
+
+.pendingleads-pagination{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 43px;
+}

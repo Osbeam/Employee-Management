@@ -1,0 +1,298 @@
+/* Container for Head Section */
+.LM-head-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Dropdown in the Head Section */
+.LM-head-container-dropdown {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 12px 50px;
+    outline: none;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 5px 0px;
+}
+
+
+/* Main Inner Container */
+.LM-inner-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr; 
+    grid-template-rows: 1fr 1fr; 
+    gap: 10px; 
+    border-radius: 10px;
+}
+
+/* First Section */
+.LM-inner-container > section:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+    background-color: rgb(255, 255, 255); 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2); 
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 300px; /* Set a max height for scrolling */
+}
+
+/* Second Section */
+.LM-inner-container > section:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+    background-color: rgb(255, 255, 255); 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 300px; /* Set a max height for scrolling */
+}
+
+/* Aside Section */
+.LM-inner-container > aside {
+    grid-column: 2;
+    grid-row: 1 / span 2; 
+    background-color: rgb(255, 255, 255); 
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow:1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 100%; /* Ensure full-height scrolling */
+}
+
+/* Leave Section */
+.LM-leave-section {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: space-around;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 250px; /* Set a max height for scrolling */
+    padding: 10px; /* Adjust padding if needed */
+    margin-bottom: 10px; /* Reduce gap between sections */
+}
+
+
+/* Section Container */
+.LM-section-container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0 10px;
+    flex: 1;
+    margin-top: 30px;
+}
+
+
+/* Circle Container */
+.LM-circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Circle Style */
+.LM-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 6px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 0px 5px -1px rgba(0, 0, 0, 0.5), inset 0px 0px 5px -1px rgba(0, 0, 0, 0.5);
+}
+
+.LM-circle .LM-number {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Specific Circle Colors */
+.LM-sick-leave { border-color: #ff8a80; }
+.LM-earned-leave { border-color: #7986cb; }
+.LM-casual-leave { border-color: #4fc3f7; }
+.LM-holiday-leave { border-color: #ffb74d; }
+
+/* Leave Type Text */
+.LM-leave-type {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Leave Info Section */
+.LM-leave-info {
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.LM-sick-leave-info { background-color: #ffebee; color: #d32f2f; }
+.LM-earned-leave-info { background-color: #e8eaf6; color: #303f9f; }
+.LM-casual-leave-info { background-color: #e1f5fe; color: #0288d1; }
+.LM-holiday-leave-info { background-color: #fff3e0; color: #f57c00; }
+.LM-holiday-National-leave-info { background-color: #fff3e0; color: #b16ade; }
+
+
+/* Leave History Section */
+.LM-leave-History-section {
+    display: flex;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 100px; /* Set a max height for scrolling */
+}
+
+/* Leave Request Section */
+.LM-leave-Request-section {
+    display: flex;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 -4px 8px rgba(0, 0, 0, 0.1), 
+                4px 0 8px rgba(0, 0, 0, 0.1), 
+                -4px 0 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 300px; /* Set a max height for scrolling */
+}
+
+/* Leave Request Section */
+.LR-heading {
+    position: sticky;
+    top: 0;
+    background-color: white; /* Or the background color of your section */
+    z-index: 10;
+    padding: 10px 0; /* Adjust padding as needed */
+  }
+  
+
+.LR-container {
+    background-color: white;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 195px; /* Set a max height for scrolling */
+}
+
+.LR-inner-card {
+    background-color: #FCE69E;
+    padding: 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+}
+
+.LR-para {
+    color: #5D5B5B;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.LR-btn {
+    margin-top: 10px;
+}
+
+.LR-btn-approve {
+    padding: 4px 15px;
+    color: white;
+    background-color: green;
+    outline: none;
+    border: none;
+    margin-right: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Type and Date Section */
+.LR-type-date {
+    display: flex;
+    justify-content: space-between;
+}
+
+.LR-type-date p {
+    color: #5D5B5B;
+    padding-top: 5px;
+}
+
+/* Request Section */
+.rs-heading h1 {
+    margin-bottom: 15px;
+}
+
+.rs-container {
+    background-color: white;
+    width: auto;
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 500px; /* Set a max height for scrolling */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 3px; /* Decrease scrollbar width */
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.rs-inner-card {
+    background-color: #FCE69E;
+    padding: 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding-right: 39px;
+    margin-right: 2px;
+}
+
+.rs-para {
+    color: #5D5B5B;
+    padding-top: 15px;
+}
+
+.rs-btn {
+    margin-top: 10px;
+}
+
+.rs-btn-approve {
+    padding: 4px 10px;
+    color: white;
+    background-color: green;
+    outline: none;
+    border: none;
+    margin-right: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.rs-btn-decline{
+    padding: 4px 10px 4px 15px;
+    color: white;
+    background-color: rgb(243, 21, 21);
+    outline: none;
+    border: none;
+    margin-left: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}

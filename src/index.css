@@ -197,9 +197,9 @@ td {
 
 /* New employee css */
 
-.ant-tabs-nav-list{
+/* .ant-tabs-nav-list{
   gap: 258px;
-}
+} */
 
 .ant-tabs-tab:hover{
   color: #9cf78c !important;
@@ -217,7 +217,7 @@ td {
 .form-container h2{
     text-align: center;
     font-weight: 600;
-    padding: 10px 0px 20px 0px;
+    padding: 50px 0px 20px 0px;
 }
 
 .form-container p{
@@ -250,62 +250,34 @@ td {
 .assets-button{
   width: 139px !important;
 }
-.submit-container{
-  padding: 40px 20px 20px 0px;
-}
-.submit-container button{
-  padding: 3px;
-  width: 75px;
-  border-radius: 5px;
-  outline: none;
-  border: 1px solid #aba3a3;
-  float: right;
-  cursor: pointer;
-}
 
-.grid-container{
+.grid-container {
   display: grid;
-  grid-template-columns: auto auto auto ;
+  grid-template-columns: auto auto; /* Only two columns now */
   background-color: aliceblue;
   padding: 5px;
 }
-.grid-item1,
-.grid-item2,
-.grid-item3,
-.grid-item4,
-.grid-item5,
-.grid-item6,
-.grid-item7,
-.grid-item8,
-.grid-item9,
-.grid-item10,
-.grid-item11,
-.grid-item12,
-.grid-item13,
-.grid-item14,
-.grid-item15,
-.grid-item16,
-.grid-item17,
-.grid-item18,
-.grid-item19,
-.grid-item20,
-.grid-item21,
-.grid-item22,
-.grid-item23,
-.grid-item24{
+
+.grid-item1 {
+  grid-row: 1 / span 2;
+}
+.grid-item2 {
+  grid-column: 2;
+}
+
+.grid-item15 {
+  grid-column: 1 / span 2;
+  grid-row: 8;
+}
+
+.grid-item1,.grid-item2,.grid-item3,.grid-item4,.grid-item5, .grid-item6, .grid-item7, .grid-item8, .grid-item9, .grid-item10,.grid-item11,.grid-item12,.grid-item13,.grid-item14,.grid-item15 {
   border: 1px solid gray;
   padding: 10px;
   font-size: 15px;
   background-color: #fdfdfd;
 }
-.grid-item1{
-  grid-row: 1 / span 2;
-}
-.grid-item2{
-  grid-column: 2 / span 2;
-}
 
-.grid-item17 {
-  grid-column: 1 / span 3;
-  grid-row: 7;
-}
+
+
+
+
